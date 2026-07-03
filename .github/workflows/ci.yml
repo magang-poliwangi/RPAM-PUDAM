@@ -1,1 +1,11 @@
-
+name: Continuous Integration
+on:
+    pull_request:
+        branches:
+            - main
+jobs:
+  approval-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR approval
+        run: echo "Checking pull request approval..."
