@@ -12,12 +12,10 @@ datasource db {
   provider = "postgresql"
 }
 
-
 enum Role {
   ADMIN
   USER
 }
-
 
 enum StatusValidasi {
   EFEKTIF
@@ -32,10 +30,10 @@ enum StatusKemajuan {
   TERTUNDA
 }
 
-enum Prioritas {
-  RENDAH
-  SEDANG
-  TINGGI
+enum PrioritasRencanaPerbaikan {
+  PENDEK
+  MENENGAH
+  PANJANG
 }
 
 enum AksiAuditLog {
@@ -46,128 +44,145 @@ enum AksiAuditLog {
   DELETE
 }
 
+model LokasiSpam {
+  id                     String   @id @default(cuid())
+  kodeLokasi             String   @unique
+  simbol                 String?
+  namaLokasi             String
+  deskripsi              String
+  penanggungJawabNama    String?
+  penanggungJawabPosisi  String?
+  penanggungJawabTelepon String?
+  penanggungJawabEmail   String?
+  referensi              String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
+  identifikasiBahaya IdentifikasiBahaya[]
+
+  @@map("lokasi_spam")
+}
 
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
-  password     String   
-  role         Role     @default(USER)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      Role     @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  auditLogs    AuditLog[]
+  auditLogs AuditLog[]
 
   @@map("users")
 }
 
-
 model AuditLog {
-  id          String       @id @default(cuid())
-  userId      String
-  user        User         @relation(fields: [userId], references: [id])
-  aksi        AksiAuditLog
-  namaTabel   String?      
-  recordId    String?      
-  keterangan  String?      
-  createdAt   DateTime     @default(now())
+  id         String       @id @default(cuid())
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  aksi       AksiAuditLog
+  namaTabel  String?
+  recordId   String?
+  keterangan String?
+  createdAt  DateTime     @default(now())
 
   @@map("audit_logs")
 }
 
-
+//Tabel 3.1 Identifikasi Bahaya dan Kejadian Bahaya
 model IdentifikasiBahaya {
-  id               String   @id @default(cuid())
-  kodeLokasi       String
-  kodeRisiko       String   @unique
-  komponenSpam     String
-  kontaminasiX     String
-  komponenSpamY    String
-  penyebabZ        String
+  id                String     @id @default(cuid())
+  lokasiSpamId      String
+  lokasiSpam        LokasiSpam @relation(fields: [lokasiSpamId], references: [id])
+  kodeRisiko        String     @unique
+  komponenSpam      String
+  kontaminasiX      String
+  komponenSpamY     String
+  penyebabZ         String
   kejadianBahayaXYZ String
-  tipeBahaya       String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  tipeBahaya        String
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
 
-  penilaianRisiko  PenilaianRisiko[]
+  penilaianRisiko PenilaianRisiko?
 
   @@map("identifikasi_bahaya")
 }
 
-
 model PenilaianRisiko {
-  id                   String              @id @default(cuid())
-  identifikasiBahayaId String
-  identifikasiBahaya   IdentifikasiBahaya  @relation(fields: [identifikasiBahayaId], references: [id])
-  peluang              Int                
-  dampak               Int                
-  skorRisiko           Int                 
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  id                    String             @id @default(cuid())
+  identifikasiBahayaId  String             @unique
+  identifikasiBahaya    IdentifikasiBahaya @relation(fields: [identifikasiBahayaId], references: [id])
+  peluangKejadianBahaya Int
+  dampaKeparahan        Int
+  skorRisiko            Int
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
 
-  kajiUlangRisiko      KajiUlangRisiko[]
+  kajiUlangRisiko KajiUlangRisiko?
 
   @@map("penilaian_risiko")
 }
 
-
+// Tabel 4.1  Kaji Ulang Risiko dengan Mempertimbangkan Tindakan Pengendalian yang Ada Saat Ini
 model KajiUlangRisiko {
-  id                  String           @id @default(cuid())
-  penilaianRisikoId   String
-  penilaianRisiko     PenilaianRisiko  @relation(fields: [penilaianRisikoId], references: [id])
-  tindakanPengendalian String
-  referensi           String
-  validasi            StatusValidasi
-  peluangSetelah      Int              
-  dampakSetelah       Int              
-  skorSetelah         Int              
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
-
-  rencanaPerbaikan    RencanaPerbaikan[]
+  id                    String                 @id @default(cuid())
+  penilaianRisikoId     String                 @unique
+  penilaianRisiko       PenilaianRisiko        @relation(fields: [penilaianRisikoId], references: [id])
+  rencanaPerbaikan      RencanaPerbaikan?
+  pemantauanOperasional PemantauanOperasional?
+  tindakanPengendalian  String
+  referensi             String
+  validasi              StatusValidasi
+  peluangKejadianBahaya Int
+  dampakKeparahan       Int
+  skorRisiko            Int
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
 
   @@map("kaji_ulang_risiko")
 }
 
+// M5 Rencana Perbaikan
 model RencanaPerbaikan {
-  id                String           @id @default(cuid())
-  kajiUlangRisikoId String
-  kajiUlangRisiko   KajiUlangRisiko  @relation(fields: [kajiUlangRisikoId], references: [id])
-  rencanaPerbaikan  String
-  penanggungJawab   String
-  jadwal            DateTime
-  biaya             Decimal
-  sumberPembiayaan  String
-  statusKemajuan    StatusKemajuan
-  kendala           String?
-  prioritas         Prioritas
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-
-  pemantauanOperasional PemantauanOperasional[]
+  id                 String                    @id @default(cuid())
+  kajiUlangRisikoId  String                    @unique
+  kajiUlangRisiko    KajiUlangRisiko           @relation(fields: [kajiUlangRisikoId], references: [id])
+  rencanaPerbaikan   String
+  penanggungJawab    String
+  jadwalPelaksanaan  String
+  biaya              Decimal
+  sumberPembiayaan   String
+  statusKemajuan     String
+  kendalaKeuangan    Boolean                   @default(false)
+  kendalaTenagaKerja Boolean                   @default(false)
+  prioritas          PrioritasRencanaPerbaikan
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
 
   @@map("rencana_perbaikan")
 }
 
-
+// M6.2 Pemantauan Operasional
 model PemantauanOperasional {
-  id                  String            @id @default(cuid())
-  rencanaPerbaikanId  String
-  rencanaPerbaikan    RencanaPerbaikan  @relation(fields: [rencanaPerbaikanId], references: [id])
-  batasKritis         String
-  apaYangDipantau     String
-  dimana              String
-  kapan               String
-  bagaimana           String
-  pelaksana           String
-  analis              String
-  penerimaLaporan     String
-  tindakanKoreksi     String?
-  pelaksanaKoreksi    String?
-  waktuKoreksi        DateTime?
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  id                                                   String          @id @default(cuid())
+  kajiUlangRisikoId                                    String          @unique
+  kajiUlangRisiko                                      KajiUlangRisiko @relation(fields: [kajiUlangRisikoId], references: [id])
+  batasKritis                                          String?
+  apaYangDimonitor                                     String
+  dimana                                               String
+  kapan                                                String
+  bagaimana                                            String
+  siapaYangMelakukan                                   String
+  siapaYangAkanMenganalisisHasilnya                    String
+  siapaYangMenerimaHasilAnalisisDanMengambilTindakan   String
+  apaTindakanKoreksinya                                String
+  siapaYangMelakukanTindakanKoreksi                    String
+  seberapaCepat                                        String
+  siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni String
+  createdAt                                            DateTime        @default(now())
+  updatedAt                                            DateTime        @updatedAt
 
   @@map("pemantauan_operasional")
 }
