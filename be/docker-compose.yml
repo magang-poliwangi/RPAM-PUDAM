@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: rpam-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nofa
+      POSTGRES_PASSWORD: nofafirdausananta
+      POSTGRES_DB: rpam
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

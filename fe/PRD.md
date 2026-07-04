@@ -158,3 +158,88 @@ Sebuah fitur FE dianggap selesai bila:
 - `rpam-backend` skill — konvensi backend, RBAC, audit log, risk score formula, integration testing.
 - `rpam-frontend` skill — konvensi implementasi FE detail (folder structure, Redux, Axios, design tokens, testing).
 - Dokumen asli: Project Overview, Kebutuhan Fungsional (FR-01–FR-35), Kebutuhan Non-Fungsional (NFR-01–NFR-37), Test Plan (TS-01–TS-15).
+
+
+
+
+# input form 
+- input buat jadi component bukan jadi page
+
+FR-18 Identifikasi Bahaya (Tabel 3.1) 
+Sistem memungkinkan pengguna melakukan:
+tambah data
+ubah data
+hapus data
+melihat data
+Field yang di input meliputi:
+Kode Lokasi
+Kode Risiko
+Komponen SPAM
+Kontaminasi (X)
+Komponen SPAM (Y)
+Penyebab (Z)
+Kejadian Bahaya (XYZ)
+Tipe Bahaya
+FR-19 Penilaian Risiko (Tabel 3.5)
+Sistem menyediakan form untuk mengelola:
+Identifikasi Bahaya (relasi) dropdown dari M3.1 
+Dampak
+Skor Risiko
+Tingkat Risiko
+Skor Risiko dihitung otomatis:
+Skor = Peluang × Dampak
+Sistem menentukan Tingkat Risiko secara otomatis berdasarkan skor.
+skor:
+1-5 = rendah (hijau)
+6-10 =  medium (biru)
+16-20 = sangat tinggi (kuning)
+>21 = Ekstrem (merah)
+
+
+FR-20 Kaji Ulang Risiko (M4)
+Sistem menyediakan form untuk mengelola:
+Penilaian Risiko (relasi) dropdown dari M3.5 
+tindakan pengendalian
+referensi
+validasi
+efektif
+tidak efektif
+tidak pasti
+risiko setelah pengendalian
+Perhitungan skor risiko setelah pengendalian dilakukan otomatis.
+Skor = Peluang × Dampak
+skor:
+1-5 = rendah (hijau)
+6-10 =  medium (biru)
+16-20 = sangat tinggi (kuning)
+>21 = Ekstrem (merah)
+FR-21 Rencana Perbaikan (M5)
+Sistem menyediakan form untuk mengelola:
+Kaji Ulang (relasi) dropdown dari M4 
+rencana perbaikan
+penanggung jawab
+jadwal
+biaya
+sumber pembiayaan
+status kemajuan
+kendala
+prioritas
+	Tingkat Risiko Dengan Pengendalian
+Rendah (hijau)
+Medium (biru)
+Sangat tinggi (kuning)
+Ekstrem (merah)
+FR-22 Pemantauan Operasional (M6.2)
+Sistem menyediakan form untuk mengelola:
+Rencana Perbaikan (relasi)  dropdown dari M5 
+batas kritis
+apa yang dipantau
+dimana
+kapan
+bagaimana
+pelaksana
+analis
+penerima laporan
+tindakan koreksi
+pelaksana koreksi
+waktu koreksi
