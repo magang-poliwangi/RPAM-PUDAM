@@ -46,76 +46,35 @@ async function main() {
   console.log('✅ Lokasi SPAM seeded:', lokasiList.length);
 
   
-  // 3. IDENTIFIKASI BAHAYA (Tabel 3.1)
-  // Catatan: kodeRisiko sengaja dibuat unik di data seed ini
-  // karena schema masih pakai @unique. Data asli instansi
-  // menunjukkan kodeRisiko BOLEH berulang (F0010 dipakai >1x) —
-  // sarannya @unique dihapus dari schema sebelum import data real.
-  
-  const bahayaData = [
-    {
-      lokasi: lokasiList[0], // C1
-      kodeRisiko: 'K0001',
-      komponenSpam: 'Chlorinator',
-      kontaminasiX: 'Kontaminasi Kimia',
-      komponenSpamY: 'Chlorinator',
-      penyebabZ: 'Under Dosing',
-      kejadianBahayaXYZ: 'Kontaminasi Kimia terjadi pada Chlorinator dikarenakan Under Dosing',
-      tipeBahaya: 'Kimia',
-    },
-    {
-      lokasi: lokasiList[1], // A1
-      kodeRisiko: 'F0001',
-      komponenSpam: 'Air Baku',
-      kontaminasiX: 'Kontaminasi Fisika',
-      komponenSpamY: 'Air Baku',
-      penyebabZ: 'Kondisi rumah panel rusak',
-      kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kondisi rumah panel rusak',
-      tipeBahaya: 'Fisik',
-    },
-    {
-      lokasi: lokasiList[2], // A2
-      kodeRisiko: 'F0002',
-      komponenSpam: 'Air Baku',
-      kontaminasiX: 'Kontaminasi Fisika',
-      komponenSpamY: 'Air Baku',
-      penyebabZ: 'Pohon tumbang',
-      kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Pohon tumbang',
-      tipeBahaya: 'Fisik',
-    },
-    {
-      lokasi: lokasiList[3], // A3
-      kodeRisiko: 'F0003',
-      komponenSpam: 'Air Baku',
-      kontaminasiX: 'Kontaminasi Fisika',
-      komponenSpamY: 'Air Baku',
-      penyebabZ: 'Kabel power panel putus',
-      kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kabel power panel putus',
-      tipeBahaya: 'Fisik',
-    },
-    {
-      lokasi: lokasiList[4], // R1
-      kodeRisiko: 'M0004',
-      komponenSpam: 'Reservoir',
-      kontaminasiX: 'Kontaminasi Mikrobiologi',
-      komponenSpamY: 'Reservoir',
-      penyebabZ: 'Overflow Reservoir',
-      kejadianBahayaXYZ: 'Kontaminasi Mikrobiologi terjadi pada Reservoir dikarenakan Overflow Reservoir',
-      tipeBahaya: 'Mikrobiologi',
-    },
-  ];
+ // 3. IDENTIFIKASI BAHAYA (Tabel 3.1)
+// Catatan: kodeRisiko TIDAK unik (F0010 bisa dipakai berkali-kali di data asli),
+// jadi pakai findFirst + create manual, bukan upsert.
 
-  const bahayaList = [];
-  for (const b of bahayaData) {
-    const { lokasi, ...rest } = b;
-    const bahaya = await prisma.identifikasiBahaya.upsert({
-      where: { kodeRisiko: rest.kodeRisiko },
-      update: {},
-      create: { ...rest, lokasiSpamId: lokasi.id },
+const bahayaData = [
+  { lokasi: lokasiList[0], kodeRisiko: 'K0001', komponenSpam: 'Chlorinator', kontaminasiX: 'Kontaminasi Kimia', komponenSpamY: 'Chlorinator', penyebabZ: 'Under Dosing', kejadianBahayaXYZ: 'Kontaminasi Kimia terjadi pada Chlorinator dikarenakan Under Dosing', tipeBahaya: 'Kimia' },
+  { lokasi: lokasiList[1], kodeRisiko: 'F0001', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Kondisi rumah panel rusak', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kondisi rumah panel rusak', tipeBahaya: 'Fisik' },
+  { lokasi: lokasiList[2], kodeRisiko: 'F0002', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Pohon tumbang', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Pohon tumbang', tipeBahaya: 'Fisik' },
+  { lokasi: lokasiList[3], kodeRisiko: 'F0003', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Kabel power panel putus', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kabel power panel putus', tipeBahaya: 'Fisik' },
+  { lokasi: lokasiList[4], kodeRisiko: 'M0004', komponenSpam: 'Reservoir', kontaminasiX: 'Kontaminasi Mikrobiologi', komponenSpamY: 'Reservoir', penyebabZ: 'Overflow Reservoir', kejadianBahayaXYZ: 'Kontaminasi Mikrobiologi terjadi pada Reservoir dikarenakan Overflow Reservoir', tipeBahaya: 'Mikrobiologi' },
+];
+
+const bahayaList = [];
+for (const b of bahayaData) {
+  const { lokasi, ...rest } = b;
+
+  let bahaya = await prisma.identifikasiBahaya.findFirst({
+    where: { kodeRisiko: rest.kodeRisiko, lokasiSpamId: lokasi.id },
+  });
+
+  if (!bahaya) {
+    bahaya = await prisma.identifikasiBahaya.create({
+      data: { ...rest, lokasiSpamId: lokasi.id },
     });
-    bahayaList.push(bahaya);
   }
-  console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
+
+  bahayaList.push(bahaya);
+}
+console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
 
   
   // 4. PENILAIAN RISIKO (Tabel 3.5)
