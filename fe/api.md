@@ -2,13 +2,13 @@
 
 | | |
 |---|---|
-| Versi | 1.0 |
-| Tanggal | 03 Juli 2026 |
+| Versi | 1.1 |
+| Tanggal | 05 Juli 2026 |
 | Base URL | `https://<host>/api` (asumsi prefix `/api`, sesuaikan dengan `routes.js`) |
 | Auth | `Authorization: Bearer <JWT>` di semua endpoint kecuali `POST /auth/login` |
 | Response envelope | `{ success, message, data }` — sesuai `src/utils/response.js` |
 
-Dokumen ini adalah kontrak API antara FE dan BE, diturunkan dari FR-01–FR-35, NFR terkait, dan `rpam-backend` / `rpam-frontend` skill. Setiap asumsi struktural (relasi antar modul, nama field yang tidak eksplisit di FR) ditandai jelas — **wajib dikonfirmasi sebelum implementasi final**, tapi cukup lengkap untuk mulai coding sesuai instruksi "kalau requirement tidak jelas, tulis asumsi jangan mengarang perilaku".
+Dokumen ini adalah kontrak API antara FE dan BE, diturunkan dari FR-01–FR-35, NFR terkait, `schema.prisma` final, dan `rpam-backend` / `rpam-frontend` skill. Field request/response di bawah **mengikuti nama field persis seperti di schema.prisma** — bukan nama generik/ringkas — supaya tidak ada layer translasi tersembunyi yang bisa salah.
 
 ---
 
@@ -23,21 +23,23 @@ Sukses:
 
 Gagal:
 ```json
-{ "success": false, "message": "string", "data": { "errors": [ { "field": "peluang", "message": "peluang wajib diisi" } ] } }
+{ "success": false, "message": "string", "data": { "errors": [ { "field": "peluangKejadianBahaya", "message": "peluang wajib diisi" } ] } }
 ```
 `data.errors` hanya muncul untuk `400` (validation error dari Joi). Untuk error lain (`401`, `403`, `404`, `409`, `500`), `data` bernilai `null`.
 
-### 1.2 Pagination & list query params
+### 1.2 List query params
 
 Semua endpoint `GET` list mendukung query params berikut (konsisten di semua modul):
 
 | Param | Tipe | Default | Keterangan |
 |---|---|---|---|
-| `page` | int | `1` | Halaman ke-berapa |
-| `pageSize` | int | `10` | Jumlah item per halaman (asumsi default, lihat `rpam-backend` skill §5) |
+| `page` | int | `1` | Halaman ke-berapa (dipakai backend sebagai offset, FE menyebutnya "batch") |
+| `pageSize` | int | `10` | Jumlah item per batch (lihat `rpam-frontend` PRD §9 gap #7) |
 | `search` | string | — | Keyword search (field yang di-search berbeda per modul, lihat masing-masing) |
 | `sortBy` | string | `createdAt` | Nama kolom untuk sort |
 | `sortOrder` | `asc` \| `desc` | `desc` | Arah sort |
+
+> **Catatan FE:** endpoint ini tetap page-based di level API (mekanisme paling sederhana buat backend). FE mengonsumsinya sebagai **infinite scroll**: increment `page` tiap fetch berikutnya, append hasil ke state (bukan replace) sampai `items.length >= total`. Tidak ada perubahan kontrak yang dibutuhkan untuk ini — murni pola konsumsi di FE (`rpam-frontend` skill §5).
 
 Response list:
 ```json
@@ -53,7 +55,7 @@ Response list:
 
 ### 1.3 ID & Timestamps
 
-- Semua ID entitas: string NanoID (bukan auto-increment integer) — sesuai NFR-08.
+- **Konflik dokumen (belum diputuskan, jangan pilih sepihak):** dokumen ini sebelumnya bilang ID pakai NanoID sesuai draft awal skill, tapi `schema.prisma` final yang sudah dikerjakan pakai `@default(cuid())` di semua model. Sampai ada keputusan resmi, **implementasi aktual = cuid**, bukan NanoID. Kalau memang mau NanoID, itu perlu perubahan schema.prisma dulu (ganti `@default(cuid())` jadi `@default(dbgenerated())` custom atau pakai `@id @default(nanoid())` via extension), bukan cuma dokumen ini.
 - Timestamp (`createdAt`, `updatedAt`, `deletedAt`) format ISO 8601 UTC.
 - Soft delete: record yang dihapus punya `deletedAt` terisi, tidak muncul di endpoint `GET` list/detail biasa (lihat `rpam-backend` skill §6).
 
@@ -70,9 +72,18 @@ Response list:
 | `409` | Konflik (mis. username sudah dipakai) |
 | `500` | Server error |
 
-### 1.5 Role notation
+### 1.5 Role & enum notation
 
-`Admin` / `User` / `Admin, User` (keduanya boleh akses) — sesuai matrix RBAC di `rpam-backend` skill §3.
+Semua field enum di response/request **memakai value persis seperti di schema.prisma** (uppercase + underscore), bukan versi title-case/lowercase — supaya FE tidak perlu layer mapping tambahan:
+
+- `Role`: `ADMIN` | `USER`
+- `TingkatRisiko`: `RENDAH` | `MEDIUM` | `TINGGI` | `SANGAT_TINGGI` | `EKSTREM`
+- `StatusValidasi`: `EFEKTIF` | `TIDAK_EFEKTIF` | `TIDAK_PASTI`
+- `StatusKemajuan`: `BELUM_MULAI` | `SEDANG_BERJALAN` | `SELESAI` | `TERTUNDA`
+- `PrioritasRencanaPerbaikan`: `PENDEK` | `MENENGAH` | `PANJANG`
+- `AksiAuditLog`: `LOGIN` | `LOGOUT` | `CREATE` | `UPDATE` | `DELETE`
+
+Role akses endpoint: `Admin` / `User` / `Admin, User` (keduanya boleh akses) — sesuai matrix RBAC di `rpam-backend` skill §3.
 
 ---
 
@@ -80,8 +91,8 @@ Response list:
 
 | Method | Path | Role | Deskripsi |
 |---|---|---|---|
-| `POST` | `/auth/login` | Public | Login, tidak perlu token |
-| `GET` | `/auth/me` | Admin, User | Ambil profil user yang sedang login (dari token) |
+| `POST` | `/auth` | Public | Login, tidak perlu token |
+| `GET` | `/auth` | Admin, User | Ambil profil user yang sedang login (dari token) |
 
 **`POST /auth/login`**
 Request:
@@ -95,7 +106,7 @@ Response `200`:
   "message": "Login berhasil",
   "data": {
     "token": "jwt-string",
-    "user": { "id": "string", "username": "string", "role": "Admin | User", "isActive": true }
+    "user": { "id": "string", "username": "string", "role": "ADMIN | USER", "isActive": true }
   }
 }
 ```
@@ -123,13 +134,13 @@ Error `403`: akun dinonaktifkan → *"Akun tidak aktif, hubungi Admin"*.
 
 `POST /users` request:
 ```json
-{ "username": "string", "password": "string", "role": "Admin | User" }
+{ "username": "string", "password": "string", "role": "ADMIN | USER" }
 ```
 Response `201`, data user (tanpa `password`). Error `409` kalau username sudah dipakai — pesan **persis** *"Username telah digunakan"*.
 
 `PUT /users/:id` request: `{ "username": "string" }` (password reset dianggap fitur terpisah, tidak ada di FR — **asumsi: belum diimplementasi**, konfirmasi ke stakeholder kalau dibutuhkan).
 
-`PATCH /users/:id/role` request: `{ "role": "Admin | User" }`
+`PATCH /users/:id/role` request: `{ "role": "ADMIN | USER" }`
 
 `PATCH /users/:id/activate` & `/deactivate`: tanpa body. Response data: `{ "id", "isActive": true|false }`.
 
@@ -152,16 +163,18 @@ Response `201`, data user (tanpa `password`). Error `409` kalau username sudah d
 | `action` | `LOGIN`\|`LOGOUT`\|`CREATE`\|`UPDATE`\|`DELETE` | Filter jenis aksi |
 | `module` | string | Filter modul, mis. `identifikasi-bahaya` |
 
-Response item shape:
+Response item shape (mengikuti field `AuditLog` di schema.prisma — `aksi`, bukan `action`, `keterangan` opsional):
 ```json
 {
   "id": "string",
   "user": { "id": "string", "username": "string" },
-  "timestamp": "2026-07-03T10:00:00Z",
-  "action": "CREATE",
+  "aksi": "CREATE",
   "module": "identifikasi-bahaya",
+  "recordId": "string",
   "oldValue": null,
-  "newValue": { }
+  "newValue": { },
+  "keterangan": null,
+  "createdAt": "2026-07-03T10:00:00Z"
 }
 ```
 
@@ -183,24 +196,41 @@ Field spesifik & filter tambahan per modul ada di bawah. **Setiap create/update/
 
 ### 5.1 M1 — Identifikasi Bahaya (`/identifikasi-bahaya`)
 
-Search by: `kodeLokasi`, `kodeRisiko`. Filter tambahan: `tipeBahaya`, `lokasi` (FR-24, FR-26).
+Search by: `lokasiSpamId` (via nama/kode lokasi), `kodeRisiko`. Filter tambahan: `tipeBahaya`, `lokasiSpamId` (FR-24, FR-26).
 
-Request body (create/update):
+Request body (create/update) — **`kodeRisiko` TIDAK ADA di body, backend generate otomatis (lihat `rpam-backend` skill §5a). Kalau field ini dikirim FE, backend abaikan.**
 ```json
 {
-  "kodeLokasi": "string",
-  "kodeRisiko": "string",
+  "lokasiSpamId": "string",
   "komponenSpam": "string",
-  "kontaminasi": "string",
-  "penyebab": "string",
-  "kejadianBahaya": "string",
+  "kontaminasiX": "string",
+  "komponenSpamY": "string",
+  "penyebabZ": "string",
+  "kejadianBahayaXYZ": "string",
   "tipeBahaya": "string"
+}
+```
+
+Response (create/detail) — `kodeRisiko` muncul sebagai field read-only hasil generate:
+```json
+{
+  "id": "string",
+  "lokasiSpamId": "string",
+  "kodeRisiko": "K0001",
+  "komponenSpam": "string",
+  "kontaminasiX": "string",
+  "komponenSpamY": "string",
+  "penyebabZ": "string",
+  "kejadianBahayaXYZ": "string",
+  "tipeBahaya": "string",
+  "createdAt": "2026-07-03T10:00:00Z",
+  "updatedAt": "2026-07-03T10:00:00Z"
 }
 ```
 
 ### 5.2 M2 — Penilaian Risiko (`/penilaian-risiko`)
 
-> **Asumsi relasi:** setiap Penilaian Risiko mengacu ke satu record Identifikasi Bahaya (`identifikasiBahayaId`), relasi 1-ke-1. Ini asumsi karena FR-18 (Tabel 3.1) dan FR-19 (Tabel 3.5) didefinisikan sebagai tabel terpisah tanpa relasi eksplisit — perlu dikonfirmasi ke product owner.
+Relasi 1-ke-1 ke M1 via `identifikasiBahayaId` (`identifikasiBahayaId` unique di schema — **sudah final**, bukan lagi asumsi terbuka).
 
 Filter tambahan: `tingkatRisiko` (FR-25).
 
@@ -208,8 +238,8 @@ Request body (create/update):
 ```json
 {
   "identifikasiBahayaId": "string",
-  "peluang": 3,
-  "dampak": 4
+  "peluangKejadianBahaya": 3,
+  "dampakKeparahan": 4
 }
 ```
 Response data — `skorRisiko` & `tingkatRisiko` **read-only, dihitung backend** via helper function (`rpam-backend` skill §5), jangan dikirim dari FE:
@@ -217,74 +247,88 @@ Response data — `skorRisiko` & `tingkatRisiko` **read-only, dihitung backend**
 {
   "id": "string",
   "identifikasiBahayaId": "string",
-  "peluang": 3,
-  "dampak": 4,
+  "peluangKejadianBahaya": 3,
+  "dampakKeparahan": 4,
   "skorRisiko": 12,
-  "tingkatRisiko": "Tinggi",
-  "warnaTingkatRisiko": "oranye"
+  "tingkatRisiko": "TINGGI",
+  "warnaTingkatRisiko": "abu_abu"
 }
 ```
 
 ### 5.3 M4 — Kaji Ulang Risiko (`/kaji-ulang`)
 
-> **Asumsi relasi:** setiap Kaji Ulang mengacu ke satu Penilaian Risiko (`penilaianRisikoId`) yang sedang di-review.
+Relasi 1-ke-1 ke M2 via `penilaianRisikoId` (unique — final).
 
 Request body:
 ```json
 {
   "penilaianRisikoId": "string",
-  "tindakan": "string",
+  "tindakanPengendalian": "string",
   "referensi": "string",
-  "validasi": "efektif | tidak_efektif | tidak_pasti",
-  "peluangBaru": 2,
-  "dampakBaru": 3
+  "validasi": "EFEKTIF | TIDAK_EFEKTIF | TIDAK_PASTI",
+  "peluangSetelah": 2,
+  "dampakSetelah": 3
 }
 ```
-Response — `skorRisikoBaru` & `tingkatRisikoBaru` read-only, dihitung ulang lewat helper function yang sama dengan M2.
+Response — `skorSetelah` & `tingkatRisikoSetelah` read-only, dihitung ulang lewat helper function yang sama dengan M2. Nama field sengaja beda dari M2 (pakai akhiran `Setelah`) supaya tidak ambigu di export Excel — lihat `rpam-backend` skill §5, M4.
+```json
+{
+  "id": "string",
+  "penilaianRisikoId": "string",
+  "tindakanPengendalian": "string",
+  "referensi": "string",
+  "validasi": "EFEKTIF",
+  "peluangSetelah": 2,
+  "dampakSetelah": 3,
+  "skorSetelah": 6,
+  "tingkatRisikoSetelah": "MEDIUM"
+}
+```
 
 ### 5.4 M5 — Rencana Perbaikan (`/rencana-perbaikan`)
 
-> **Asumsi relasi:** mengacu ke satu Kaji Ulang (`kajiUlangId`) — rencana perbaikan adalah tindak lanjut dari hasil kaji ulang.
+Relasi 1-ke-1 ke M4 via `kajiUlangRisikoId` (unique — final).
 
 Request body:
 ```json
 {
-  "kajiUlangId": "string",
-  "rencana": "string",
-  "pic": "string",
-  "jadwal": "2026-08-01",
+  "kajiUlangRisikoId": "string",
+  "rencanaPerbaikan": "string",
+  "penanggungJawab": "string",
+  "jadwalPelaksanaan": "string",
   "biaya": 5000000,
-  "sumberDana": "string",
-  "statusKemajuan": "belum_mulai | berjalan | selesai | tertunda",
-  "kendala": "string",
-  "prioritas": "rendah | sedang | tinggi",
-  "tingkatRisikoDenganPengendalian": "Rendah | Medium | Tinggi | Sangat Tinggi | Ekstrem"
+  "sumberPembiayaan": "string",
+  "statusKemajuan": "BELUM_MULAI | SEDANG_BERJALAN | SELESAI | TERTUNDA",
+  "kendalaKeuangan": false,
+  "kendalaTenagaKerja": false,
+  "prioritas": "PENDEK | MENENGAH | PANJANG"
 }
 ```
-> **Catatan konflik requirement:** FR-21 cuma menyebut 4 opsi (Rendah/Medium/Sangat Tinggi/Ekstrem) untuk `tingkatRisikoDenganPengendalian`, melewati "Tinggi" — sama seperti konflik di M2 (`rpam-backend` skill §5). Kontrak ini pakai 5 opsi supaya konsisten dengan skala risiko utama; konfirmasi ke stakeholder.
+> Catatan: `prioritas` di sini adalah **jangka waktu pelaksanaan** (pendek/menengah/panjang), bukan level urgensi — sesuai kolom "Skala Prioritas" di Tabel 5.1 sumber data. Tidak ada field `tingkatRisikoDenganPengendalian` tersendiri di M5 — kalau FE butuh tampilkan itu, ambil dari relasi `kajiUlangRisiko.tingkatRisikoSetelah` (include saat query, jangan duplikat datanya di tabel M5).
 
 ### 5.5 M6 — Pemantauan Operasional (`/pemantauan`)
 
-> **Asumsi relasi:** field opsional `rencanaPerbaikanId` (nullable) kalau pemantauan ini terkait rencana perbaikan tertentu; boleh berdiri sendiri.
-> **Catatan konflik requirement:** Project Overview bilang "Score dihitung otomatis" untuk M6, tapi FR-22 tidak menyediakan field `peluang`/`dampak` untuk dihitung. Kontrak ini **tidak menyertakan field skor** untuk M6 — kalau ternyata dibutuhkan, perlu klarifikasi field input skornya apa.
+> **Perbaikan dari versi sebelumnya:** relasinya **langsung & wajib ke M4** (`kajiUlangRisikoId`, unique, required) sesuai schema.prisma final — bukan opsional ke M5 (`rencanaPerbaikanId`, nullable) seperti draf awal. Artinya M5 dan M6 adalah **dua cabang paralel** di bawah satu record Kaji Ulang Risiko (masing-masing maksimal satu per Kaji Ulang), bukan rantai berurutan M4→M5→M6. Kalau alur bisnis sebenarnya butuh M6 mensyaratkan M5 sudah ada duluan, itu **perlu perubahan schema** (tambah relasi M5→M6), bukan sekadar dokumen ini — belum dilakukan, konfirmasi ke stakeholder dulu.
 
-Request body:
+Request body (nama field mengikuti schema persis, cukup panjang — jangan disingkat):
 ```json
 {
-  "rencanaPerbaikanId": "string | null",
+  "kajiUlangRisikoId": "string",
   "batasKritis": "string",
-  "apa": "string",
+  "apaYangDimonitor": "string",
   "dimana": "string",
   "kapan": "string",
   "bagaimana": "string",
-  "pelaksana": "string",
-  "analis": "string",
-  "penerimaLaporan": "string",
-  "tindakanKoreksi": "string",
-  "pelaksanaKoreksi": "string",
-  "waktuKoreksi": "2026-08-01T00:00:00Z"
+  "siapaYangMelakukan": "string",
+  "siapaYangAkanMenganalisisHasilnya": "string",
+  "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "string",
+  "apaTindakanKoreksinya": "string",
+  "siapaYangMelakukanTindakanKoreksi": "string",
+  "seberapaCepat": "string",
+  "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "string"
 }
 ```
+Tidak ada field skor di M6 — skor risiko sudah final dihitung di M2/M4.
 
 ---
 
@@ -298,6 +342,8 @@ Request body:
 
 Request: `multipart/form-data`, field `file`.
 
+Template M1 (`identifikasi-bahaya`) **tidak boleh punya kolom `kodeRisiko` sebagai wajib** — kalau ada isinya, backend abaikan dan tetap generate sendiri per baris (`rpam-backend` skill §7).
+
 Response `200` (sukses, termasuk sebagian gagal):
 ```json
 {
@@ -308,7 +354,7 @@ Response `200` (sukses, termasuk sebagian gagal):
     "successCount": 48,
     "failedCount": 2,
     "failedRows": [
-      { "row": 12, "errors": ["kodeLokasi wajib diisi"] },
+      { "row": 12, "errors": ["lokasiSpamId wajib diisi"] },
       { "row": 30, "errors": ["tipeBahaya tidak valid"] }
     ]
   }
@@ -339,41 +385,45 @@ Response: `Content-Type: application/vnd.openxmlformats-officedocument.spreadshe
 |---|---|---|---|
 | `GET` | `/dashboard` | Admin, User | Ringkasan dashboard |
 
-Response data:
+Response data — key `distribusiTingkatRisiko` pakai value enum `TingkatRisiko` persis (§1.5), bukan title-case:
 ```json
 {
   "jumlahUserAktif": 15,
   "totalDataRpam": { "identifikasiBahaya": 40, "penilaianRisiko": 40, "kajiUlang": 12, "rencanaPerbaikan": 8, "pemantauan": 20 },
-  "distribusiTingkatRisiko": { "Rendah": 10, "Medium": 15, "Tinggi": 8, "SangatTinggi": 5, "Ekstrem": 2 },
+  "distribusiTingkatRisiko": { "RENDAH": 10, "MEDIUM": 15, "TINGGI": 8, "SANGAT_TINGGI": 5, "EKSTREM": 2 },
   "aktivitasTerbaru": [
-    { "user": "string", "action": "CREATE", "module": "identifikasi-bahaya", "timestamp": "2026-07-03T10:00:00Z" }
+    { "user": "string", "aksi": "CREATE", "module": "identifikasi-bahaya", "createdAt": "2026-07-03T10:00:00Z" }
   ]
 }
 ```
-> `jumlahUserAktif` hanya relevan/terlihat penuh untuk Admin (FR-35); User tetap bisa hit endpoint yang sama tapi FE boleh sembunyikan widget ini untuk role User sesuai RBAC §7 dashboard (`rpam-frontend` skill §7).
+> `jumlahUserAktif` hanya relevan/terlihat penuh untuk Admin (FR-35); User tetap bisa hit endpoint yang sama tapi FE boleh sembunyikan widget ini untuk role User sesuai RBAC (`rpam-frontend` skill §7).
 
 ---
 
-## 9. Ringkasan Asumsi Struktural (perlu konfirmasi)
+## 9. Ringkasan Asumsi & Keputusan Struktural
 
-| # | Asumsi | Alasan |
+| # | Item | Status |
 |---|---|---|
-| 1 | M2 relasi 1-ke-1 ke M1 via `identifikasiBahayaId` | FR-18/FR-19 dua tabel terpisah tanpa relasi eksplisit |
-| 2 | M4 relasi ke M2 via `penilaianRisikoId` | "Kaji ulang" secara logis me-review satu penilaian risiko |
-| 3 | M5 relasi ke M4 via `kajiUlangId` | "Rencana perbaikan" tindak lanjut dari hasil kaji ulang |
-| 4 | M6 relasi opsional ke M5 via `rencanaPerbaikanId` (nullable) | Tidak ada relasi eksplisit di FR, dibuat opsional supaya tidak memaksa |
-| 5 | M6 tidak punya field skor | FR-22 tidak sediakan `peluang`/`dampak`, kontradiksi dengan Project Overview |
-| 6 | `tingkatRisikoDenganPengendalian` M5 pakai 5 opsi (termasuk "Tinggi") | Konsisten dengan skala 5-tingkat di M2/M4, walau FR-21 cuma sebut 4 |
-| 7 | Import data duplikat: skip + laporkan, bukan overwrite | TC-53 tidak spesifik |
-| 8 | Reset password user belum ada endpoint | Tidak disebut di FR-06–FR-10 |
-| 9 | Tidak ada endpoint `logout` server-side (kecuali audit trail) | Sesuai "logout hanya hapus token client" |
-| 10 | Default `pageSize` = 10 | Tidak ditentukan requirement |
+| 1 | M2 relasi 1-ke-1 ke M1 via `identifikasiBahayaId` | **Final** — sudah di schema.prisma |
+| 2 | M4 relasi 1-ke-1 ke M2 via `penilaianRisikoId` | **Final** |
+| 3 | M5 relasi 1-ke-1 ke M4 via `kajiUlangRisikoId` | **Final** |
+| 4 | M6 relasi 1-ke-1 **wajib** ke M4 via `kajiUlangRisikoId` (bukan ke M5, bukan nullable) | **Final** — koreksi dari draf sebelumnya yang salah asumsi opsional-ke-M5 |
+| 5 | M5 dan M6 adalah cabang paralel di bawah M4, tidak ada relasi M5→M6 di database | **Perlu dikonfirmasi** kalau alur bisnis sebenarnya butuh M6 bergantung pada M5 — saat ini schema tidak mendukung itu |
+| 6 | M6 tidak punya field skor | **Final** — skor sudah selesai di M2/M4 |
+| 7 | `kodeRisiko` M1 auto-generate backend, format `{PREFIX}{4 digit}` per tipeBahaya | **Final**, lihat `rpam-backend` skill §5a |
+| 8 | Import data duplikat: skip + laporkan, bukan overwrite | **Asumsi**, TC-53 tidak spesifik |
+| 9 | Reset password user belum ada endpoint | **Asumsi**, tidak disebut di FR-06–FR-10 |
+| 10 | Tidak ada endpoint `logout` server-side (kecuali audit trail) | **Final**, sesuai "logout hanya hapus token client" |
+| 11 | Default `pageSize` = 10, dikonsumsi FE sebagai infinite scroll | **Final** |
+| 12 | ID pakai `cuid()` (bukan NanoID seperti disebut draf skill awal) | **Konflik dokumen, belum diputuskan** — lihat §1.3 |
 
 ---
 
 ## 10. Referensi
 
-- `rpam-backend` skill — implementasi detail, RBAC middleware, audit log service, risk-score helper, integration testing.
-- `rpam-frontend` skill — cara FE konsumsi endpoint ini (Axios convention, unwrap `data`, Redux slice shape).
-- `PRD-RPAM-Frontend.md` — requirement level produk untuk FE.
+- `rpam-backend` skill (`prd.md`) — implementasi detail, RBAC middleware, audit log service, risk-score helper, kode risiko generation, integration testing.
+- `rpam-backend` requirement (`task.md`) — alur modul, business rules.
+- `rpam-frontend` skill (`fe/task.md`) — cara FE konsumsi endpoint ini (Axios convention, unwrap `data`, Redux slice shape, infinite scroll).
+- `fe/prd.md` — requirement level produk untuk FE.
+- `schema.prisma` — sumber kebenaran final untuk nama field & tipe data.
 - Dokumen asli: Project Overview, FR-01–FR-35, NFR-01–NFR-37, Test Plan TS-01–TS-15.

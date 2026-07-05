@@ -1,446 +1,252 @@
-# Project Overview
+---
+name: rpam-backend
+description: "Use this skill whenever writing, editing, or reviewing backend code for the RPAM (Rencana Pengamanan Air Minum) application — a Node.js/Express/Prisma/PostgreSQL app for managing drinking-water safety-plan data (hazard identification, risk assessment, risk review, improvement plans, operational monitoring). Trigger this for ANY task touching the be/ folder — creating controllers, repositories, routes, or validators; writing Prisma schema or migrations; implementing RBAC, audit log, kode risiko generation, or Excel import/export; writing integration tests for any feature; or creating a new git branch for this project. Do not skip this skill even for small changes — it encodes folder conventions, risk-score formulas, kode risiko generation rules, mandatory integration-test mapping per Test Plan, and hard rules that must not be violated."
+---
 
-Membangun aplikasi web RPAM (Rencana Pengamanan Air Minum) berbasis React dan Express untuk membantu instansi mengelola proses identifikasi bahaya, penilaian risiko, kaji ulang risiko, rencana perbaikan, dan pemantauan operasional.
+# RPAM Backend Skill
 
-Sistem digunakan oleh dua role:
+Reference for all backend work on the RPAM app. Read this before writing any code, schema, or route in this project.
 
-- Admin
-- User
+## 1. Project Summary
 
-Target pengguna maksimal sekitar 20 user aktif, sehingga tidak diperlukan arsitektur kompleks seperti microservice atau Redis cukup layered arsitektur.
-contoh 
+RPAM helps an institution manage drinking-water safety plans: hazard identification → risk assessment → risk review → improvement plans → operational monitoring. ~20 active users max — **no microservices, no Redis, just layered architecture**.
 
-src
-┣authentikasi
- ┣ authentikasi.controller.js
- ┣ authentikasi.repository.js
- ┣ authentikasi.route.js
- ┗ authentikasi.validator.js
+**Stack:** Node.js, Express, Prisma ORM, PostgreSQL, Joi, Multer, JWT, NanoID, bcrypt, CORS, Nodemon, ESLint. Frontend (separate): React + Vite + Redux Toolkit + Axios + React Router + Tailwind.
 
+## 2. Folder Structure (do not change without instruction)
 
-# Objective
+Feature-based modules under `src/`, each with controller/repository/route/validator:
 
-Aplikasi harus mampu
-- Mengelola data RPAM
-- Mengelola user
-- Menghasilkan audit log
-- Import Excel
-- Export Excel
-- Menghitung skor risiko otomatis
-- Monitoring aktivitas pengguna
+```
+be/src/
+ ┣ databases/
+ ┃ ┣ generated/prisma/      (Prisma client output, do not hand-edit)
+ ┃ ┣ prisma/
+ ┃ ┃ ┣ migrations/
+ ┃ ┃ ┗ schema.prisma
+ ┃ ┣ client.js
+ ┃ ┗ prisma.config.ts
+ ┣ exceptions/
+ ┃ ┣ client-error.js
+ ┃ ┗ error.js
+ ┣ middlewares/
+ ┃ ┣ authenticate-token.js   (JWT check)
+ ┃ ┣ error-handling.js
+ ┃ ┗ validate.js             (Joi validation wrapper)
+ ┣ security/
+ ┃ ┗ token-manager.js
+ ┣ services/
+ ┣ test/
+ ┣ utils/
+ ┃ ┗ response.js             ({ success, message, data } shape)
+ ┣ container.js
+ ┣ env.js
+ ┣ routes.js
+ ┗ server.js
+```
 
-# Tech Stack
-- Node.js
-- Express
-- Prisma ORM
-- PostgreSQL
-- Joi
-- Multer
-- JWT
-- NanoID
-- bcrypt
-- CORS
-- Nodemon
-- ESLint
+Each feature module (e.g. `authentikasi/`, `identifikasi-bahaya/`, `penilaian-risiko/`) follows this pattern:
+```
+<module>/
+ ┣ <module>.controller.js
+ ┣ <module>.repository.js
+ ┣ <module>.route.js
+ ┗ <module>.validator.js
+```
+Before creating a new file, check if a similar one already exists and reuse it.
 
+## 3. Roles & RBAC
 
-# Struktur Project
-be
- ┣ src
- ┃ ┣ databases
- ┃ ┃ ┣ generated
- ┃ ┃ ┃ ┗ prisma
- ┃ ┃ ┃ ┃ ┣ internal
- ┃ ┃ ┃ ┃ ┃ ┣ class.ts
- ┃ ┃ ┃ ┃ ┃ ┣ prismaNamespace.ts
- ┃ ┃ ┃ ┃ ┃ ┗ prismaNamespaceBrowser.ts
- ┃ ┃ ┃ ┃ ┣ models
- ┃ ┃ ┃ ┃ ┣ browser.ts
- ┃ ┃ ┃ ┃ ┣ client.ts
- ┃ ┃ ┃ ┃ ┣ commonInputTypes.ts
- ┃ ┃ ┃ ┃ ┣ enums.ts
- ┃ ┃ ┃ ┃ ┗ models.ts
- ┃ ┃ ┣ prisma
- ┃ ┃ ┃ ┣ migrations
- ┃ ┃ ┃ ┃ ┣ 20260703105902_first_init
- ┃ ┃ ┃ ┃ ┃ ┗ migration.sql
- ┃ ┃ ┃ ┃ ┗ migration_lock.toml
- ┃ ┃ ┃ ┗ schema.prisma
- ┃ ┃ ┣ client.js
- ┃ ┃ ┗ prisma.config.ts
- ┃ ┣ exceptions
- ┃ ┃ ┣ client-error.js
- ┃ ┃ ┗ error.js
- ┃ ┣ middlewares
- ┃ ┃ ┣ authenticate-token.js
- ┃ ┃ ┣ error-handling.js
- ┃ ┃ ┗ validate.js
- ┃ ┣ security
- ┃ ┃ ┗ token-manager.js
- ┃ ┣ services
- ┃ ┣ test
- ┃ ┣ utils
- ┃ ┃ ┗ response.js
- ┃ ┣ container.js
- ┃ ┣ env.js
- ┃ ┣ routes.js
- ┃ ┗ server.js
- ┣ .env
- ┣ .env.example
- ┣ .gitignore
- ┣ eslint.config.js
- ┣ package-lock.json
- ┣ package.json
- ┣ README.md
+| Capability | Admin | User |
+|---|---|---|
+| CRUD User, activate/deactivate, change role | ✅ | ❌ |
+| CRUD all RPAM data (M1–M6) | ✅ | ✅ |
+| Import / Export Excel | ✅ | ✅ |
+| View Audit Log | ✅ | ❌ |
+| Monitoring aktivitas pengguna | ✅ | ❌ |
+| Search / Filter / Sort | ✅ | ✅ |
 
+Implement via an authorization middleware that checks `req.user.role` — apply on top of the JWT auth middleware, never instead of it. All endpoints except `POST /auth/login` require the auth middleware.
 
-# User Roles
-## Admin
+## 4. Auth
 
-Hak akses:
+- Login via `username` + `password` → returns JWT (24h expiry). No refresh token flow (not required by NFRs).
+- Logout is client-side only (just discard the token) — no server-side blacklist needed at this scale.
+- Passwords hashed with bcrypt. Never store or log plaintext passwords.
 
-- CRUD User
-- CRUD seluruh data RPAM
-- Import Excel
-- Export Excel
-- Melihat Audit Log
-- Monitoring aktivitas
+## 5. RPAM Modules & Business Rules
 
-## User
-Hak akses:
-- Login
-- CRUD data RPAM
-- Export Excel
-- Import Excel
-- Search
-- Filter
-Tidak dapat:
-- Mengelola User
-- Melihat Audit Log
+### M1 — Identifikasi Bahaya
+CRUD. Fields diinput user: `lokasiSpamId` (relasi), `komponenSpam`, `kontaminasiX`, `komponenSpamY`, `penyebabZ`, `kejadianBahayaXYZ`, `tipeBahaya`.
 
+`kodeRisiko` **bukan input user** — lihat §5a.
 
-# Functional Requirements
-Authentication
-Login
-User login menggunakan:
-- username
-- password
+### 5a. Generate `kodeRisiko` (wajib, jangan skip)
 
-Response:
-- JWT Token
-- Logout hanya menghapus token pada client.
+- Format: `{PREFIX}{4 digit angka}`, mis. `K0001`, `F0002`, `M0001`.
+- `PREFIX` = huruf pertama `tipeBahaya` di-uppercase (Fisika→F, Kimia→K, Mikrobiologi→M). Kalau ada tipe bahaya baru di luar tiga ini, konfirmasi dulu ke stakeholder sebelum menambah prefix baru — jangan mengarang aturan sendiri.
+- Nomor urut naik terpisah per prefix (independen, bukan counter global).
+- Implementasi (asumsi untuk skala ~20 user, dokumentasikan di komentar kode):
+  ```js
+  async function generateKodeRisiko(tx, tipeBahaya) {
+    const prefix = tipeBahaya.charAt(0).toUpperCase();
+    const last = await tx.identifikasiBahaya.findFirst({
+      where: { kodeRisiko: { startsWith: prefix } },
+      orderBy: { kodeRisiko: 'desc' },
+    });
+    const lastNumber = last ? parseInt(last.kodeRisiko.slice(1), 10) : 0;
+    const nextNumber = String(lastNumber + 1).padStart(4, '0');
+    return `${prefix}${nextNumber}`;
+  }
+  ```
+- Panggil fungsi ini di dalam `prisma.$transaction(...)` bersamaan dengan `create`, supaya generate nomor dan insert row atomic — mencegah dua request nyaris bersamaan menghasilkan kode yang sama.
+- Validator Joi untuk create M1 **tidak boleh** menerima field `kodeRisiko` dari body — kalau ada, `stripUnknown` atau tolak. `kodeRisiko` tidak berubah saat update.
+- Kalau skala user naik jauh di atas ~20 dan race condition mulai jadi masalah nyata, pertimbangkan tabel counter terpisah (`SequenceCounter { prefix @id, lastNumber }`) dengan row-level lock — belum diperlukan sekarang.
 
+### M2 — Penilaian Risiko
+Fields diinput user: `identifikasiBahayaId` (relasi), `peluangKejadianBahaya`, `dampakKeparahan`.
 
+Dihitung otomatis, **jangan pernah dihitung manual di controller — selalu panggil helper function**, e.g. `src/utils/risk-calculator.js`:
 
-# User Management
-Admin dapat:
-
-- Create User
-- Update User
-- Delete User
-- Activate User
-- Deactivate User
-- Change Role
-
-
-Audit Log
-
-Sistem wajib mencatat:
-
-Login
-Logout
-Create
-Update
-Delete
-
-# Audit log minimal menyimpan:
-- User
-- Timestamp
-- Action
-- Module
-- Old Value (optional)
-- New Value (optional)
-
-
-# Modul RPAM
-M1 Identifikasi Bahaya
-CRUD
-Field:
-- kode lokasi
-- kode risiko
-- komponen SPAM
-- kontaminasi
-- penyebab
-- kejadian bahaya
-- tipe bahaya
-
-# M2 Penilaian Risiko
-Field:
-- peluang
-- dampak
-
-Automatic:
-`` score = peluang × dampak``
-Risk Level
-
-| Score | Level         |
-| ----- | ------------- |
-| 1-5   | Rendah        |
-| 6-10  | Medium        |
-| 11-15 | Tinggi        |
-| 16-20 | Sangat Tinggi |
-| 21-25 | Ekstrem       |
-
-
-AI tidak boleh menghitung manual, selalu menggunakan helper function.
-
-# M4 Kaji Ulang
-
-Field:
-
-- tindakan
-- referensi
-- validasi
-- efektivitas
-- peluang baru
-- dampak baru
-
-# M5 Rencana Perbaikan
-CRUD
-Field:
-- rencana
-- PIC
-- biaya
-- sumber dana
-- prioritas
-- status
-
-# M6 Pemantauan
-
-CRUD
-
-Field:
-
-- batas kritis
-- apa
-- dimana
-- kapan
-- bagaimana
-- pelaksana
-- analis
-- tindakan koreksi
-Score dihitung otomatis.
-
-
-# Search
-
-Semua tabel harus memiliki:
-
-- Search
-- Filter
-- Sort
-- Pagination
-
-
-Import Excel
-
-Import menggunakan Multer.
-
-# Validasi:
-
-- extension xlsx
-- template sesuai
-- field wajib
-Jika gagal:
-400 Bad Request
-dengan detail error.
-
-# Export Excel
-Semua modul dapat diekspor.
-Export keseluruhan menghasilkan beberapa sheet.
-
-
-Dashboard
-
-Dashboard menampilkan:
-
-- jumlah user
-- aktivitas terbaru
-- total data RPAM
-- distribusi tingkat risiko
-
-# API Convention
-
-REST API.
-
-Contoh:
-GET /users
-
-POST /users
-
-PUT /users/:id
-
-DELETE /users/:id
-Response sesuai dengan /src/utils/response.js
-{
-  success,
-  message,
-  data
+```js
+function calculateRiskScore(peluang, dampak) {
+  return peluang * dampak;
 }
 
+function getRiskLevel(score) {
+  if (score >= 1 && score <= 5) return { level: 'RENDAH', color: 'hijau' };
+  if (score >= 6 && score <= 10) return { level: 'MEDIUM', color: 'biru' };
+  if (score >= 11 && score <= 15) return { level: 'TINGGI', color: 'abu_abu' };
+  if (score >= 16 && score <= 20) return { level: 'SANGAT_TINGGI', color: 'kuning' };
+  if (score >= 21 && score <= 25) return { level: 'EKSTREM', color: 'merah' };
+  throw new Error('Invalid risk score');
+}
+```
+`level` di atas harus persis sama dengan value enum `TingkatRisiko` di schema (`RENDAH | MEDIUM | TINGGI | SANGAT_TINGGI | EKSTREM`), simpan ke field `tingkatRisiko`.
 
+> Sudah dikonfirmasi: 5 tingkat (1-5/6-10/11-15/16-20/21-25) dipakai sebagai acuan final — bukan versi FR lama yang cuma 4 tingkat. Warna "Tinggi" = abu-abu (dikonfirmasi lewat FR terbaru).
 
-# Validation Rules
+### M4 — Kaji Ulang Risiko
+Fields diinput user: `penilaianRisikoId` (relasi), `tindakanPengendalian`, `referensi`, `validasi` (enum `StatusValidasi`: EFEKTIF/TIDAK_EFEKTIF/TIDAK_PASTI), `peluangSetelah`, `dampakSetelah`.
 
-Semua request wajib divalidasi menggunakan Joi.
+Dihitung otomatis lewat helper yang sama di §M2, hasil disimpan ke `skorSetelah` dan `tingkatRisikoSetelah` (enum `TingkatRisiko` yang sama). Field-field ini sengaja diberi akhiran `Setelah` supaya tidak ambigu dengan field senama di M2 saat export Excel (dua modul beda punya kolom "skor" dan "peluang" yang maknanya beda — sebelum vs sesudah pengendalian).
 
-Tidak boleh menggunakan validasi manual.
+### M5 — Rencana Perbaikan
+Fields: `kajiUlangRisikoId` (relasi), `rencanaPerbaikan`, `penanggungJawab`, `jadwalPelaksanaan`, `biaya`, `sumberPembiayaan`, `statusKemajuan` (enum `StatusKemajuan`: BELUM_MULAI/SEDANG_BERJALAN/SELESAI/TERTUNDA), `kendalaKeuangan` (boolean), `kendalaTenagaKerja` (boolean), `prioritas` (enum `PrioritasRencanaPerbaikan`: PENDEK/MENENGAH/PANJANG — ini jangka waktu pelaksanaan, **bukan** level urgensi rendah/sedang/tinggi, sesuai kolom "Skala Prioritas" di Tabel 5.1 sumber data).
 
+### M6.2 — Pemantauan Operasional
+Fields: `kajiUlangRisikoId` (relasi), `batasKritis`, `apaYangDimonitor`, `dimana`, `kapan`, `bagaimana`, `siapaYangMelakukan`, `siapaYangAkanMenganalisisHasilnya`, `siapaYangMenerimaHasilAnalisisDanMengambilTindakan`, `apaTindakanKoreksinya`, `siapaYangMelakukanTindakanKoreksi`, `seberapaCepat`, `siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni`.
 
+Tidak ada skor otomatis di modul ini — jangan buat field skor kosong, skor risiko sudah selesai dihitung di M2/M4.
 
-# Security
-Password menggunakan bcrypt.
-JWT expiration
-24 ja
-Semua endpoint selain login wajib middleware authentication.
-Role menggunakan middleware authorization.
+### Semua modul CRUD
+Setiap tabel data wajib mendukung: search, filter, sort, pagination (buat jadi infinite scroll).
 
+## 6. Audit Log
 
+Wajib dicatat untuk: Login, Logout, Create, Update, Delete — pada SEMUA modul data, bukan cuma sebagian.
 
-# Definition of Done
+Schema (sesuai `AuditLog` di schema.prisma):
+```
+{
+  userId,
+  aksi,       // LOGIN | LOGOUT | CREATE | UPDATE | DELETE
+  module,     // e.g. "identifikasi-bahaya"
+  recordId?,
+  oldValue?,  // Json, snapshot sebelum perubahan (wajib utk UPDATE/DELETE)
+  newValue?,  // Json, snapshot sesudah perubahan (wajib utk CREATE/UPDATE)
+  keterangan?,
+  createdAt,
+}
+```
+Implement audit logging as a reusable service (e.g. `services/audit-log.service.js`) called from repository/controller layer after each mutating operation — don't duplicate the write logic per module.
 
-Feature dianggap selesai apabila:
+**Delete policy:** semua model data RPAM (`LokasiSpam`, `IdentifikasiBahaya`, `PenilaianRisiko`, `KajiUlangRisiko`, `RencanaPerbaikan`, `PemantauanOperasional`, `User`) punya kolom `deletedAt`. Delete = set `deletedAt = now()`, bukan hard delete — supaya `oldValue` tetap bisa direkam di audit log setelah data "dihapus". Semua query list/read wajib exclude record dengan `deletedAt != null` kecuali endpoint khusus admin untuk lihat data terhapus (kalau dibutuhkan nanti).
 
-CRUD berjalan
-Validasi berjalan
-Authorization berjalan
-Audit Log tercatat
-Unit Test lulus
-ESLint tanpa error
-Build berhasil
-Tidak ada console error
+## 7. Import / Export Excel
 
+- Import pakai Multer. Validasi: extension harus `.xlsx`, template harus sesuai (kolom wajib ada), field wajib harus terisi. Gagal → `400 Bad Request` dengan detail error per baris/kolom.
+- Kolom `kodeRisiko` **tidak boleh** jadi kolom wajib di template import M1 — tetap di-generate lewat §5a saat proses import per baris, bukan dibaca dari file. Kalau file kebetulan punya kolom itu, abaikan isinya.
+- Export: setiap modul bisa diekspor sendiri-sendiri; export "semua data" menghasilkan satu file dengan banyak sheet (satu sheet per modul).
+- **Belum ditentukan:** urutan/nama kolom exact di template Excel per modul. Saat implementasi, tulis asumsi kolom di komentar kode dan konfirmasi ke user sebelum finalisasi template.
 
-# AI Instructions
+## 8. API Convention
 
-Saat menghasilkan kode, AI wajib mengikuti aturan berikut:
+REST, response selalu lewat `src/utils/response.js`:
+```json
+{ "success": true, "message": "...", "data": {} }
+```
+Contoh: `GET /users`, `POST /users`, `PUT /users/:id`, `DELETE /users/:id`.
 
-- Jangan mengubah struktur folder tanpa instruksi.
-- Jangan menghapus kode yang sudah ada.
-- Jangan membuat library baru jika fungsi dapat diselesaikan dengan library yang telah dipilih.
-- Semua endpoint harus menggunakan Prisma ORM, tidak menggunakan query SQL mentah kecuali benar-benar diperlukan.
-- Seluruh validasi request menggunakan Joi.
-- Semua endpoint yang memerlukan autentikasi harus menggunakan JWT middleware.
-- Terapkan Role-Based Access Control (RBAC) untuk membedakan hak akses Admin dan User.
-- Semua operasi Create, Update, dan Delete wajib mencatat Audit Log.
-- Jika requirement tidak jelas, tuliskan asumsi dalam komentar atau dokumentasi, jangan mengarang perilaku sistem.
-- Pastikan semua kode lolos ESLint dan tidak menghasilkan warning baru.
-- Sebelum membuat file baru, periksa apakah file serupa sudah ada dan gunakan kembali jika memungkinkan.
+## 9. Validation & Security (hard rules)
 
+- Semua request body divalidasi pakai **Joi** — tidak ada validasi manual.
+- Semua endpoint kecuali login pakai JWT auth middleware.
+- RBAC pakai middleware authorization terpisah dari authentication.
+- Password: bcrypt hash.
+- Semua ID unik pakai NanoID kecuali requirement bilang lain (kodeRisiko pakai format §5a, bukan NanoID).
+- Query database: **selalu Prisma ORM**, raw SQL cuma kalau benar-benar tidak bisa dihindari (dan harus dijelaskan alasannya di komentar).
 
+## 10. Non-Functional Targets (ringkas)
 
+- Layani ≥20 concurrent user tanpa penurunan performa signifikan.
+- CRUD normal ≤3 detik di jaringan lokal.
+- Config (DB, JWT secret, CORS origin, dll) lewat `.env`, jangan hardcode.
+- FE dan BE deploy terpisah sebagai service masing-masing.
 
+## 11. Integration Testing (wajib per fitur)
 
-# input form 
-Lakukan validasi juga
-FR-18 Identifikasi Bahaya (Tabel 3.1) 
-Sistem memungkinkan pengguna melakukan:
-tambah data
-ubah data
-hapus data
-melihat data
-Field yang di input meliputi:
-Kode Lokasi
-Kode Risiko
-Komponen SPAM
-Kontaminasi (X)
-Komponen SPAM (Y)
-Penyebab (Z)
-Kejadian Bahaya (XYZ)
-Tipe Bahaya
-FR-19 Penilaian Risiko (Tabel 3.5)
-Sistem menyediakan form untuk mengelola:
-Identifikasi Bahaya (relasi) dropdown dari M3.1 
-Dampak
-Skor Risiko
-Tingkat Risiko
-Skor Risiko dihitung otomatis:
-Skor = Peluang × Dampak
-Sistem menentukan Tingkat Risiko secara otomatis berdasarkan skor.
-skor:
-1-5 = rendah (hijau)
-6-10 =  medium (biru)
-16-20 = sangat tinggi (kuning)
->21 = Ekstrem (merah)
+Setiap fitur/endpoint baru **wajib** disertai integration test yang mengacu ke Test Plan RPAM (TS-01 s.d. TS-15). Fitur belum dianggap selesai kalau belum ada test yang cover skenario di bawah untuk modul terkait.
 
+**Mapping modul → test scenario (acuan wajib):**
 
-FR-20 Kaji Ulang Risiko (M4)
-Sistem menyediakan form untuk mengelola:
-Penilaian Risiko (relasi) dropdown dari M3.5 
-tindakan pengendalian
-referensi
-validasi
-efektif
-tidak efektif
-tidak pasti
-risiko setelah pengendalian
-Perhitungan skor risiko setelah pengendalian dilakukan otomatis.
-Skor = Peluang × Dampak
-skor:
-1-5 = rendah (hijau)
-6-10 =  medium (biru)
-16-20 = sangat tinggi (kuning)
->21 = Ekstrem (merah)
-FR-21 Rencana Perbaikan (M5)
-Sistem menyediakan form untuk mengelola:
-Kaji Ulang (relasi) dropdown dari M4 
-rencana perbaikan
-penanggung jawab
-jadwal
-biaya
-sumber pembiayaan
-status kemajuan
-kendala
-prioritas
-	Tingkat Risiko Dengan Pengendalian
-Rendah (hijau)
-Medium (biru)
-Sangat tinggi (kuning)
-Ekstrem (merah)
-FR-22 Pemantauan Operasional (M6.2)
-Sistem menyediakan form untuk mengelola:
-Rencana Perbaikan (relasi)  dropdown dari M5 
-batas kritis
-apa yang dipantau
-dimana
-kapan
-bagaimana
-pelaksana
-analis
-penerima laporan
-tindakan koreksi
-pelaksana koreksi
-waktu koreksi
+| Modul/Fitur | Test Scenario | Contoh kasus wajib di-cover |
+|---|---|---|
+| Login/Logout | TS-01 | login benar, password salah, username tidak ditemukan, field kosong, logout |
+| Manajemen User (Admin) | TS-02 | tambah user, username duplikat, edit, hapus, ubah role, nonaktifkan akun |
+| Audit Log | TS-03 | login/create/update/delete tercatat, filter by tanggal & user |
+| M1 Identifikasi Bahaya | TS-04 | tambah (kodeRisiko ter-generate benar & unik), edit, hapus (soft delete), field wajib kosong, list data |
+| M2 Penilaian Risiko | TS-05 | skor otomatis (termasuk kasus eksak: peluang=3, dampak=4 → skor=12), level berubah sesuai skor, simpan |
+| M4 Kaji Ulang | TS-06 | tindakan pengendalian, status efektif/tidak efektif, skor & level baru dihitung ulang |
+| M5 Rencana Perbaikan | TS-07 | tambah rencana, PIC, biaya, prioritas, edit |
+| M6 Pemantauan | TS-08 | tambah, edit, hapus, list |
+| Search | TS-09 | cari by kode risiko, by lokasi, keyword tidak ditemukan |
+| Filter | TS-10 | filter lokasi, tingkat risiko, tipe bahaya |
+| Sorting | TS-11 | urutkan by kode risiko, tingkat risiko, lokasi |
+| Import Excel | TS-12 | file valid, format salah, file kosong, data duplikat |
+| Export Excel | TS-13 | export per modul, export semua modul → banyak sheet |
+| Dashboard | TS-14 | dashboard tampil, aktivitas terbaru, jumlah user aktif |
+| Hak Akses (RBAC) | TS-15 | Admin bisa akses User/Audit Log/hapus/import; User ditolak di User Management & Audit Log tapi bisa CRUD data/export/import/search |
 
+**Aturan penulisan test:**
+- Simpan integration test di `src/test/<module>.test.js` (atau sesuai konvensi test runner yang dipakai proyek — cek `src/test/` dulu sebelum bikin pola baru, jangan bikin struktur baru tanpa alasan).
+- Test harus hit endpoint asli (mis. lewat supertest), bukan cuma unit-test fungsi helper — karena tujuannya integration testing, bukan unit testing.
+- Setiap Test Case ID (TC-xx) yang relevan dengan fitur yang sedang dikerjakan wajib punya test case yang mapping 1:1, dan sebutkan TC-nya di nama test, contoh: `it('TC-24: Peluang=3 Dampak=4 → Skor=12', ...)`.
+- Pass criteria mengikuti Test Plan §4: tidak ada error yang menghambat proses utama (critical/high severity), perhitungan skor & level harus benar, kodeRisiko unik & format benar, RBAC sesuai, import/export tidak boleh kehilangan/merusak data, audit log akurat, search/filter/sort hasilnya sesuai.
+- Kalau bikin fitur baru yang belum ada test scenario-nya di Test Plan (di luar TS-01–TS-15), tulis test case baru dengan pola serupa dan catat di komentar/PR description — jangan skip integration test hanya karena tidak ada TC yang eksplisit meng-cover.
 
+## 12. Git Branch Naming Convention
 
+Format: `{github-username}-{action}` dimana `action` adalah salah satu dari `feat`, `fix`, `chore`, `refactor`, `docs`, `test`.
 
-# alur
-semisal pengguna develop langsung ke M.6.2 tidak ada data sebelumnua maka buat data dummy dulu tidak ada datanya maka buat data dummy dulu bisa buat seed dll
-M3.1 Identifikasi Bahaya → SEMUA baris wajib ada di sini
-        ↓
-M3.5 Penilaian Risiko → SEMUA bahaya idealnya dinilai (biar tahu levelnya)
-        ↓ (kalau tingkat risiko rendah, BISA BERHENTI DI SINI)
-M4 Kaji Ulang Risiko → hanya utk risiko yang perlu pengendalian
-        ↓ (kalau sudah efektif dikendalikan, BISA BERHENTI DI SINI)
-M5 Rencana Perbaikan → hanya utk risiko yang M4-nya belum efektif/butuh tindak lanjut
-        ↓
-M6.2 Pemantauan Operasional → hanya utk risiko yang sudah ada kontrol/rencana yang perlu dipantau rutinM3.1 Identifikasi Bahaya → SEMUA baris wajib ada di sini
-        ↓
-M3.5 Penilaian Risiko → SEMUA bahaya idealnya dinilai (biar tahu levelnya)
-        ↓ (kalau tingkat risiko rendah, BISA BERHENTI DI SINI)
-M4 Kaji Ulang Risiko → hanya utk risiko yang perlu pengendalian
-        ↓ (kalau sudah efektif dikendalikan, BISA BERHENTI DI SINI)
-M5 Rencana Perbaikan → hanya utk risiko yang M4-nya belum efektif/butuh tindak lanjut
-        ↓
-M6.2 Pemantauan Operasional → hanya utk risiko yang sudah ada kontrol/rencana yang perlu dipantau rutin
+Contoh:
+```
+nofa-feat
+nofa-fix
+```
+
+> Catatan: format dasar ini tidak menyertakan deskripsi singkat perubahan, jadi kalau butuh lebih deskriptif (disarankan untuk repo dengan banyak branch), boleh diperpanjang jadi `{github-username}-{action}-{deskripsi-singkat-kebab-case}`, misal `nofa-feat-audit-log-filter`. Pakai format dasar kalau user tidak minta yang lebih detail.
+
+## 13. Hard AI Rules (jangan dilanggar)
+
+- Jangan ubah struktur folder tanpa instruksi eksplisit.
+- Jangan hapus kode yang sudah ada.
+- Jangan tambah library baru kalau fungsi bisa diselesaikan dengan library yang sudah dipilih (lihat §1 stack).
+- Jangan pernah hitung skor risiko manual — selalu lewat helper function (§5).
+- Jangan pernah generate `kodeRisiko` dari input user — selalu backend-generated sesuai §5a, dan selalu dalam transaction.
+- Semua Create/Update/Delete wajib mencatat audit log (§6) — tidak ada pengecualian per modul.
+- Delete selalu soft delete (§6) — tidak ada hard delete pada data RPAM.
+- Setiap fitur baru wajib punya integration test sesuai §11 — jangan tandai fitur "selesai" tanpa test yang mapping ke Test Plan.
+- Kalau requirement tidak jelas: tulis asumsi di komentar/dokumentasi, jangan mengarang perilaku sistem sendiri. Daftar asumsi yang sudah diketahui ada di §5a, §7, §10.
+- Sebelum bikin file baru, cek dulu apakah file serupa sudah ada di modul lain, reuse polanya.
+- Kode harus lolos ESLint tanpa warning baru, dan tidak ada console error.

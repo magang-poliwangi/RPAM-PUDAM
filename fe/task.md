@@ -18,45 +18,32 @@ RPAM frontend is the client for a drinking-water safety-plan management system: 
 Feature-based, mirrors the backend module split:
 
 ```
-fe/
- ┣ src/
- ┃ ┣ api/
- ┃ ┃ ┣ axiosClient.js        (Axios instance + JWT interceptor)
- ┃ ┃ ┗ endpoints.js          (base URL path constants)
- ┃ ┣ app/
- ┃ ┃ ┣ store.js              (Redux store config)
- ┃ ┃ ┗ rootReducer.js
- ┃ ┣ components/
- ┃ ┃ ┣ common/               (reusable primitives: Button, Input, Select, Modal, Table, Badge, Pagination, Toast, RiskLevelBadge, ConfirmDialog, EmptyState, Spinner)
- ┃ ┃ ┗ layout/               (Sidebar, Navbar, ProtectedRoute, GuestRoute, DashboardLayout)
- ┃ ┣ features/
- ┃ ┃ ┣ auth/
- ┃ ┃ ┣ users/
- ┃ ┃ ┣ audit-log/
- ┃ ┃ ┣ identifikasi-bahaya/
- ┃ ┃ ┣ penilaian-risiko/
- ┃ ┃ ┣ kaji-ulang/
- ┃ ┃ ┣ rencana-perbaikan/
- ┃ ┃ ┣ pemantauan/
- ┃ ┃ ┗ dashboard/
- ┃ ┣ hooks/                  (useAuth, usePagination, useDebounce, etc.)
- ┃ ┣ pages/                  (route-level composition, thin — delegate to features/components)
- ┃ ┣ router/
- ┃ ┃ ┗ routes.jsx
- ┃ ┣ styles/
- ┃ ┃ ┗ theme.css              (Tailwind theme tokens, see §4)
- ┃ ┣ utils/
+fe
+ ┣ src
+ ┃ ┣ components
+ ┃ ┣ pages
+ ┃ ┃ ┣ admin
+ ┃ ┃ ┗ user
+ ┃ ┣ states
+ ┃ ┃ ┣[folder redux]
+ ┃ ┃ ┃ ┣action.js
+ ┃ ┃ ┃ ┗reducer.js
+ ┃ ┃ ┗ index.js
  ┃ ┣ App.jsx
- ┃ ┗ main.jsx
- ┣ cypress/
- ┃ ┣ e2e/                    (one spec file per Test Scenario, see §8)
- ┃ ┣ fixtures/
- ┃ ┗ support/
- ┣ vite.config.js
- ┣ tailwind.config.js
+ ┃ ┣ main.jsx
+ ┃ ┗ style.css
  ┣ .env
  ┣ .env.example
- ┗ package.json
+ ┣ .gitignore
+ ┣ api.md
+ ┣ eslint.config.js
+ ┣ index.html
+ ┣ package-lock.json
+ ┣ package.json
+ ┣ PRD.md
+ ┣ README.md
+ ┣ task.md
+ ┗ vite.config.js
 ```
 
 Each `features/<module>/` folder follows:
@@ -73,14 +60,15 @@ Before creating a new component or slice, check `components/common/` and existin
 
 - Every component in `components/common/` must be **prop-driven and business-logic-free** — no direct API calls, no `useSelector`/`useDispatch` tied to a specific feature, no hardcoded module-specific text.
 - Prefer composition (`children`) over configuration flags when a component's shape varies a lot.
-- If two features need visually-identical UI (e.g. a data table with search/filter/sort/pagination — required on every module per backend NFR-31), build **one** shared component (`components/common/DataTable.jsx`) and pass columns/data/handlers as props. Do not copy-paste table markup per module.
+- If two features need visually-identical UI (e.g. a data table with search/filter/sort/infinite scroll — required on every module per backend NFR-31), build **one** shared component (`components/common/DataTable.jsx`) and pass columns/data/handlers as props. Do not copy-paste table markup per module.
 - Module-specific components (forms, module-only widgets) live in `features/<module>/components/`, not in `components/common/`.
 - Every reusable component should work with just its required props and sane defaults — no required context/provider beyond Redux and Router.
+- `IdentifikasiBahayaForm` (M1) must never render an input for `kodeRisiko` — it's backend-generated. Show it as read-only text in edit mode / detail view only, never as an editable field.
 
 ## 4. Design System / Theme
 
 Keep it **simple and clean** — light background, generous whitespace, rounded corners, minimal shadows. One brand color (water/trust) + a fixed semantic palette for risk levels that must **exactly match the backend risk levels** (rpam-backend §5, M2).
-dan untuk pagination buat jadi infinite scroll.
+
 **Tailwind theme tokens** (put in `tailwind.config.js` under `theme.extend.colors`):
 
 ```js
@@ -104,7 +92,7 @@ colors: {
   risk: {
     rendah:       '#22c55e', // green-500
     medium:       '#3b82f6', // blue-500
-    tinggi:       '#f97316', // orange-500
+    tinggi:       '#6b7280', // gray-500 — dikonfirmasi abu-abu (bukan orange), sinkron rpam-backend prd.md §5
     sangatTinggi: '#eab308', // yellow-500
     ekstrem:      '#ef4444', // red-500
   },
@@ -120,19 +108,23 @@ colors: {
 > **Kenapa teal, bukan biru, untuk brand color:** biru sudah dipakai sebagai warna semantic untuk risk level "Medium". Kalau brand color juga biru, badge risiko dan tombol/nav utama jadi susah dibedakan sekilas. Teal dipilih karena masih terasa "air/trust" tapi visually distinct dari palet risiko. **Ini keputusan desain, bukan dari requirement — sah untuk diganti kalau user/product owner punya preferensi warna lain.**
 
 **Rules:**
-- `risk.*` colors **wajib** dipakai lewat satu komponen `<RiskLevelBadge level="Tinggi" />` di `components/common/` — jangan hardcode warna risiko di tempat lain. Mapping level→warna di komponen ini harus identik dengan helper `getRiskLevel()` di backend (rpam-backend §5).
+- `risk.*` colors **wajib** dipakai lewat satu komponen `<RiskLevelBadge level="Tinggi" />` di `components/common/` — jangan hardcode warna risiko di tempat lain. Mapping level→warna di komponen ini harus identik dengan helper `getRiskLevel()` di backend (rpam-backend §5): Rendah=hijau, Medium=biru, Tinggi=**abu-abu**, Sangat Tinggi=kuning, Ekstrem=merah.
 - Typography: system sans-serif via Tailwind default (`font-sans`). Headings `font-semibold`, body `font-normal`. Base size `text-sm`/`text-base`, avoid more than 3 heading sizes (`text-lg`, `text-xl`, `text-2xl`).
 - Buttons: solid `brand-700` for primary actions, outline/neutral for secondary, `status.error` for destructive (delete) actions — always paired with a confirm dialog (see `ConfirmDialog` in common components).
 - Cards/tables: `neutral-100` background, `neutral-200` border, `rounded-lg`, `shadow-sm` (avoid heavy shadows — keep it flat/minimal).
+- Semua tabel data pakai **infinite scroll**, bukan pagination bernomor halaman — lihat §5 untuk shape state-nya.
 - Dark mode: **not required** unless the user asks — don't build it speculatively.
 
 ## 5. Redux Conventions
 
 - One slice per feature module (`features/<module>/<module>Slice.js`) using **Redux Toolkit** `createSlice` + `createAsyncThunk`. No plain `redux` boilerplate (no manual action types/reducers switch).
 - Async calls go through `<module>Api.js` (thin Axios wrapper) — thunks call the API module, never call Axios directly inline in the slice.
-- Slice state shape convention: `{ items: [], selected: null, status: 'idle' | 'loading' | 'succeeded' | 'failed', error: null, pagination: { page, pageSize, total } }`. Keep this shape consistent across modules so `DataTable`/`Pagination` common components can consume any slice the same way and make infinite scroll.
+- Slice state shape convention: `{ items: [], selected: null, status: 'idle' | 'loading' | 'succeeded' | 'failed', error: null, pagination: { page, pageSize, total } }`.
+  - `pageSize` default 10–20 (lihat rpam-frontend PRD §9 gap #7).
+  - Infinite scroll = `page` naik tiap fetch berikutnya, hasil **di-append** ke `items` (bukan direplace). Turunkan `hasMore` di selector via `items.length < total`, jangan simpan sebagai state terpisah supaya tidak ada dua sumber kebenaran.
+  - Reset (`items = []`, `page = 1`) setiap kali search/filter/sort berubah.
 - Auth state (`features/auth/authSlice.js`) holds `{ user, token, isAuthenticated, status, error }`. Token also persisted for axios interceptor use (in-memory + rehydrate from storage at app boot — never put secrets in Redux devtools-exposed logs in production).
-- Selectors: export named selectors from each slice file (`selectUsers`, `selectUsersStatus`) instead of inlining `state.users.items` across components.
+- Selectors: export named selectors from each slice file (`selectUsers`, `selectUsersStatus`, `selectUsersHasMore`) instead of inlining `state.users.items` across components.
 - Do not put derived/computed values (e.g. formatted dates, risk level strings) in Redux state — compute them in selectors or components. Redux stores raw API data only.
 
 ## 6. API Layer
@@ -141,6 +133,7 @@ colors: {
 - Request interceptor attaches `Authorization: Bearer <token>` from Redux/auth state.
 - Response interceptor: on `401`, dispatch logout and redirect to `/login` — **no refresh-token queue logic**, because the backend issues a single 24h JWT with no refresh flow (rpam-backend §4). Don't build refresh-queue interceptor patterns from other projects here — they don't apply.
 - Every API response follows the backend shape `{ success, message, data }` (rpam-backend §8) — always unwrap `data` in the thunk, never leak the raw response shape into slice state.
+- M1 create/update payload never includes `kodeRisiko` — it's stripped/ignored by backend anyway, but don't send it from FE to avoid confusion in request logs.
 
 ## 7. Routing & RBAC
 
@@ -153,8 +146,8 @@ colors: {
 Two layers, both required — mirrors rpam-backend §11's mapping to the same Test Plan (TS-01–TS-15):
 
 ### 8a. Vitest — unit & Redux tests
-- Every slice (`<module>Slice.test.js`) must test: initial state, each reducer/extraReducer transition (pending/fulfilled/rejected), and selectors.
-- Every `components/common/` component gets a render test (React Testing Library) covering its main prop variations (e.g. `RiskLevelBadge` renders correct color/label for all 5 levels — mirrors rpam-backend §5's `getRiskLevel` cases).
+- Every slice (`<module>Slice.test.js`) must test: initial state, each reducer/extraReducer transition (pending/fulfilled/rejected), append-on-fetch-more behavior for infinite scroll, and selectors (including `hasMore`).
+- Every `components/common/` component gets a render test (React Testing Library) covering its main prop variations (e.g. `RiskLevelBadge` renders correct color/label for all 5 levels, including gray for "Tinggi" — mirrors rpam-backend §5's `getRiskLevel` cases).
 - Mock Axios (e.g. `vi.mock`) — Vitest tests never hit a real backend.
 - Run via `npm run test` (Vitest), config in `vite.config.js` (`test` block) or a separate `vitest.config.js`.
 
@@ -163,6 +156,7 @@ Two layers, both required — mirrors rpam-backend §11's mapping to the same Te
 - Each spec covers its Test Cases (TC-xx) end-to-end against a running app (real or test backend) — e.g. `TS-01-login.cy.js` must include TC-01 (login sukses), TC-02 (password salah), TC-03 (username tidak ditemukan), TC-04 (field kosong), TC-05 (logout).
 - Name individual `it()` blocks with the TC id, e.g. `it('TC-24: Peluang=3 Dampak=4 → Skor=12', () => {...})`.
 - Cover RBAC scenarios (TS-15) with two logged-in states (Admin session, User session) — use `cy.session()` or a custom login command per role, don't re-type login steps in every spec.
+- Cover infinite scroll explicitly for at least one data-heavy module (e.g. M1): scroll to bottom triggers next batch fetch, no duplicate rows, `hasMore=false` stops further fetches.
 - Full mapping table (module → TS-xx → cases) is identical to rpam-backend §11 — reuse it, don't re-derive it.
 
 **Definition of done for any FE feature:** component/slice built following §3–§7 **and** has both a Vitest test (§8a) and a Cypress spec covering its Test Scenario (§8b). Don't mark a feature complete without both.
@@ -177,9 +171,11 @@ Same convention as rpam-backend: `{github-username}-{action}` (e.g. `nofa-feat`,
 - Jangan hapus kode yang sudah ada.
 - Jangan tambah library baru kalau fungsi bisa diselesaikan dengan library yang sudah dipilih (§1 stack) — khususnya jangan tambah RTK Query, styled-components, atau UI kit lain tanpa diminta.
 - Komponen di `components/common/` wajib reusable & bebas business logic (§3) — kalau ada logic spesifik modul, taruh di `features/<module>/components/`.
-- Warna risk level wajib lewat `RiskLevelBadge` dan wajib sinkron dengan backend `getRiskLevel()` (§4, §5) — jangan hardcode hex/nama warna risiko di komponen lain.
-- Redux state per modul wajib ikut shape konsisten di §5 supaya `DataTable`/`Pagination` bisa dipakai lintas modul.
+- Warna risk level wajib lewat `RiskLevelBadge` dan wajib sinkron dengan backend `getRiskLevel()` (§4, §5) — jangan hardcode hex/nama warna risiko di komponen lain. Ingat: Tinggi = abu-abu, bukan oranye.
+- Redux state per modul wajib ikut shape konsisten di §5 supaya `DataTable` bisa dipakai lintas modul — infinite scroll append, bukan replace.
 - Jangan bikin refresh-token interceptor — backend cuma pakai token tunggal 24 jam (§6).
+- Jangan pernah render input field untuk `kodeRisiko` di form M1 — itu backend-generated (§3, §6).
+- Jangan bikin UI pagination bernomor halaman untuk tabel data — semua pakai infinite scroll (§4, §5).
 - Setiap fitur baru wajib punya Vitest test (unit/slice/component) **dan** Cypress spec yang mapping ke Test Scenario (§8) — tidak dianggap selesai tanpa keduanya.
 - Kalau requirement/desain tidak jelas: tulis asumsi di komentar/dokumentasi (contoh: §4 soal brand color), jangan mengarang perilaku sistem sendiri.
 - Sebelum bikin file/komponen baru, cek dulu apakah sudah ada yang serupa di `components/common/` atau modul lain, reuse polanya.

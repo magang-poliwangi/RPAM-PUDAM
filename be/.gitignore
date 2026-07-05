@@ -4,3 +4,4 @@ node_modules
 !.env.example
 /src/generated/prisma
 /src/databases/prisma/migrations/*
+/src/databases/generated/

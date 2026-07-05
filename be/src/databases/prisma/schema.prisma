@@ -4,7 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -48,8 +48,8 @@ model LokasiSpam {
   id                     String   @id @default(cuid())
   kodeLokasi             String   @unique
   simbol                 String?
-  namaLokasi             String
-  deskripsi              String
+  namaLokasi             String?
+  deskripsi              String?
   penanggungJawabNama    String?
   penanggungJawabPosisi  String?
   penanggungJawabTelepon String?
@@ -95,7 +95,7 @@ model IdentifikasiBahaya {
   id                String     @id @default(cuid())
   lokasiSpamId      String
   lokasiSpam        LokasiSpam @relation(fields: [lokasiSpamId], references: [id])
-  kodeRisiko        String     @unique
+  kodeRisiko        String     
   komponenSpam      String
   kontaminasiX      String
   komponenSpamY     String
@@ -115,7 +115,7 @@ model PenilaianRisiko {
   identifikasiBahayaId  String             @unique
   identifikasiBahaya    IdentifikasiBahaya @relation(fields: [identifikasiBahayaId], references: [id])
   peluangKejadianBahaya Int
-  dampaKeparahan        Int
+  dampakKeparahan        Int
   skorRisiko            Int
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
