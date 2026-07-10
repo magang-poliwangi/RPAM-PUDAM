@@ -4,7 +4,8 @@ import TokenManager from '../security/token-manager.js';
 async function authenticateToken(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
-
+    console.log(authHeader);
+    
     if (!authHeader?.startsWith('Bearer ')) {
       console.log('no bearer');
       return next(new AuthenticationError('Token tidak ditemukan'));

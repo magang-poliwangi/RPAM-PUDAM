@@ -1,1 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
 @import "tailwindcss";
+
+
+
+@theme {
+  --color-primary: #2fa084;
+  --color-secondary: #6fcf97;
+  --color-tthird: #888888;
+  --color-line: #e3e3e3;
+  --font-primary: "Inter", sans-serif;
+  --font-secondary: "Poppins", sans-serif;
+
+  --color-brand-50: #EEF7F6;
+  --color-brand-100: #D3EBE8;
+  --color-brand-200: #A7D6D1;
+  --color-brand-300: #78BFB8;
+  --color-brand-400: #4DA79F;
+  --color-brand-500: #237E7C;
+  --color-brand-600: #1A6664;
+  --color-brand-700: #12504F;
+  --color-brand-800: #0C3D3B;
+  --color-brand-900: #082827;
+
+  --font-display: "Manrope", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-50 font-primary text-neutral-900 antialiased;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+}

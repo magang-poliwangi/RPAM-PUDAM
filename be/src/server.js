@@ -7,6 +7,7 @@ import ErrorHandler from './middlewares/error-handling.js';
 import Routers from './routes.js';
 import './container.js';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 
 
 const app = express();
@@ -20,7 +21,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: process.env.URLFE,
+  origin: process.env.URL_FE,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true,
 }));
@@ -32,6 +33,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use(express.json());
+app.use(cookieParser());
 app.use('/api', Routers);
 app.use(ErrorHandler);
 
