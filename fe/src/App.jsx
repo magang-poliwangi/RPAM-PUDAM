@@ -1,11 +1,7 @@
+import PemantauanOperasionalPage from "./pages/PemantauanOperasionalPage";
 
 function App() {
-
-  return (
-    <>
-      <></>
-    </>
-  )
+  return <PemantauanOperasionalPage />;
 }
 
-export default App
+export default App;
