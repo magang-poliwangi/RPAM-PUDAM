@@ -1,0 +1,2427 @@
+{
+  "locations": [
+    {
+      "kodeLokasi": "C1",
+      "simbol": "〇",
+      "namaLokasi": "Klorinasi di Reservoir Kalipuro"
+    },
+    {
+      "kodeLokasi": "A1",
+      "simbol": "〇",
+      "namaLokasi": "Mata Air Gedor II"
+    },
+    {
+      "kodeLokasi": "A2",
+      "simbol": "〇",
+      "namaLokasi": "Sumur Pompa Ketapang"
+    },
+    {
+      "kodeLokasi": "A3",
+      "simbol": "〇",
+      "namaLokasi": "Sumber Gedor I"
+    },
+    {
+      "kodeLokasi": "R1",
+      "simbol": "▽",
+      "namaLokasi": "Reservoir Kalipuro"
+    },
+    {
+      "kodeLokasi": "R2",
+      "simbol": "▽",
+      "namaLokasi": "Reservoir Banjarsari"
+    },
+    {
+      "kodeLokasi": "D1",
+      "simbol": "→",
+      "namaLokasi": "Distribusi Kalongan"
+    },
+    {
+      "kodeLokasi": "UP1",
+      "simbol": "→",
+      "namaLokasi": "Unit Pelayanan Kel. Kalipuro"
+    },
+    {
+      "kodeLokasi": "A4",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A4"
+    },
+    {
+      "kodeLokasi": "A5",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A5"
+    },
+    {
+      "kodeLokasi": "A6",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A6"
+    },
+    {
+      "kodeLokasi": "A7",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A7"
+    },
+    {
+      "kodeLokasi": "A8",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A8"
+    },
+    {
+      "kodeLokasi": "A9",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A9"
+    },
+    {
+      "kodeLokasi": "A10",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A10"
+    },
+    {
+      "kodeLokasi": "A11",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A11"
+    },
+    {
+      "kodeLokasi": "A12",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A12"
+    },
+    {
+      "kodeLokasi": "A13",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A13"
+    },
+    {
+      "kodeLokasi": "A14",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A14"
+    },
+    {
+      "kodeLokasi": "A15",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A15"
+    },
+    {
+      "kodeLokasi": "A16",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A16"
+    },
+    {
+      "kodeLokasi": "A17",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A17"
+    },
+    {
+      "kodeLokasi": "A18",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A18"
+    },
+    {
+      "kodeLokasi": "A19",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A19"
+    },
+    {
+      "kodeLokasi": "A20",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A20"
+    },
+    {
+      "kodeLokasi": "A21",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A21"
+    },
+    {
+      "kodeLokasi": "A22",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A22"
+    },
+    {
+      "kodeLokasi": "A23",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A23"
+    },
+    {
+      "kodeLokasi": "A24",
+      "simbol": "〇",
+      "namaLokasi": "Air Baku A24"
+    },
+    {
+      "kodeLokasi": "R3",
+      "simbol": "▽",
+      "namaLokasi": "Reservoir R3"
+    },
+    {
+      "kodeLokasi": "R4",
+      "simbol": "▽",
+      "namaLokasi": "Reservoir R4"
+    },
+    {
+      "kodeLokasi": "R5",
+      "simbol": "▽",
+      "namaLokasi": "Reservoir R5"
+    },
+    {
+      "kodeLokasi": "R6",
+      "simbol": "▽",
+      "namaLokasi": "Reservoir R6"
+    },
+    {
+      "kodeLokasi": "R7",
+      "simbol": "▽",
+      "namaLokasi": "Reservoir R7"
+    },
+    {
+      "kodeLokasi": "D2",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D2"
+    },
+    {
+      "kodeLokasi": "D3",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D3"
+    },
+    {
+      "kodeLokasi": "D4",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D4"
+    },
+    {
+      "kodeLokasi": "D5",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D5"
+    },
+    {
+      "kodeLokasi": "D6",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D6"
+    },
+    {
+      "kodeLokasi": "D7",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D7"
+    },
+    {
+      "kodeLokasi": "D8",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D8"
+    },
+    {
+      "kodeLokasi": "D9",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D9"
+    },
+    {
+      "kodeLokasi": "D10",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D10"
+    },
+    {
+      "kodeLokasi": "D11",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D11"
+    },
+    {
+      "kodeLokasi": "D12",
+      "simbol": "→",
+      "namaLokasi": "Distribusi D12"
+    },
+    {
+      "kodeLokasi": "UP2",
+      "simbol": "→",
+      "namaLokasi": "Unit Pelayanan UP2"
+    },
+    {
+      "kodeLokasi": "UP3",
+      "simbol": "→",
+      "namaLokasi": "Unit Pelayanan UP3"
+    },
+    {
+      "kodeLokasi": "UP4",
+      "simbol": "→",
+      "namaLokasi": "Unit Pelayanan UP4"
+    },
+    {
+      "kodeLokasi": "UP5",
+      "simbol": "→",
+      "namaLokasi": "Unit Pelayanan UP5"
+    },
+    {
+      "kodeLokasi": "UP6",
+      "simbol": "→",
+      "namaLokasi": "Unit Pelayanan UP6"
+    },
+    {
+      "kodeLokasi": "UP7",
+      "simbol": "→",
+      "namaLokasi": "Unit Pelayanan UP7"
+    }
+  ],
+  "records": [
+    {
+      "kodeLokasi": "C1",
+      "kodeRisiko": "K0001",
+      "identifikasi": {
+        "komponenSpam": "Chlorinator",
+        "kontaminasiX": "Kontaminasi Kimia",
+        "komponenSpamY": "Chlorinator",
+        "penyebabZ": "Under Dosing",
+        "kejadianBahayaXYZ": "Kontaminasi Kimia terjadi pada Chlorinator dikarenakan Under Dosing",
+        "tipeBahaya": "Kimia"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 4,
+        "skorRisiko": 20
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pembelian cadangan alat injektor chlorinasi",
+        "referensi": "Laporan Monev",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 4,
+        "skorRisiko": 20
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Pemasangan alat Rechlorinasi",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 100000000.0,
+        "sumberPembiayaan": "PUDAM",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "MENENGAH"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemasangan gas chlor",
+        "dimana": "Resevoir",
+        "kapan": "Segera",
+        "bagaimana": "Penambahan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera ditambah",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A1",
+      "kodeRisiko": "F0001",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Kondisi rumah panel rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kondisi rumah panel rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemeliharaan Rumah Panel \nSumur Pompa Ketapang",
+        "referensi": "Observasi Kondisi Sumur Pompa",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemeliharaan Rumah Panel",
+        "dimana": "Sumur Pompa",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A2",
+      "kodeRisiko": "F0002",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Pohon tumbang",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Pohon tumbang",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemangkasan Pohon Yang \nMembahayakan Bangunan Di Area Tandon, Pompa Dan Sumber",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Pembuatan pagar dan plensengan",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 25000000.0,
+        "sumberPembiayaan": "PUDAM",
+        "statusKemajuan": "SEDANG_BERJALAN",
+        "kendala": null,
+        "prioritas": "MENENGAH"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemangkasan pohon",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Pemangkasan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipangkas",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A3",
+      "kodeRisiko": "F0003",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Kabel power panel putus",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kabel power panel putus",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Penggantian Kabel Power \nUntuk Panel Sumur Pompa Kantor",
+        "referensi": "Laporan Monev",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 3,
+        "dampakKeparahan": 5,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Pemeliharaan Tutup Manhole",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 10000000.0,
+        "sumberPembiayaan": "PUDAM",
+        "statusKemajuan": "SEDANG_BERJALAN",
+        "kendala": null,
+        "prioritas": "PENDEK"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Penggantian Kabel power panel sumur",
+        "dimana": "Resevoir",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diganti",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A4",
+      "kodeRisiko": "F0004",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Sumur pompa sering tersambar petir",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Sumur pompa sering tersambar petir",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan Alat Penangkal \nPetir Surge Arrester Pompa TPI,Progo, Banjarsari",
+        "referensi": "Laporan Monev",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 3,
+        "dampakKeparahan": 5,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Pemeliharaan Bangunan Reservoir",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 250000000.0,
+        "sumberPembiayaan": "PUDAM",
+        "statusKemajuan": "SEDANG_BERJALAN",
+        "kendala": null,
+        "prioritas": "MENENGAH"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemasangan Alat Penangkal petir",
+        "dimana": "Resevoir",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A5",
+      "kodeRisiko": "F0005",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Rumah jaga sumber rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Rumah jaga sumber rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Perbaikan Rumah Joglo \nSumber Gedor",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 3,
+        "dampakKeparahan": 3,
+        "skorRisiko": 9
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Perbaikan Rumah Joglo",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Perbaikan sesuai SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A6",
+      "kodeRisiko": "F0006",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Kondisi bangunan sumur pompa rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kondisi bangunan sumur pompa rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pembuatan Pondasi, \nPavingisasi Dan Rabatan Sumber Gedor I",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pembuatan Pondasi Pavingisasi",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Pembuatan sesuai SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A7",
+      "kodeRisiko": "F0007",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Meter air rusak/mati",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Meter air rusak/mati",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan Meter Air \nInduk Produksi dan Ditribusi",
+        "referensi": "Laporan kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 3,
+        "dampakKeparahan": 5,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Sosialisasi ke pelanggan",
+        "penanggungJawab": "Kabag Pelayanan Konsumen",
+        "jadwal": "3 Bulan Sekali",
+        "biaya": 1000000.0,
+        "sumberPembiayaan": "PUDAM",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "PENDEK"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemasangan Meter Air Induk",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A8",
+      "kodeRisiko": "F0008",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Pipa Transmisi putus",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Pipa Transmisi putus",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan Trustblok Pipa Transmisi Kalongan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Penggantian Pipa yang sudah melebihi usai teknis",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "1 Bulan Sekali",
+        "biaya": 2000000000.0,
+        "sumberPembiayaan": "PUDAM",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "PENDEK"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemasangan Trustblok",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A9",
+      "kodeRisiko": "F0009",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Penurunan debit sumber",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Penurunan debit sumber",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan Auning dan ATS Pompa Ketapang",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 5,
+        "skorRisiko": 20
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Sosialisasi ke pelanggan yang memiliki hewan peliharaan untuk memindahkan ke lokasi lain",
+        "penanggungJawab": "Kabag Pelayanan Konsumen",
+        "jadwal": "6 Bulan Sekali",
+        "biaya": 1000000.0,
+        "sumberPembiayaan": "PUDAM",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "PENDEK"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Pemasangan Auning dan ATS Sumur Pompa",
+        "dimana": "Sumur Pompa",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A10",
+      "kodeRisiko": "F0010",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Meter air rusak/mati",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Meter air rusak/mati",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Service meter air pompa Bakungan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Pemasangan Pagar untuk area sumber gedor III",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 25000000.0,
+        "sumberPembiayaan": "Pudam",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "PANJANG"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Service Meter Air Sumur Pompa",
+        "dimana": "Sumur Pompa",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A11",
+      "kodeRisiko": "F0010",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Meter air rusak/mati",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Meter air rusak/mati",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan Meter induk Pompa Bakungan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Service Meter Air Sumur Pompa",
+        "dimana": "Sumur Pompa",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A12",
+      "kodeRisiko": "F0009",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Penurunan debit sumber",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Penurunan debit sumber",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pengangkatan Sumur pompa dan penggantian pipa tekan Sumur pompa Penataban",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Pembangunan plengsengan untuk mengurangi resiko longsor di sumber jagir",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 30000000.0,
+        "sumberPembiayaan": "Pudam",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "PANJANG"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pengangkatan Sumur Pompa Penataban",
+        "dimana": "Sumur Pompa",
+        "kapan": "Segera",
+        "bagaimana": "Pengangkatan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diangkat",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A13",
+      "kodeRisiko": "F0010",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Kereta genset mobile rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kereta genset mobile rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Perbaikan Kereta Genset dan lampu sien emergensi",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 5,
+        "skorRisiko": 20
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Sosialisasi ke pelanggan untuk tidak membuang sampah sembarangan",
+        "penanggungJawab": "Kabag Pelayanan Konsumen",
+        "jadwal": "6 bulan sekali",
+        "biaya": 1000000.0,
+        "sumberPembiayaan": "Pudam",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "PENDEK"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Perbaikan Kereta Genset dan Lampu Sien Emergensi",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Perbaikan secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A14",
+      "kodeRisiko": "F0011",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Kondisi jalanan masuk rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kondisi jalanan masuk rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan Paving di rumah jaga Kalipuro",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Pavingisasi di area sumur pompa, rembesan tidak masuk ke sela-sela casing sumur pompa",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 20000000.0,
+        "sumberPembiayaan": "Pudam",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "MENENGAH"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pemasangan pavingisasi",
+        "dimana": "Reservoir",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A15",
+      "kodeRisiko": "F0012",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Panel sumur pompa rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Panel sumur pompa rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Perbaikan panel sumur pompa di argopuro",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Pemasangan bak penangkap resapan sumber rembesan Gedor 1",
+        "penanggungJawab": "Kabag Prodist",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 15000000.0,
+        "sumberPembiayaan": "Pudam",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "MENENGAH"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Perbaikan Panel Sumur Pompa",
+        "dimana": "Sumur Pompa",
+        "kapan": "Segera",
+        "bagaimana": "Perbaikan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaikan",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A16",
+      "kodeRisiko": "F0013",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Genset mobile kantor rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Genset mobile kantor rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Penggantian aki dan service genset mobile kantor",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 3,
+        "dampakKeparahan": 4,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan penggantian aki dan service genset",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diganti",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A17",
+      "kodeRisiko": "F0014",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Panel sumur pompa rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Panel sumur pompa rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Perbaikan panel pompa di sumur gajahmada",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 5,
+        "skorRisiko": 20
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Sosialisasi ke pelanggan yang memiliki hewan peliharaan untuk memindahkan ke lokasi lain",
+        "penanggungJawab": "Kabag Pelayanan Konsumen",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 1000000.0,
+        "sumberPembiayaan": "Pudam",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "PENDEK"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Perbaikan panel pompa sumur gajahmada",
+        "dimana": "Sumur Pompa",
+        "kapan": "Segera",
+        "bagaimana": "Perbaikan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaikan",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A18",
+      "kodeRisiko": "F0015",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Jalan menuju pipa transmisi kotor",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Air Baku dikarenakan Jalan menuju pipa transmisi kotor",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pembersihan jalur transmisi sumber gedpr s/d gombengsari",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pembersihan jalur transmisi",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Pembersihan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibersihkan",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A19",
+      "kodeRisiko": "M0001",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Merusak limgkungan sumber",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Air Baku dikarenakan Merusak limgkungan sumber",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 5,
+        "skorRisiko": 25
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Penanaman pohon area sumber dan sumur pompa",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Penanaman pohon area sumber",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Penanaman secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera ditanam",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A20",
+      "kodeRisiko": "M0001",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Merusak limgkungan sumber",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Air Baku dikarenakan Merusak limgkungan sumber",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 5,
+        "skorRisiko": 25
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pembersihan pohon tumbang",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 4,
+        "skorRisiko": 16
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pembersihan pohon tumbang",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Pembersihan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibersihkan",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A21",
+      "kodeRisiko": "M0002",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Brondcaptering terkena akar",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Air Baku dikarenakan Brondcaptering terkena akar",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 3,
+        "dampakKeparahan": 5,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pembersihan akar pohon dan mengatasi kebocoran brond captering sumber gedor III",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 2,
+        "dampakKeparahan": 3,
+        "skorRisiko": 6
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pembersihan akar pohon",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Pembersihan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibersihkan",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A22",
+      "kodeRisiko": "M0003",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Penurunan debit sumber",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Air Baku dikarenakan Penurunan debit sumber",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 5,
+        "skorRisiko": 25
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pengawasan pembangunan brontcaptering dan pipa transmisi di sumber pelinggihan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pembangunan broncaptering",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Perbaikan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A23",
+      "kodeRisiko": "M0002",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Brondcaptering terkena akar",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Air Baku dikarenakan Brondcaptering terkena akar",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 5,
+        "skorRisiko": 25
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pembersihan akar pohon dan mengatasi kebocoran brond captering sumber gedor II",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pembersihan akar pohon",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Pembersihan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibersihkan",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "A24",
+      "kodeRisiko": "M0003",
+      "identifikasi": {
+        "komponenSpam": "Air Baku",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Air Baku",
+        "penyebabZ": "Debit air sumber meningkat",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Air Baku dikarenakan Debit air sumber meningkat",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 5,
+        "skorRisiko": 25
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan TEE Y di Sumber Pelinggihan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Pemasangan TEE Y di sumber pelinggihan",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan sesuai SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "R1",
+      "kodeRisiko": "M0004",
+      "identifikasi": {
+        "komponenSpam": "Reservoir",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Reservoir",
+        "penyebabZ": "Overflow Reservoir",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Reservoir dikarenakan Overflow Reservoir",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 5,
+        "skorRisiko": 25
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Perbaikan Saluran pembuangan Oveerflow Tandon Banjarsari",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan perbaikan saluran pembuangan Overflow tandon",
+        "dimana": "Reservoir",
+        "kapan": "Segera",
+        "bagaimana": "Perbaikan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "R2",
+      "kodeRisiko": "M0005",
+      "identifikasi": {
+        "komponenSpam": "Reservoir",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Reservoir",
+        "penyebabZ": "Alat ukur rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Reservoir dikarenakan Alat ukur rusak",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 5,
+        "skorRisiko": 20
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan alat ukur level ketinggian air Tandon Kluncing dan Banjarsari",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "TIDAK_EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 5,
+        "skorRisiko": 20
+      },
+      "rencanaPerbaikan": {
+        "rencanaPerbaikan": "Sosialisasi ke pelanggan",
+        "penanggungJawab": "Kabag Pelayanan Konsumen",
+        "jadwal": "Sesuai RKAP",
+        "biaya": 1000000.0,
+        "sumberPembiayaan": "Pudam",
+        "statusKemajuan": "BELUM_MULAI",
+        "kendala": null,
+        "prioritas": "PENDEK"
+      },
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemasangan Alat ukur level ketinggian air",
+        "dimana": "Reservoir",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan sesuai SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "R3",
+      "kodeRisiko": "F0009",
+      "identifikasi": {
+        "komponenSpam": "Reservoir",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Reservoir",
+        "penyebabZ": "Kondisi Jalanan rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Reservoir dikarenakan Kondisi Jalanan rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan Paving di area reservoir",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pemasangan paving",
+        "dimana": "Reservoir",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan sesuai SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "R4",
+      "kodeRisiko": "M0005",
+      "identifikasi": {
+        "komponenSpam": "Reservoir",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Reservoir",
+        "penyebabZ": "Alat ukur rusak",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Reservoir dikarenakan Alat ukur rusak",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan alat ukur level ketinggian air Tandon Penataban",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemasangan Alat ukur level ketinggian air",
+        "dimana": "Reservoir",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan sesuai SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "R5",
+      "kodeRisiko": "M0006",
+      "identifikasi": {
+        "komponenSpam": "Reservoir",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Reservoir",
+        "penyebabZ": "Tutup Manhole sudah berkarat di Reservoir Kelirpuan",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Reservoir dikarenakan Tutup Manhole sudah berkarat di Reservoir Kelirpuan",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Penggantian Manhole di DMA Kelirpuan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan penggantian tutup manhole di DMA Kelirpuan",
+        "dimana": "Reservoir",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diganti",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "R6",
+      "kodeRisiko": "M0007",
+      "identifikasi": {
+        "komponenSpam": "Reservoir",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Reservoir",
+        "penyebabZ": "Listrik sering mati",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Reservoir dikarenakan Listrik sering mati",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan PLTS di Tandon Banjarsari",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 5,
+        "skorRisiko": 20
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemasangan PLTS di tandon banjarsari",
+        "dimana": "Reservoir",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "R7",
+      "kodeRisiko": "M0008",
+      "identifikasi": {
+        "komponenSpam": "Reservoir",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Reservoir",
+        "penyebabZ": "Meter air rusak/mati",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Reservoir dikarenakan Meter air rusak/mati",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Service meter air pompa Penataban",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan Pemasangan Meter Air Induk",
+        "dimana": "Sumur Pompa",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D1",
+      "kodeRisiko": "F0010",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Trust block rusak/hancur",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Trust block rusak/hancur",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan Trust Block pipa transmisi Kalongan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan perbaikan bak penangkap air",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Melaksanakan sesuai SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibuat",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D2",
+      "kodeRisiko": "F0011",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Flushing Pipa tidak rutin",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Flushing Pipa tidak rutin",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Penjadwalan kembali flushing pipa",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 5,
+        "skorRisiko": 20
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pengadaan genset",
+        "dimana": "Air baku",
+        "kapan": "Segera",
+        "bagaimana": "Pengadaan barang secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibuat",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D3",
+      "kodeRisiko": "F0012",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Perbaikan pipa distribusi",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Perbaikan pipa distribusi",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Belum ada pengendalian",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan penanganan",
+        "dimana": "Air baku",
+        "kapan": "Segera",
+        "bagaimana": "Melaksanakan sesuai SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibuat",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D4",
+      "kodeRisiko": "F0013",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "NRW Meningkat",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan NRW Meningkat",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan DMA Perum Adimas Sobo, Taman Puring, BCI, Bunga Residence, Villa Bukit Mas",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pemasangan DMA",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Pemasangan secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dipasang",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D5",
+      "kodeRisiko": "F0003",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Tekanan air rendah (kurang dari 0,7)",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Tekanan air rendah (kurang dari 0,7)",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Adanya PRV 4\" di daerah yang bertekanan rendah",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pemasangan PRV",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D6",
+      "kodeRisiko": "F0010",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Kualitas Pipa/usia pipa yang tidak layak pakai",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Kualitas Pipa/usia pipa yang tidak layak pakai",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Adanya revitalisasi Pipa yang sudah tidak layak pakai",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan revitalisasi",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D7",
+      "kodeRisiko": "F0011",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Kimia",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Jenis Pipa Besi(GI) yang sudah berkarat",
+        "kejadianBahayaXYZ": "Kontaminasi Kimia terjadi pada Distribusi dikarenakan Jenis Pipa Besi(GI) yang sudah berkarat",
+        "tipeBahaya": "Kimia"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 4,
+        "skorRisiko": 20
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Adanya revitalisasi pipa besi yang sudah berkarat",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan revitalisasi",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D8",
+      "kodeRisiko": "F0012",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Sabotase/Pencurian air",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Sabotase/Pencurian air",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Adanya temuan sabotase/pencurian air",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Menyusun jadwal berkala",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Melaksanakan sesuai SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diflushing",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D9",
+      "kodeRisiko": "F0013",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Perbaikan Pipa/Maintanance yang membutuhkan waktu lama",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Perbaikan Pipa/Maintanance yang membutuhkan waktu lama",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Percepatan perbaikan pipa",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan perbaikan pipa",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D10",
+      "kodeRisiko": "F0014",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Kesalahan SOP pada petugas (Lalai dan kurang tanggap)",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Kesalahan SOP pada petugas (Lalai dan kurang tanggap)",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Koordinasi dengan bagian terkait",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Peringatan dan segera koordinasi",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Melaksanakan sesuai SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera koordinasi",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D11",
+      "kodeRisiko": "F0015",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Kompetensi petugas (Belum sertifikasi)",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Kompetensi petugas (Belum sertifikasi)",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Sertifikasi bagi petugas yang belum kompetensi",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Penyesuaian petugas yang belum kompetensi",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Melaksanakan sesuai SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera ditindaklanuti",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "D12",
+      "kodeRisiko": "F0016",
+      "identifikasi": {
+        "komponenSpam": "Distribusi",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Distribusi",
+        "penyebabZ": "Pengisian Air Tangki",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Distribusi dikarenakan Pengisian Air Tangki",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Perlu wash out bagian dalam air tangki",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan wash out bagian dalam air tangki",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "UP1",
+      "kodeRisiko": "M0006",
+      "identifikasi": {
+        "komponenSpam": "Zona Pelanggan",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Pelayanan",
+        "penyebabZ": "Gabung dengan Sumur Bor",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Pelayanan dikarenakan Gabung dengan Sumur Bor",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 5,
+        "skorRisiko": 25
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Perlu flushing secara rutin",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Menyusun jadwal berkala",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Melaksanakan sesuai SOP",
+        "siapaYangMelakukan": "Staff layanan konsumen",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi hubungan langganan",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag pelayanan konsumen",
+        "apaTindakanKoreksinya": "Segera sosialisasi",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi hubungan langganan",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag pelayanan konsumen"
+      }
+    },
+    {
+      "kodeLokasi": "UP2",
+      "kodeRisiko": "F0013",
+      "identifikasi": {
+        "komponenSpam": "Zona Pelanggan",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Pelayanan",
+        "penyebabZ": "Perbaikan Kebocoran di pelanggan",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Pelayanan dikarenakan Perbaikan Kebocoran di pelanggan",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pengecekan secara berkala di bagian bak penangkap air",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan perbaikan bak penangkap air",
+        "dimana": "Mata air",
+        "kapan": "Segera",
+        "bagaimana": "Melaksanakan sesuai SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibuat",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "UP3",
+      "kodeRisiko": "F0017",
+      "identifikasi": {
+        "komponenSpam": "Zona Pelanggan",
+        "kontaminasiX": "Kontaminasi Mikrobiologi",
+        "komponenSpamY": "Pelayanan",
+        "penyebabZ": "Penggunaan Tandon yang berlebih",
+        "kejadianBahayaXYZ": "Kontaminasi Mikrobiologi terjadi pada Pelayanan dikarenakan Penggunaan Tandon yang berlebih",
+        "tipeBahaya": "Mikrobiologi"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 5,
+        "skorRisiko": 25
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pengadaan Genset untuk mengantisipasi instalasi chlorine mati",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pengadaan genset",
+        "dimana": "Air baku",
+        "kapan": "Segera",
+        "bagaimana": "Pengadaan barang secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibuat",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "UP4",
+      "kodeRisiko": "F0018",
+      "identifikasi": {
+        "komponenSpam": "Zona Pelanggan",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Pelayanan",
+        "penyebabZ": "Kualitas Pipa di pelanggan",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Pelayanan dikarenakan Kualitas Pipa di pelanggan",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pengecekan secara berkala di lokasi sumur pompa yang berada dekat sungai",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan penanganan",
+        "dimana": "Air baku",
+        "kapan": "Segera",
+        "bagaimana": "Melaksanakan sesuai SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera dibuat",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "UP5",
+      "kodeRisiko": "F0019",
+      "identifikasi": {
+        "komponenSpam": "Zona Pelanggan",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Pelayanan",
+        "penyebabZ": "Pasang Baru",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Pelayanan dikarenakan Pasang Baru",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemeliharaan dan perbaikan reservoir penataban dan kelirpuan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan perbaikan reservoir",
+        "dimana": "Resevoir",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff produksi",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi produksi",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diganti",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Produksi",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "UP6",
+      "kodeRisiko": "F0025",
+      "identifikasi": {
+        "komponenSpam": "Zona Pelayanan",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Pelayanan",
+        "penyebabZ": "Pipa dinas pelanggan berpasir",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Pelayanan dikarenakan Pipa dinas pelanggan berpasir",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan strainer di pipa dinas pelanggan",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pemasangan strainer",
+        "dimana": "Pelayanan",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    },
+    {
+      "kodeLokasi": "UP7",
+      "kodeRisiko": "F0026",
+      "identifikasi": {
+        "komponenSpam": "Zona Pelayanan",
+        "kontaminasiX": "Kontaminasi Fisika",
+        "komponenSpamY": "Pelayanan",
+        "penyebabZ": "Pipa distribusi di pelanggan sumur pompa diamond 2 berpasir dan keruh",
+        "kejadianBahayaXYZ": "Kontaminasi Fisika terjadi pada Pelayanan dikarenakan Pipa distribusi di pelanggan sumur pompa diamond 2 berpasir dan keruh",
+        "tipeBahaya": "Fisik"
+      },
+      "penilaian": {
+        "peluangKejadianBahaya": 5,
+        "dampakKeparahan": 3,
+        "skorRisiko": 15
+      },
+      "kajiUlang": {
+        "tindakanPengendalian": "Pemasangan wash out di pipa distribusi  wilayah pompa diamond 2",
+        "referensi": "Laporan Kegiatan pekerjaan",
+        "validasi": "EFEKTIF",
+        "peluangKejadianBahaya": 4,
+        "dampakKeparahan": 3,
+        "skorRisiko": 12
+      },
+      "rencanaPerbaikan": null,
+      "pemantauanOperasional": {
+        "batasKritis": null,
+        "apaYangDimonitor": "Percepatan pemasangan wash out di pipa distribusi",
+        "dimana": "Distribusi",
+        "kapan": "Segera",
+        "bagaimana": "Penggantian secara SOP",
+        "siapaYangMelakukan": "Staff Trandist",
+        "siapaYangAkanMenganalisisHasilnya": "Kasi Trandist",
+        "siapaYangMenerimaHasilAnalisisDanMengambilTindakan": "Kabag prodist",
+        "apaTindakanKoreksinya": "Segera diperbaiki",
+        "siapaYangMelakukanTindakanKoreksi": "Kasi Trandist",
+        "seberapaCepat": "saat itu juga",
+        "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni": "Kabag prodist"
+      }
+    }
+  ]
+}

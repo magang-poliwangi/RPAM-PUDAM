@@ -55,6 +55,7 @@ model LokasiSpam {
   penanggungJawabTelepon String?
   penanggungJawabEmail   String?
   referensi              String?
+  deletedAt              DateTime?
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
@@ -102,6 +103,7 @@ model IdentifikasiBahaya {
   penyebabZ         String
   kejadianBahayaXYZ String
   tipeBahaya        String
+  deletedAt         DateTime?
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 
@@ -117,6 +119,7 @@ model PenilaianRisiko {
   peluangKejadianBahaya Int
   dampakKeparahan        Int
   skorRisiko            Int
+  deletedAt             DateTime?
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
 
@@ -138,6 +141,7 @@ model KajiUlangRisiko {
   peluangKejadianBahaya Int
   dampakKeparahan       Int
   skorRisiko            Int
+  deletedAt             DateTime?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 
@@ -146,20 +150,20 @@ model KajiUlangRisiko {
 
 // M5 Rencana Perbaikan
 model RencanaPerbaikan {
-  id                 String                    @id @default(cuid())
-  kajiUlangRisikoId  String                    @unique
-  kajiUlangRisiko    KajiUlangRisiko           @relation(fields: [kajiUlangRisikoId], references: [id])
-  rencanaPerbaikan   String
-  penanggungJawab    String
-  jadwalPelaksanaan  String
-  biaya              Decimal
-  sumberPembiayaan   String
-  statusKemajuan     String
-  kendalaKeuangan    Boolean                   @default(false)
-  kendalaTenagaKerja Boolean                   @default(false)
-  prioritas          PrioritasRencanaPerbaikan
-  createdAt          DateTime                  @default(now())
-  updatedAt          DateTime                  @updatedAt
+  id                String                    @id @default(cuid())
+  kajiUlangRisikoId String                    @unique
+  kajiUlangRisiko   KajiUlangRisiko           @relation(fields: [kajiUlangRisikoId], references: [id])
+  rencanaPerbaikan  String
+  penanggungJawab   String
+  jadwal            String
+  biaya             Decimal
+  sumberPembiayaan  String
+  statusKemajuan    StatusKemajuan            @default(BELUM_MULAI)
+  kendala           String?
+  prioritas         PrioritasRencanaPerbaikan
+  deletedAt         DateTime?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
 
   @@map("rencana_perbaikan")
 }
@@ -181,8 +185,10 @@ model PemantauanOperasional {
   siapaYangMelakukanTindakanKoreksi                    String
   seberapaCepat                                        String
   siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni String
+  deletedAt                                            DateTime?
   createdAt                                            DateTime        @default(now())
   updatedAt                                            DateTime        @updatedAt
 
   @@map("pemantauan_operasional")
 }
+

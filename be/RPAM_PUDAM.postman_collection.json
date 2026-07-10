@@ -1,0 +1,504 @@
+{
+  "info": {
+    "name": "RPAM PUDAM API",
+    "_postman_id": "rpam-pudam-2026",
+    "description": "Koleksi API untuk sistem RPAM PUDAM - Auth, M4 Kaji Ulang Risiko, M5 Rencana Perbaikan",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "m4_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "m5_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "  pm.collectionVariables.set('access_token', res.data.accessToken);",
+                  "  console.log('Token saved:', res.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login sebagai admin. Token otomatis tersimpan ke variabel access_token."
+          }
+        },
+        {
+          "name": "Login (User)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "  pm.collectionVariables.set('access_token', res.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nofa\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 M4 - Kaji Ulang Risiko",
+      "item": [
+        {
+          "name": "GET All Kaji Ulang",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/m4?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["m4"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "Ambil semua data kaji ulang risiko dengan pagination."
+          }
+        },
+        {
+          "name": "GET All - dengan Search",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/m4?page=1&limit=10&search=klorin",
+              "host": ["{{base_url}}"],
+              "path": ["m4"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "klorin" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/m4/{{m4_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["m4", "{{m4_id}}"]
+            },
+            "description": "Set variabel m4_id terlebih dahulu dari response GET All."
+          }
+        },
+        {
+          "name": "POST Create Kaji Ulang",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('m4_id', res.data.id);",
+                  "  console.log('M4 ID saved:', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"penilaianRisikoId\": \"GANTI_DENGAN_ID_PENILAIAN_RISIKO\",\n  \"tindakanPengendalian\": \"Pengecekan kadar klorin secara rutin setiap hari\",\n  \"referensi\": \"SOP-KLORIN-001\",\n  \"validasi\": \"EFEKTIF\",\n  \"peluangKejadianBahaya\": 2,\n  \"dampakKeparahan\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m4",
+              "host": ["{{base_url}}"],
+              "path": ["m4"]
+            },
+            "description": "Buat kaji ulang risiko baru.\n\n**validasi** pilihan: EFEKTIF | TIDAK_EFEKTIF | TIDAK_PASTI\n\n**peluangKejadianBahaya & dampakKeparahan**: 1-5\n\nSkor risiko dihitung otomatis: Peluang × Dampak\n\n**Tingkat Risiko:**\n- 1-5 = Rendah (hijau)\n- 6-10 = Medium (biru)\n- 11-15 = Tinggi (abu-abu)\n- 16-20 = Sangat Tinggi (kuning)\n- >21 = Ekstrem (merah)"
+          }
+        },
+        {
+          "name": "PUT Update Kaji Ulang",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"penilaianRisikoId\": \"GANTI_DENGAN_ID_PENILAIAN_RISIKO\",\n  \"tindakanPengendalian\": \"Pengecekan kadar klorin 2x sehari pagi dan sore\",\n  \"referensi\": \"SOP-KLORIN-002\",\n  \"validasi\": \"EFEKTIF\",\n  \"peluangKejadianBahaya\": 1,\n  \"dampakKeparahan\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m4/{{m4_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["m4", "{{m4_id}}"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Kaji Ulang (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/m4/{{m4_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["m4", "{{m4_id}}"]
+            },
+            "description": "Soft delete - data tidak benar-benar dihapus, hanya ditandai deletedAt."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛠️ M5 - Rencana Perbaikan",
+      "item": [
+        {
+          "name": "GET All Rencana Perbaikan",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/m5?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["m5"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET All - dengan Search",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/m5?page=1&limit=10&search=perbaikan",
+              "host": ["{{base_url}}"],
+              "path": ["m5"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "perbaikan" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/m5/{{m5_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["m5", "{{m5_id}}"]
+            }
+          }
+        },
+        {
+          "name": "POST Create - Prioritas PENDEK",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('m5_id', res.data.id);",
+                  "  console.log('M5 ID saved:', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kajiUlangRisikoId\": \"GANTI_DENGAN_ID_KAJI_ULANG\",\n  \"rencanaPerbaikan\": \"Pemasangan filter tambahan pada unit intake\",\n  \"penanggungJawab\": \"Budi Santoso\",\n  \"jadwal\": \"Triwulan I 2026\",\n  \"biaya\": 5000000,\n  \"sumberPembiayaan\": \"APBD\",\n  \"statusKemajuan\": \"BELUM_MULAI\",\n  \"kendala\": null,\n  \"prioritas\": \"PENDEK\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m5",
+              "host": ["{{base_url}}"],
+              "path": ["m5"]
+            },
+            "description": "Buat rencana perbaikan baru.\n\n**statusKemajuan** pilihan:\n- BELUM_MULAI\n- SEDANG_BERJALAN\n- SELESAI\n- TERTUNDA\n\n**prioritas** pilihan:\n- PENDEK\n- MENENGAH\n- PANJANG\n\n**kendala** (opsional): null, atau string misal 'Keuangan' atau 'Keuangan, Tenaga Kerja'"
+          }
+        },
+        {
+          "name": "POST Create - Prioritas MENENGAH (ada kendala)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kajiUlangRisikoId\": \"GANTI_DENGAN_ID_KAJI_ULANG\",\n  \"rencanaPerbaikan\": \"Rehabilitasi jaringan pipa distribusi zona A\",\n  \"penanggungJawab\": \"Siti Rahayu\",\n  \"jadwal\": \"Triwulan II 2026\",\n  \"biaya\": 75000000,\n  \"sumberPembiayaan\": \"Dana Alokasi Khusus (DAK)\",\n  \"statusKemajuan\": \"SEDANG_BERJALAN\",\n  \"kendala\": \"Keuangan, Tenaga Kerja\",\n  \"prioritas\": \"MENENGAH\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m5",
+              "host": ["{{base_url}}"],
+              "path": ["m5"]
+            }
+          }
+        },
+        {
+          "name": "POST Create - Prioritas PANJANG (selesai)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kajiUlangRisikoId\": \"GANTI_DENGAN_ID_KAJI_ULANG\",\n  \"rencanaPerbaikan\": \"Pembangunan reservoar baru kapasitas 500m3\",\n  \"penanggungJawab\": \"Ahmad Fauzi\",\n  \"jadwal\": \"Triwulan IV 2026\",\n  \"biaya\": 500000000,\n  \"sumberPembiayaan\": \"Pinjaman Daerah\",\n  \"statusKemajuan\": \"SELESAI\",\n  \"kendala\": null,\n  \"prioritas\": \"PANJANG\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m5",
+              "host": ["{{base_url}}"],
+              "path": ["m5"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Rencana Perbaikan",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kajiUlangRisikoId\": \"GANTI_DENGAN_ID_KAJI_ULANG\",\n  \"rencanaPerbaikan\": \"Pemasangan filter tambahan pada unit intake - diperbarui\",\n  \"penanggungJawab\": \"Budi Santoso\",\n  \"jadwal\": \"Triwulan I-II 2026\",\n  \"biaya\": 7500000,\n  \"sumberPembiayaan\": \"APBD\",\n  \"statusKemajuan\": \"SEDANG_BERJALAN\",\n  \"kendala\": \"Keuangan\",\n  \"prioritas\": \"PENDEK\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m5/{{m5_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["m5", "{{m5_id}}"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Rencana Perbaikan (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/m5/{{m5_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["m5", "{{m5_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 Dummy Data - Validasi Field",
+      "item": [
+        {
+          "name": "M4 - validasi TIDAK_EFEKTIF",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"penilaianRisikoId\": \"GANTI_DENGAN_ID_PENILAIAN_RISIKO\",\n  \"tindakanPengendalian\": \"Pemberian desinfektan manual tiap minggu\",\n  \"referensi\": \"SOP-DESIN-003\",\n  \"validasi\": \"TIDAK_EFEKTIF\",\n  \"peluangKejadianBahaya\": 4,\n  \"dampakKeparahan\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m4",
+              "host": ["{{base_url}}"],
+              "path": ["m4"]
+            },
+            "description": "Skor = 4×5 = 20 → Sangat Tinggi (kuning)"
+          }
+        },
+        {
+          "name": "M4 - validasi TIDAK_PASTI (Ekstrem)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"penilaianRisikoId\": \"GANTI_DENGAN_ID_PENILAIAN_RISIKO\",\n  \"tindakanPengendalian\": \"Belum ada tindakan pengendalian\",\n  \"referensi\": \"N/A\",\n  \"validasi\": \"TIDAK_PASTI\",\n  \"peluangKejadianBahaya\": 5,\n  \"dampakKeparahan\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m4",
+              "host": ["{{base_url}}"],
+              "path": ["m4"]
+            },
+            "description": "Skor = 5×5 = 25 → Ekstrem (merah)"
+          }
+        },
+        {
+          "name": "M4 - Error: validasi tidak valid",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"penilaianRisikoId\": \"abc\",\n  \"tindakanPengendalian\": \"Test\",\n  \"referensi\": \"REF\",\n  \"validasi\": \"SALAH\",\n  \"peluangKejadianBahaya\": 3,\n  \"dampakKeparahan\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m4",
+              "host": ["{{base_url}}"],
+              "path": ["m4"]
+            },
+            "description": "Harusnya return 400 - validasi hanya boleh EFEKTIF | TIDAK_EFEKTIF | TIDAK_PASTI"
+          }
+        },
+        {
+          "name": "M5 - Error: statusKemajuan tidak valid",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kajiUlangRisikoId\": \"abc\",\n  \"rencanaPerbaikan\": \"Test\",\n  \"penanggungJawab\": \"Test PJ\",\n  \"jadwal\": \"TW1 2026\",\n  \"biaya\": 1000,\n  \"sumberPembiayaan\": \"APBD\",\n  \"statusKemajuan\": \"TIDAK_VALID\",\n  \"kendala\": null,\n  \"prioritas\": \"PENDEK\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/m5",
+              "host": ["{{base_url}}"],
+              "path": ["m5"]
+            },
+            "description": "Harusnya return 400 - statusKemajuan hanya: BELUM_MULAI | SEDANG_BERJALAN | SELESAI | TERTUNDA"
+          }
+        },
+        {
+          "name": "M5 - Error: tanpa token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/m5",
+              "host": ["{{base_url}}"],
+              "path": ["m5"]
+            },
+            "description": "Harusnya return 401 - Unauthorized"
+          }
+        }
+      ]
+    }
+  ]
+}

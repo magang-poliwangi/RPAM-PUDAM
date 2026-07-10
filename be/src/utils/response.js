@@ -1,5 +1,6 @@
 const response = (res, statusCode, message, data) => {
   const body = {
+    success: statusCode < 400,
     status: statusCode < 400 ? 'success' : statusCode < 500 ? 'fail' : 'error',
   };
   if (message) body.message = message;

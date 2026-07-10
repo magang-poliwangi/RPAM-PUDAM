@@ -19,11 +19,19 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
-app.use(cors({
-  origin: process.env.URLFE,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+const corsOptions = {
+  origin: [
+    process.env.URLFE,
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+  ].filter(Boolean),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('/{*path}', cors(corsOptions));
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
