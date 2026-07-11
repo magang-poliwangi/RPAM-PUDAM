@@ -11,13 +11,14 @@ import RencanaPerbaikanPage from './pages/RencanaPerbaikanPage';
 import PemantauanPage from './pages/PemantauanPage';
 import UsersPage from './pages/UsersPage';
 import AuditLogPage from './pages/AuditLogPage';
+import LoginPage from './pages/LoginPage';
 
 export default function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/login" element={<LoginPage/>}/>
 
           {/* Protected */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />

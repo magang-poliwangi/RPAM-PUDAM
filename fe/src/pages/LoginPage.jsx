@@ -91,9 +91,6 @@ export default function LoginPage() {
             </form>
           </div>
         </div>
-        <p className="text-center text-xs text-gray-400 mt-4">
-          © 2026 PUDAM — Sistem RPAM
-        </p>
       </div>
     </div>
   );
