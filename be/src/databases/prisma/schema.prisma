@@ -64,6 +64,15 @@ model LokasiSpam {
   @@map("lokasi_spam")
 }
 
+model Authentikasi {
+  token  String @id
+  userId String
+  expiresAt DateTime
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("authentikasi")
+}
+
 model User {
   id        String   @id @default(cuid())
   username  String   @unique
@@ -73,7 +82,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  auditLogs AuditLog[]
+  auditLogs     AuditLog[]
+  authentikasis Authentikasi[]
 
   @@map("users")
 }
@@ -96,7 +106,7 @@ model IdentifikasiBahaya {
   id                String     @id @default(cuid())
   lokasiSpamId      String
   lokasiSpam        LokasiSpam @relation(fields: [lokasiSpamId], references: [id])
-  kodeRisiko        String     
+  kodeRisiko        String
   komponenSpam      String
   kontaminasiX      String
   komponenSpamY     String
@@ -117,7 +127,7 @@ model PenilaianRisiko {
   identifikasiBahayaId  String             @unique
   identifikasiBahaya    IdentifikasiBahaya @relation(fields: [identifikasiBahayaId], references: [id])
   peluangKejadianBahaya Int
-  dampakKeparahan        Int
+  dampakKeparahan       Int
   skorRisiko            Int
   deletedAt             DateTime?
   createdAt             DateTime           @default(now())

@@ -1,24 +1,45 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
-import { loginThunk, selectAuth } from '../states/auth/authSlice';
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  IoLockClosedOutline,
+  IoPersonOutline,
+
+} from "react-icons/io5";
+import InputComponent from "../components/common/InputComponent";
+import useForm from "../hooks/useForm";
+import { asyncSetAuthUser } from "../states/authUser/action";
+import { setErrorActionCreator, unsetErrorActionCreator } from "../states/error/action";
+import { responseError } from "../utils/response-error";
+
 
 export default function LoginPage() {
+  const { form, onChange } = useForm({ username: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const error = useSelector((state) => state.error);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { status, error } = useSelector(selectAuth);
-  const [form, setForm] = useState({ username: '', password: '' });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const result = await dispatch(loginThunk(form));
-    if (loginThunk.fulfilled.match(result)) {
-      navigate('/dashboard');
+  const onSubmitForm = async (event) => {
+    event.preventDefault();
+    dispatch(unsetErrorActionCreator());
+
+    if (!form.username.trim() || !form.password.trim()) {
+      dispatch(setErrorActionCreator("Username dan password wajib diisi"));
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await dispatch(asyncSetAuthUser(form));
+    } catch (requestError) {
+      dispatch(setErrorActionCreator(responseError({ error: requestError, msg: "Login gagal" })));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-white to-slate-100">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-teal-50 via-white to-slate-100">
       <div className="w-full max-w-md">
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
@@ -43,42 +64,16 @@ export default function LoginPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="username">
-                  Username
-                </label>
-                <input
-                  id="username"
-                  type="text"
-                  required
-                  value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  placeholder="Masukkan username"
-                  className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="password">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="Masukkan password"
-                  className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors"
-                />
-              </div>
+            <form onSubmit={onSubmitForm} className="flex flex-col gap-4">
+              <InputComponent placeholder='Masukkan username' name="username" label="Username" value={form.username} onChangeValue={onChange} leftIcon={IoPersonOutline} />
+              <InputComponent name="password" placeholder='Masukkan password' label="Password" type={showPassword ? "text" : "password"} value={form.password} onChangeValue={onChange} leftIcon={IoLockClosedOutline} toggle onChangeToggle={() => setShowPassword((value) => !value)} />
               <button
                 id="login-btn"
                 type="submit"
-                disabled={status === 'loading'}
+                disabled={isSubmitting}
                 className="w-full py-2.5 px-4 bg-teal-700 hover:bg-teal-800 disabled:bg-teal-400 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 mt-2"
               >
-                {status === 'loading' ? (
+                {isSubmitting ? (
                   <>
                     <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />

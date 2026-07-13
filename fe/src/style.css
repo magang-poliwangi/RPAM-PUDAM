@@ -1,33 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
 @import "tailwindcss";
 
+/* Ubah nilai token ini untuk mengganti tema aplikasi secara menyeluruh. */
+@theme {
+  --color-brand-50: #eef7f6;
+  --color-brand-100: #d3ebe8;
+  --color-brand-200: #a7d6d1;
+  --color-brand-300: #78bfb8;
+  --color-brand-400: #4da79f;
+  --color-brand-500: #237e7c;
+  --color-brand-600: #1a6664;
+  --color-brand-700: #12504f;
+  --color-brand-800: #0c3d3b;
+  --color-brand-900: #082827;
+
+  --color-app-canvas: #f8fafc;
+  --color-app-surface: #ffffff;
+  --color-app-surface-muted: #f8fafc;
+  --color-app-border: #e2e8f0;
+  --color-app-text: #1f2937;
+  --color-app-text-muted: #64748b;
+  --color-app-primary: #0f766e;
+  --color-app-primary-hover: #115e59;
+  --color-app-primary-soft: #f0fdfa;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Manrope", "Inter", sans-serif;
+}
+
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #f8fafc;
-    color: #334155;
     margin: 0;
-    padding: 0;
+    min-width: 320px;
+    background: var(--color-app-canvas);
+    color: var(--color-app-text);
+    font-family: var(--font-sans);
   }
+
+  button,
+  input,
+  select,
+  textarea { font: inherit; }
+}
+
+@layer components {
+  .app-shell { @apply min-h-screen bg-app-canvas text-app-text; }
+  .app-main { @apply flex-1 overflow-auto; }
+  .app-content { @apply mx-auto max-w-screen-xl p-6; }
+  .app-page-header { @apply mb-6; }
+  .app-page-title { @apply text-xl font-bold text-app-text; }
+  .app-page-subtitle { @apply mt-0.5 text-sm text-app-text-muted; }
+  .app-card { @apply overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-sm; }
+  .app-input { @apply w-full rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm transition-colors focus:border-app-primary focus:outline-none focus:ring-2 focus:ring-app-primary/20; }
+  .app-button-primary { @apply inline-flex items-center justify-center gap-2 rounded-lg bg-app-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-app-primary-hover disabled:cursor-not-allowed disabled:opacity-50; }
+  .app-button-secondary { @apply rounded-lg border border-app-border bg-app-surface px-4 py-2 text-sm font-medium text-app-text transition-colors hover:bg-app-surface-muted; }
+  .app-icon-button { @apply rounded-md p-1.5 text-app-text-muted transition-colors hover:bg-app-primary-soft hover:text-app-primary; }
+  .app-table-head { @apply border-b border-app-border bg-app-surface-muted; }
+  .app-table-row { @apply transition-colors hover:bg-app-surface-muted; }
+  .app-overlay { @apply fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4; }
+  .app-modal { @apply flex max-h-[90vh] w-full flex-col rounded-2xl bg-app-surface shadow-2xl; }
 }
 
 @layer utilities {
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #e2e8f0 transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #e2e8f0;
-    border-radius: 3px;
-  }
+  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 3px; }
 }

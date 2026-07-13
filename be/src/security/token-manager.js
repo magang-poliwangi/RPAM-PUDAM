@@ -5,7 +5,7 @@ const TokenManager = {
     expiresIn: '24h'
   }),
   generateRefreshToken: (payload) => jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
-    expiresIn: '7d'
+    expiresIn: '1d'
   }),
   verifyAcessToken: (token) => {
     const payload = jwt.verify(token, process.env.ACCESS_TOKEN_KEY);

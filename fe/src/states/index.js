@@ -1,9 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './auth/authSlice';
+import authUserReducer from './authUser/reducer';
+import errorReducer from './error/reducer';
+import usersReducer from './user/reducer';
+import isPreloadReducer from './isPreload/reducer';
+import kajiUlangRisikosReducer from './kajiUlangRisiko/reducer';
+import rencanaPerbaikansReducer from './rencanaPerbaikan/reducer';
 
 const store = configureStore({
   reducer: {
-    auth: authReducer,
+    authUser: authUserReducer,
+    error: errorReducer,
+    users: usersReducer,
+    isPreload : isPreloadReducer,
+    kajiUlangRisikos: kajiUlangRisikosReducer,
+    rencanaPerbaikans: rencanaPerbaikansReducer,
   },
 });
 

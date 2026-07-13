@@ -1,20 +1,67 @@
 import express from 'express';
-import authRouter from './auth/auth.route.js';
-import m1Router from './m1/m1.route.js';
-import m2Router from './m2/m2.route.js';
-import m4Router from './m4/m4.route.js';
-import m5Router from './m5/m5.route.js';
-import m6Router from './m6/m6.route.js';
-import miscRouter from './misc/misc.route.js';
 
-const Routers = express.Router();
+import { authController, userController, kajiUlangRisikoController, rencanaPerbaikanController } from './container.js';
 
-Routers.use('/auth', authRouter);
-Routers.use('/identifikasi-bahaya', m1Router);
-Routers.use('/penilaian-risiko', m2Router);
-Routers.use('/m4', m4Router);
-Routers.use('/m5', m5Router);
-Routers.use('/pemantauan', m6Router);
-Routers.use('/', miscRouter);
+import authRoute from './services/auth/auth.route.js';
+import userRoute from './services/user/user.route.js';
+import kajiUlangRisikoRoute from './services/kaji-ulang-risiko/kaji-ulang-risiko.route.js';
+import rencanaPerbaikanRoute from './services/rencana-perbaikan/rencana-perbaikan.route.js';
 
-export default Routers;
+import { authenticationPayloadValidatorPost } from './services/auth/auth.validator.js';
+import { userPayloadValidatorPost, userPayloadValidatorPut, userIdParamValidator } from './services/user/user.validator.js';
+import {
+    kajiUlangRisikoPayloadValidatorPost,
+    kajiUlangRisikoPayloadValidatorPut,
+    kajiUlangRisikoIdParamValidator,
+} from './services/kaji-ulang-risiko/kaji-ulang-risiko.validator.js';
+import {
+    rencanaPerbaikanPayloadValidatorPost,
+    rencanaPerbaikanPayloadValidatorPut,
+    rencanaPerbaikanIdParamValidator,
+} from './services/rencana-perbaikan/rencana-perbaikan.validator.js';
+
+import { loginLimiter } from './middlewares/rate-limiter.js';
+import validate from './middlewares/validate.js';
+
+const routers = express.Router();
+
+routers.use(
+    '/auth',
+    authRoute(authController, {
+        authenticationPayloadValidatorPost,
+        validate,
+        loginLimiter,
+    })
+);
+
+routers.use(
+    '/user',
+    userRoute(userController, {
+        validate,
+        userPayloadValidatorPost,
+        userIdParamValidator,
+        userPayloadValidatorPut,
+    })
+);
+
+routers.use(
+    '/kaji-ulang-risiko',
+    kajiUlangRisikoRoute(kajiUlangRisikoController, {
+        validate,
+        kajiUlangRisikoPayloadValidatorPost,
+        kajiUlangRisikoPayloadValidatorPut,
+        kajiUlangRisikoIdParamValidator,
+    })
+);
+
+routers.use(
+    '/rencana-perbaikan',
+    rencanaPerbaikanRoute(rencanaPerbaikanController, {
+        validate,
+        rencanaPerbaikanPayloadValidatorPost,
+        rencanaPerbaikanPayloadValidatorPut,
+        rencanaPerbaikanIdParamValidator,
+    })
+);
+
+export default routers;

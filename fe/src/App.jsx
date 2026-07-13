@@ -1,42 +1,42 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
-import { Provider } from 'react-redux';
-import store from './states/index';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { asyncPreloadProcess } from "./states/isPreload/action";
+import { Navigate, Route, Routes } from "react-router";
+import LoginPage from "./pages/LoginPage";
+import KajiUlangPage from "./pages/KajiUlangRisikoPage";
+import RencanaPerbaikanPage from "./pages/RencanaPerbaikanPage";
+import ManagementUserPage from "./pages/ManagementUserPage";
 
-import { GuestRoute, ProtectedRoute } from './components/common/RouteGuards';
-import DashboardPage from './pages/DashboardPage';
-import IdentifikasiBahayaPage from './pages/IdentifikasiBahayaPage';
-import PenilaianRisikoPage from './pages/PenilaianRisikoPage';
-import KajiUlangPage from './pages/KajiUlangPage';
-import RencanaPerbaikanPage from './pages/RencanaPerbaikanPage';
-import PemantauanPage from './pages/PemantauanPage';
-import UsersPage from './pages/UsersPage';
-import AuditLogPage from './pages/AuditLogPage';
-import LoginPage from './pages/LoginPage';
+function App() {
+  const { authUser, isPreload } = useSelector((state) => state);
+  const dispatch = useDispatch();
 
-export default function App() {
+  useEffect(() => {
+    dispatch(asyncPreloadProcess());
+  }, [dispatch]);
+
+  if (isPreload) {
+    return <div className="app-shell flex items-center justify-center text-sm text-app-text-muted">Memuat aplikasi...</div>;
+  }
+
+  if (!authUser) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
+
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage/>}/>
-
-          {/* Protected */}
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-          <Route path="/identifikasi-bahaya" element={<ProtectedRoute><IdentifikasiBahayaPage /></ProtectedRoute>} />
-          <Route path="/penilaian-risiko" element={<ProtectedRoute><PenilaianRisikoPage /></ProtectedRoute>} />
-          <Route path="/kaji-ulang" element={<ProtectedRoute><KajiUlangPage /></ProtectedRoute>} />
-          <Route path="/rencana-perbaikan" element={<ProtectedRoute><RencanaPerbaikanPage /></ProtectedRoute>} />
-          <Route path="/pemantauan" element={<ProtectedRoute><PemantauanPage /></ProtectedRoute>} />
-
-          {/* Admin only */}
-          <Route path="/users" element={<ProtectedRoute adminOnly><UsersPage /></ProtectedRoute>} />
-          <Route path="/audit-log" element={<ProtectedRoute adminOnly><AuditLogPage /></ProtectedRoute>} />
-
-          {/* Redirects */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </Provider>
+    <Routes>
+      <Route path="/kaji-ulang" element={<KajiUlangPage />} />
+      <Route path="/rencana-perbaikan" element={<RencanaPerbaikanPage />} />
+      {authUser.role === "ADMIN" && <Route path="/management-user" element={<ManagementUserPage />} />}
+      <Route path="/" element={<Navigate to="/kaji-ulang" replace />} />
+      <Route path="*" element={<Navigate to="/kaji-ulang" replace />} />
+    </Routes>
   );
 }
+
+export default App;
