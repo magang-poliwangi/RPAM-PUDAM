@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, Link } from 'react-router';
-import { selectUser } from '../../states/auth/authSlice';
 
 const navItems = [
   {
@@ -49,7 +48,7 @@ const navItems = [
     group: 'Admin',
     adminOnly: true,
     items: [
-      { to: '/users', label: 'Manajemen User', icon: (
+      { to: '/management-user', label: 'Manajemen User', icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
@@ -64,9 +63,10 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const user = useSelector(selectUser);
+  const { authUser } = useSelector((state) => state);
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const enabledRoutes = new Set(['/kaji-ulang', '/rencana-perbaikan', '/management-user']);
 
   const isActive = (to) => location.pathname === to || location.pathname.startsWith(to + '/');
 
@@ -98,13 +98,13 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-2 scrollbar-thin">
         {navItems.map((group) => {
-          if (group.adminOnly && user?.role !== 'ADMIN') return null;
+          if (group.adminOnly && authUser?.role !== 'ADMIN') return null;
           return (
             <div key={group.group} className="mb-4">
               {!collapsed && (
                 <p className="px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">{group.group}</p>
               )}
-              {group.items.map((item) => (
+              {group.items.filter((item) => enabledRoutes.has(item.to)).map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
@@ -128,12 +128,12 @@ export default function Sidebar() {
       <div className="border-t border-gray-100 p-3">
         <div className={`flex items-center gap-3 px-2 py-2 rounded-lg ${collapsed ? 'justify-center' : ''}`}>
           <div className="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-white">{user?.username?.[0]?.toUpperCase() || 'U'}</span>
+            <span className="text-xs font-bold text-white">{authUser?.username?.[0]?.toUpperCase() || 'U'}</span>
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">{user?.username}</p>
-              <p className="text-xs text-gray-400">{user?.role === 'ADMIN' ? 'Admin' : 'User'}</p>
+              <p className="text-sm font-medium text-gray-900 truncate">{authUser?.username}</p>
+              <p className="text-xs text-gray-400">{authUser?.role === 'ADMIN' ? 'Admin' : 'User'}</p>
             </div>
           )}
         </div>

@@ -12,8 +12,8 @@ const userApi = (() => {
         return data.data.user;
     };
 
-    const updateUser = async (id, payload) => {
-        const { data } = await axiosInstance.put(`/user/${id}`, payload);
+    const updateUser = async ({ id, username, password }) => {
+        const { data } = await axiosInstance.put(`/user/${id}`, { username, password });
         return data.data.user;
     };
 

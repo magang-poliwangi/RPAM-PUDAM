@@ -1,10 +1,10 @@
 // Risk level badge component - colors must match backend getRiskLevel()
 const RISK_CONFIG = {
-  RENDAH: { label: 'Rendah', bg: 'bg-green-100', text: 'text-green-700', dot: 'bg-green-500' },
-  MEDIUM: { label: 'Medium', bg: 'bg-blue-100', text: 'text-blue-700', dot: 'bg-blue-500' },
-  TINGGI: { label: 'Tinggi', bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-500' },
-  SANGAT_TINGGI: { label: 'Sangat Tinggi', bg: 'bg-yellow-100', text: 'text-yellow-700', dot: 'bg-yellow-500' },
-  EKSTREM: { label: 'Ekstrem', bg: 'bg-red-100', text: 'text-red-700', dot: 'bg-red-500' },
+  Rendah: { label: 'Rendah', bg: 'bg-green-100', text: 'text-green-700', dot: 'bg-green-500' },
+  Medium: { label: 'Medium', bg: 'bg-blue-100', text: 'text-blue-700', dot: 'bg-blue-500' },
+  Tinggi: { label: 'Tinggi', bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-500' },
+  'Sangat Tinggi': { label: 'Sangat Tinggi', bg: 'bg-yellow-100', text: 'text-yellow-700', dot: 'bg-yellow-500' },
+  Ekstrem: { label: 'Ekstrem', bg: 'bg-red-100', text: 'text-red-700', dot: 'bg-red-500' },
 };
 
 export default function RiskLevelBadge({ level }) {

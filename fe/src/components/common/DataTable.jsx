@@ -1,20 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-/**
- * DataTable — reusable table with search, sort, and infinite scroll.
- * Props:
- *  columns: [{ key, label, render?, sortable? }]
- *  data: []
- *  loading: bool
- *  hasMore: bool
- *  onLoadMore: fn
- *  search: string
- *  onSearchChange: fn
- *  searchPlaceholder: string
- *  emptyMessage: string
- *  actions: (row) => ReactNode  (optional)
- *  headerExtra: ReactNode       (optional — e.g. add button)
- */
+
 export default function DataTable({
   columns = [],
   data = [],
@@ -47,7 +33,6 @@ export default function DataTable({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Header bar */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="relative">
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,29 +43,29 @@ export default function DataTable({
             value={search}
             onChange={(e) => onSearchChange?.(e.target.value)}
             placeholder={searchPlaceholder}
-            className="pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 w-64 transition-colors"
+            className="app-input w-64 pl-9 pr-4"
           />
         </div>
-        {headerExtra && <div className="flex items-center gap-2">{headerExtra}</div>}
+        {headerExtra && <div className="flex  items-center gap-2">{headerExtra}</div>}
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+      <div className="app-card">
         <div className="overflow-x-auto scrollbar-thin">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-8">#</th>
+              <tr className="app-table-head">
+                <th className="w-8 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-app-text-muted">#</th>
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap"
+                    className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-app-text-muted"
                   >
                     {col.label}
                   </th>
                 ))}
                 {actions && (
-                  <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Aksi</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-app-text-muted">Aksi</th>
                 )}
               </tr>
             </thead>
@@ -98,10 +83,10 @@ export default function DataTable({
                 </tr>
               ) : (
                 data.map((row, idx) => (
-                  <tr key={row.id || idx} className="hover:bg-gray-50/60 transition-colors">
-                    <td className="px-4 py-3 text-gray-400 text-xs">{idx + 1}</td>
+                  <tr key={row.id || idx} className="app-table-row">
+                    <td className="px-4 py-3 text-xs text-app-text-muted">{idx + 1}</td>
                     {columns.map((col) => (
-                      <td key={col.key} className="px-4 py-3 text-gray-700">
+                      <td key={col.key} className="px-4 py-3 text-app-text">
                         {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '-')}
                       </td>
                     ))}

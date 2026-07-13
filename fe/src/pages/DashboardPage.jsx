@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import AppLayout from '../components/common/AppLayout';
-import { dashboardApi } from '../api/rpamApi';
+import { dashboardApi } from '../api/kaji-ulang-risiko';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../states/auth/authSlice';
 import RiskLevelBadge from '../components/common/RiskLevelBadge';
@@ -23,20 +23,10 @@ function StatCard({ label, value, icon, color = 'teal' }) {
 }
 
 export default function DashboardPage() {
-  const user = useSelector(selectUser);
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+   const { users = [] } = useSelector((states) => states);
 
-  useEffect(() => {
-    dashboardApi.get()
-      .then((res) => setData(res.data.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
 
-  const totalRpam = data
-    ? Object.values(data.totalDataRpam || {}).reduce((a, b) => a + b, 0)
-    : 0;
+
 
   return (
     <AppLayout>

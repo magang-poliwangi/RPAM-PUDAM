@@ -1,162 +1,227 @@
 import { prisma } from '../client.js';
-import bcrypt from 'bcrypt';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import bcrypt from 'bcrypt'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+function hitungSkor(peluang, dampak) {
+  return peluang * dampak;
+}
 
 async function main() {
-  // 1. Seed default users
+  
+  // 1. USERS
+  
   const passwordHash = await bcrypt.hash('password123', 10);
-  await prisma.user.upsert({
-    where: { username: 'admin' },
-    update: {},
-    create: { username: 'admin', password: passwordHash, role: 'ADMIN' },
-  });
-  await prisma.user.upsert({
-    where: { username: 'nofa' },
-    update: {},
-    create: { username: 'nofa', password: passwordHash, role: 'USER' },
+
+  await prisma.user.createMany({
+    data: [
+      { username: 'admin', password: passwordHash, role: 'ADMIN' },
+      { username: 'nofa', password: passwordHash, role: 'USER' },
+    ],
+    skipDuplicates: true,
   });
   console.log('✅ Users seeded');
 
-  // 2. Clear existing RPAM tables to ensure idempotency
-  await prisma.pemantauanOperasional.deleteMany({});
-  await prisma.rencanaPerbaikan.deleteMany({});
-  await prisma.kajiUlangRisiko.deleteMany({});
-  await prisma.penilaianRisiko.deleteMany({});
-  await prisma.identifikasiBahaya.deleteMany({});
-  await prisma.lokasiSpam.deleteMany({});
-  console.log('🗑️ Cleared existing RPAM database records');
+  
+  // 2. LOKASI SPAM (Modul 2 - master lokasi)
+  
+  const lokasiData = [
+    { kodeLokasi: 'C1', simbol: '〇', namaLokasi: 'Klorinasi di Reservoir Kalipuro' },
+    { kodeLokasi: 'A1', simbol: '〇', namaLokasi: 'Mata Air Gedor II' },
+    { kodeLokasi: 'A2', simbol: '〇', namaLokasi: 'Sumur Pompa Ketapang' },
+    { kodeLokasi: 'A3', simbol: '〇', namaLokasi: 'Sumber Gedor I' },
+    { kodeLokasi: 'R1', simbol: '▽', namaLokasi: 'Reservoir Kalipuro' },
+    { kodeLokasi: 'R2', simbol: '▽', namaLokasi: 'Reservoir Banjarsari' },
+    { kodeLokasi: 'D1', simbol: '→', namaLokasi: 'Distribusi Kalongan' },
+    { kodeLokasi: 'UP1', simbol: '→', namaLokasi: 'Unit Pelayanan Kel. Kalipuro' },
+  ];
 
-  // 3. Load parsed data from JSON file
-  const jsonPath = path.join(process.cwd(), 'rpam_data.json');
-  if (!fs.existsSync(jsonPath)) {
-    console.error(`❌ rpam_data.json not found at ${jsonPath}! Run parse_excel.py first.`);
-    process.exit(1);
+  const lokasiList = [];
+  for (const l of lokasiData) {
+    const lokasi = await prisma.lokasiSpam.upsert({
+      where: { kodeLokasi: l.kodeLokasi },
+      update: {},
+      create: l,
+    });
+    lokasiList.push(lokasi);
+  }
+  console.log('✅ Lokasi SPAM seeded:', lokasiList.length);
+
+  
+ // 3. IDENTIFIKASI BAHAYA (Tabel 3.1)
+// Catatan: kodeRisiko TIDAK unik (F0010 bisa dipakai berkali-kali di data asli),
+// jadi pakai findFirst + create manual, bukan upsert.
+
+const bahayaData = [
+  { lokasi: lokasiList[0], kodeRisiko: 'K0001', komponenSpam: 'Chlorinator', kontaminasiX: 'Kontaminasi Kimia', komponenSpamY: 'Chlorinator', penyebabZ: 'Under Dosing', kejadianBahayaXYZ: 'Kontaminasi Kimia terjadi pada Chlorinator dikarenakan Under Dosing', tipeBahaya: 'Kimia' },
+  { lokasi: lokasiList[1], kodeRisiko: 'F0001', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Kondisi rumah panel rusak', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kondisi rumah panel rusak', tipeBahaya: 'Fisik' },
+  { lokasi: lokasiList[2], kodeRisiko: 'F0002', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Pohon tumbang', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Pohon tumbang', tipeBahaya: 'Fisik' },
+  { lokasi: lokasiList[3], kodeRisiko: 'F0003', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Kabel power panel putus', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kabel power panel putus', tipeBahaya: 'Fisik' },
+  { lokasi: lokasiList[4], kodeRisiko: 'M0004', komponenSpam: 'Reservoir', kontaminasiX: 'Kontaminasi Mikrobiologi', komponenSpamY: 'Reservoir', penyebabZ: 'Overflow Reservoir', kejadianBahayaXYZ: 'Kontaminasi Mikrobiologi terjadi pada Reservoir dikarenakan Overflow Reservoir', tipeBahaya: 'Mikrobiologi' },
+];
+
+const bahayaList = [];
+for (const b of bahayaData) {
+  const { lokasi, ...rest } = b;
+
+  let bahaya = await prisma.identifikasiBahaya.findFirst({
+    where: { kodeRisiko: rest.kodeRisiko, lokasiSpamId: lokasi.id },
+  });
+
+  if (!bahaya) {
+    bahaya = await prisma.identifikasiBahaya.create({
+      data: { ...rest, lokasiSpamId: lokasi.id },
+    });
   }
 
-  const fileContent = fs.readFileSync(jsonPath, 'utf-8');
-  const data = JSON.parse(fileContent);
+  bahayaList.push(bahaya);
+}
+console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
 
-  // 4. Seed Locations
-  const locationsMap = {}; // Maps kodeLokasi -> id
-  for (const loc of data.locations) {
-    const created = await prisma.lokasiSpam.create({
-      data: {
-        kodeLokasi: loc.kodeLokasi,
-        simbol: loc.simbol,
-        namaLokasi: loc.namaLokasi,
+  
+  // 4. PENILAIAN RISIKO (Tabel 3.5)
+  // Sengaja cuma 4 dari 5 bahaya yang dinilai (cabang berhenti di sini)
+  
+  const penilaianData = [
+    { bahaya: bahayaList[0], peluang: 5, dampak: 4 }, // C1 - skor 20
+    { bahaya: bahayaList[1], peluang: 5, dampak: 3 }, // A1 - skor 15
+    { bahaya: bahayaList[2], peluang: 2, dampak: 2 }, // A2 - skor 4 (rendah, berhenti di sini)
+    { bahaya: bahayaList[3], peluang: 4, dampak: 5 }, // A3 - skor 20
+  ];
+
+  const penilaianList = [];
+  for (const p of penilaianData) {
+    const penilaian = await prisma.penilaianRisiko.upsert({
+      where: { identifikasiBahayaId: p.bahaya.id },
+      update: {},
+      create: {
+        identifikasiBahayaId: p.bahaya.id,
+        peluangKejadianBahaya: p.peluang,
+        dampakKeparahan: p.dampak,
+        skorRisiko: hitungSkor(p.peluang, p.dampak),
       },
     });
-    locationsMap[loc.kodeLokasi] = created.id;
+    penilaianList.push(penilaian);
   }
-  console.log(`✅ Seeded ${data.locations.length} locations`);
+  console.log('✅ Penilaian Risiko seeded:', penilaianList.length);
 
-  // 5. Seed Core RPAM Records
-  let countM1 = 0;
-  let countM2 = 0;
-  let countM4 = 0;
-  let countM5 = 0;
-  let countM6 = 0;
+  
+  // 5. KAJI ULANG RISIKO (Tabel 4.1)
+  // Cuma 3 dari 4 penilaian yang lanjut ke kaji ulang
+  
+  const kajiUlangData = [
+    {
+      penilaian: penilaianList[0], // dari C1
+      tindakanPengendalian: 'Pembelian cadangan alat injektor chlorinasi',
+      referensi: 'Laporan Monev',
+      validasi: 'TIDAK_EFEKTIF',
+      peluang: 5,
+      dampak: 4,
+    },
+    {
+      penilaian: penilaianList[1], // dari A1
+      tindakanPengendalian: 'Pemeliharaan Rumah Panel Sumur Pompa Ketapang',
+      referensi: 'Observasi Kondisi Sumur Pompa',
+      validasi: 'EFEKTIF',
+      peluang: 2,
+      dampak: 2,
+    },
+    {
+      penilaian: penilaianList[3], // dari A3
+      tindakanPengendalian: 'Penggantian Kabel Power Untuk Panel Sumur Pompa Kantor',
+      referensi: 'Laporan Monev',
+      validasi: 'EFEKTIF',
+      peluang: 1,
+      dampak: 2,
+    },
+  ];
 
-  for (const record of data.records) {
-    const locId = locationsMap[record.kodeLokasi];
-    if (!locId) {
-      console.warn(`⚠️ Warning: Location code ${record.kodeLokasi} not found in locationsMap. Skipping.`);
-      continue;
-    }
-
-    // A. IdentifikasiBahaya
-    const idBahaya = await prisma.identifikasiBahaya.create({
-      data: {
-        lokasiSpamId: locId,
-        kodeRisiko: record.kodeRisiko,
-        komponenSpam: record.identifikasi.komponenSpam,
-        kontaminasiX: record.identifikasi.kontaminasiX,
-        komponenSpamY: record.identifikasi.komponenSpamY,
-        penyebabZ: record.identifikasi.penyebabZ,
-        kejadianBahayaXYZ: record.identifikasi.kejadianBahayaXYZ,
-        tipeBahaya: record.identifikasi.tipeBahaya,
+  const kajiUlangList = [];
+  for (const k of kajiUlangData) {
+    const kaji = await prisma.kajiUlangRisiko.upsert({
+      where: { penilaianRisikoId: k.penilaian.id },
+      update: {},
+      create: {
+        penilaianRisikoId: k.penilaian.id,
+        tindakanPengendalian: k.tindakanPengendalian,
+        referensi: k.referensi,
+        validasi: k.validasi,
+        peluangKejadianBahaya: k.peluang,
+        dampakKeparahan: k.dampak,
+        skorRisiko: hitungSkor(k.peluang, k.dampak),
       },
     });
-    countM1++;
-
-    // B. PenilaianRisiko
-    const idPenilaian = await prisma.penilaianRisiko.create({
-      data: {
-        identifikasiBahayaId: idBahaya.id,
-        peluangKejadianBahaya: record.penilaian.peluangKejadianBahaya,
-        dampakKeparahan: record.penilaian.dampakKeparahan,
-        skorRisiko: record.penilaian.skorRisiko,
-      },
-    });
-    countM2++;
-
-    // C. KajiUlangRisiko
-    if (record.kajiUlang) {
-      const idKaji = await prisma.kajiUlangRisiko.create({
-        data: {
-          penilaianRisikoId: idPenilaian.id,
-          tindakanPengendalian: record.kajiUlang.tindakanPengendalian,
-          referensi: record.kajiUlang.referensi,
-          validasi: record.kajiUlang.validasi,
-          peluangKejadianBahaya: record.kajiUlang.peluangKejadianBahaya,
-          dampakKeparahan: record.kajiUlang.dampakKeparahan,
-          skorRisiko: record.kajiUlang.skorRisiko,
-        },
-      });
-      countM4++;
-
-      // D. RencanaPerbaikan
-      if (record.rencanaPerbaikan) {
-        await prisma.rencanaPerbaikan.create({
-          data: {
-            kajiUlangRisikoId: idKaji.id,
-            rencanaPerbaikan: record.rencanaPerbaikan.rencanaPerbaikan,
-            penanggungJawab: record.rencanaPerbaikan.penanggungJawab,
-            jadwal: record.rencanaPerbaikan.jadwal,
-            biaya: record.rencanaPerbaikan.biaya,
-            sumberPembiayaan: record.rencanaPerbaikan.sumberPembiayaan,
-            statusKemajuan: record.rencanaPerbaikan.statusKemajuan,
-            kendala: record.rencanaPerbaikan.kendala,
-            prioritas: record.rencanaPerbaikan.prioritas,
-          },
-        });
-        countM5++;
-      }
-
-      // E. PemantauanOperasional
-      if (record.pemantauanOperasional) {
-        await prisma.pemantauanOperasional.create({
-          data: {
-            kajiUlangRisikoId: idKaji.id,
-            batasKritis: record.pemantauanOperasional.batasKritis,
-            apaYangDimonitor: record.pemantauanOperasional.apaYangDimonitor,
-            dimana: record.pemantauanOperasional.dimana,
-            kapan: record.pemantauanOperasional.kapan,
-            bagaimana: record.pemantauanOperasional.bagaimana,
-            siapaYangMelakukan: record.pemantauanOperasional.siapaYangMelakukan,
-            siapaYangAkanMenganalisisHasilnya: record.pemantauanOperasional.siapaYangAkanMenganalisisHasilnya,
-            siapaYangMenerimaHasilAnalisisDanMengambilTindakan: record.pemantauanOperasional.siapaYangMenerimaHasilAnalisisDanMengambilTindakan,
-            apaTindakanKoreksinya: record.pemantauanOperasional.apaTindakanKoreksinya,
-            siapaYangMelakukanTindakanKoreksi: record.pemantauanOperasional.siapaYangMelakukanTindakanKoreksi,
-            seberapaCepat: record.pemantauanOperasional.seberapaCepat,
-            siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni: record.pemantauanOperasional.siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni,
-          },
-        });
-        countM6++;
-      }
-    }
+    kajiUlangList.push(kaji);
   }
+  console.log('✅ Kaji Ulang Risiko seeded:', kajiUlangList.length);
 
-  console.log(`✅ Seeded IdentifikasiBahaya (M1): ${countM1}`);
-  console.log(`✅ Seeded PenilaianRisiko (M2): ${countM2}`);
-  console.log(`✅ Seeded KajiUlangRisiko (M4): ${countM4}`);
-  console.log(`✅ Seeded RencanaPerbaikan (M5): ${countM5}`);
-  console.log(`✅ Seeded PemantauanOperasional (M6): ${countM6}`);
+  
+  // 6. RENCANA PERBAIKAN (Tabel 5.1)
+  // Cuma diisi untuk kaji ulang yang TIDAK_EFEKTIF (kajiUlangList[0])
+  
+  await prisma.rencanaPerbaikan.upsert({
+    where: { kajiUlangRisikoId: kajiUlangList[0].id },
+    update: {},
+    create: {
+      kajiUlangRisikoId: kajiUlangList[0].id,
+      rencanaPerbaikan: 'Pemasangan alat Rechlorinasi',
+      penanggungJawab: 'Kabag Prodist',
+      jadwalPelaksanaan: 'Sesuai RKAP',
+      biaya: 100000000,
+      sumberPembiayaan: 'PUDAM',
+      statusKemajuan: 'Masih Rencana',
+      kendalaKeuangan: false,
+      kendalaTenagaKerja: false,
+      prioritas: 'PANJANG',
+    },
+  });
+  console.log('✅ Rencana Perbaikan seeded');
+
+  
+  // 7. PEMANTAUAN OPERASIONAL (Tabel 6.2)
+  // Diisi untuk kaji ulang C1 (bercabang paralel dengan Rencana Perbaikan)
+  // DAN untuk kaji ulang A1 (yang efektif, tidak perlu rencana perbaikan
+  // tapi tetap dipantau)
+  
+  await prisma.pemantauanOperasional.upsert({
+    where: { kajiUlangRisikoId: kajiUlangList[0].id }, // C1
+    update: {},
+    create: {
+      kajiUlangRisikoId: kajiUlangList[0].id,
+      batasKritis: null,
+      apaYangDimonitor: 'Percepatan Pemasangan gas chlor',
+      dimana: 'Reservoir',
+      kapan: 'Segera',
+      bagaimana: 'Penambahan secara SOP',
+      siapaYangMelakukan: 'Staff produksi',
+      siapaYangAkanMenganalisisHasilnya: 'Kasi produksi',
+      siapaYangMenerimaHasilAnalisisDanMengambilTindakan: 'Kabag prodist',
+      apaTindakanKoreksinya: 'Segera ditambah',
+      siapaYangMelakukanTindakanKoreksi: 'Kasi Produksi',
+      seberapaCepat: 'saat itu juga',
+      siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni: 'Kabag prodist',
+    },
+  });
+
+  await prisma.pemantauanOperasional.upsert({
+    where: { kajiUlangRisikoId: kajiUlangList[1].id }, // A1
+    update: {},
+    create: {
+      kajiUlangRisikoId: kajiUlangList[1].id,
+      batasKritis: null,
+      apaYangDimonitor: 'Percepatan Pemeliharaan Rumah Panel',
+      dimana: 'Sumur Pompa',
+      kapan: 'Segera',
+      bagaimana: 'Pemasangan secara SOP',
+      siapaYangMelakukan: 'Staff produksi',
+      siapaYangAkanMenganalisisHasilnya: 'Kasi produksi',
+      siapaYangMenerimaHasilAnalisisDanMengambilTindakan: 'Kabag prodist',
+      apaTindakanKoreksinya: 'Segera dipasang',
+      siapaYangMelakukanTindakanKoreksi: 'Kasi Produksi',
+      seberapaCepat: 'saat itu juga',
+      siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni: 'Kabag prodist',
+    },
+  });
+  console.log('✅ Pemantauan Operasional seeded (2 baris)');
+
   console.log('🌱 Seeding selesai!');
 }
 

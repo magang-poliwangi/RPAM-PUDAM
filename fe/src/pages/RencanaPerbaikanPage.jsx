@@ -1,10 +1,24 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import AppLayout from '../components/common/AppLayout';
-import DataTable from '../components/common/DataTable';
-import Modal from '../components/common/Modal';
-import ConfirmDialog from '../components/common/ConfirmDialog';
-import RiskLevelBadge from '../components/common/RiskLevelBadge';
-import { rencanaPerbaikanApi, kajiUlangApi } from '../api/rpamApi';
+import { useCallback, useEffect, useState } from "react";
+import InputComponent from "../components/common/InputComponent";
+import SelectField from "../components/common/SelectField";
+import useModalForm from "../hooks/useModalForm";
+import usePaginatedFetch from "../hooks/usePaginatedFetch";
+import useDebouncedSearch from "../hooks/useDebouncedSearch";
+import rencanaPerbaikanApi from "../api/rencana-perbaikan";
+import { kajiUlangRisikoApi } from "../api/kaji-ulang-risiko";
+import useConfirmDialog from "../hooks/useConfirmDialog";
+import { omitFields } from "../utils/omitFields";
+import AppLayout from "../components/common/AppLayout";
+import DataTable from "../components/common/DataTable";
+import AddButton from "../components/common/AddButton";
+import IconButton from "../components/common/IconButton";
+import Modal from "../components/common/Modal";
+import ConfirmDialog from "../components/common/ConfirmDialog";
+import Badge from "../components/common/Badge";
+import { formatRupiah } from "../utils/format-rupiah";
+import RiskLevelBadge from "../components/common/RiskLevelBadge";
+import { DeleteIcon, EditIcon } from "../components/common/icons";
+
 
 const PAGE_SIZE = 15;
 const EMPTY_FORM = {
@@ -25,70 +39,70 @@ const PRIORITAS_OPTIONS = [
   { value: 'PANJANG', label: 'Panjang' },
 ];
 const STATUS_LABEL = { BELUM_MULAI: 'Belum Mulai', SEDANG_BERJALAN: 'Sedang Berjalan', SELESAI: 'Selesai', TERTUNDA: 'Tertunda' };
-const STATUS_CLASS = {
-  BELUM_MULAI: 'bg-gray-100 text-gray-600',
-  SEDANG_BERJALAN: 'bg-blue-100 text-blue-700',
-  SELESAI: 'bg-green-100 text-green-700',
-  TERTUNDA: 'bg-yellow-100 text-yellow-700',
-};
+const STATUS_VARIANT = { BELUM_MULAI: 'gray', SEDANG_BERJALAN: 'blue', SELESAI: 'green', TERTUNDA: 'yellow' };
+const READONLY_FIELDS = ['id', 'createdAt', 'updatedAt', 'kajiUlangRisiko'];
 
 function RpForm({ form, onChange, onSubmit, onCancel, loading, mode, kuOptions }) {
+  const kuSelectOptions = kuOptions.map((ku) => ({
+    value: ku.id,
+    label: `${ku.tindakanPengendalian?.slice(0, 50)} (Skor: ${ku.skorSetelah} — ${ku.tingkatRisikoSetelah})`,
+  }));
+
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Kaji Ulang Risiko <span className="text-red-500">*</span></label>
-        <select required value={form.kajiUlangRisikoId || ''} onChange={(e) => onChange({ ...form, kajiUlangRisikoId: e.target.value })}
-          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors">
-          <option value="">-- Pilih Kaji Ulang Risiko --</option>
-          {kuOptions.map((ku) => (
-            <option key={ku.id} value={ku.id}>{ku.tindakanPengendalian?.slice(0, 50)} (Skor: {ku.skorSetelah} — {ku.tingkatRisikoSetelah})</option>
-          ))}
-        </select>
-      </div>
-      {[
-        { name: 'rencanaPerbaikan', label: 'Rencana Perbaikan', required: true },
-        { name: 'penanggungJawab', label: 'Penanggung Jawab', required: true },
-        { name: 'jadwal', label: 'Jadwal Pelaksanaan', required: true },
-        { name: 'sumberPembiayaan', label: 'Sumber Pembiayaan', required: false },
-      ].map(({ name, label, required }) => (
-        <div key={name}>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{label}{required && <span className="text-red-500 ml-1">*</span>}</label>
-          <input type="text" required={required} value={form[name] || ''} onChange={(e) => onChange({ ...form, [name]: e.target.value })}
-            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors" />
-        </div>
-      ))}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Biaya (Rp)</label>
-        <input type="number" min={0} value={form.biaya || ''} onChange={(e) => onChange({ ...form, biaya: Number(e.target.value) })}
-          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors" />
-      </div>
+      <SelectField
+        name="kajiUlangRisikoId" label="Kaji Ulang Risiko" required
+        value={form.kajiUlangRisikoId || ''}
+        onChange={(e) => onChange({ ...form, kajiUlangRisikoId: e.target.value })}
+        options={kuSelectOptions}
+      />
+      <InputComponent
+        name="rencanaPerbaikan" label="Rencana Perbaikan" required
+        value={form.rencanaPerbaikan || ''}
+        onChangeValue={(e) => onChange({ ...form, rencanaPerbaikan: e.target.value })}
+      />
+      <InputComponent
+        name="penanggungJawab" label="Penanggung Jawab" required
+        value={form.penanggungJawab || ''}
+        onChangeValue={(e) => onChange({ ...form, penanggungJawab: e.target.value })}
+      />
+      <InputComponent
+        name="jadwal" label="Jadwal Pelaksanaan" required
+        value={form.jadwal || ''}
+        onChangeValue={(e) => onChange({ ...form, jadwal: e.target.value })}
+      />
+      <InputComponent
+        name="sumberPembiayaan" label="Sumber Pembiayaan"
+        value={form.sumberPembiayaan || ''}
+        onChangeValue={(e) => onChange({ ...form, sumberPembiayaan: e.target.value })}
+      />
+      <InputComponent
+        name="biaya" label="Biaya (Rp)" type="number"
+        value={form.biaya || ''}
+        onChangeValue={(e) => onChange({ ...form, biaya: Number(e.target.value) })}
+      />
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Status Kemajuan <span className="text-red-500">*</span></label>
-          <select required value={form.statusKemajuan || ''} onChange={(e) => onChange({ ...form, statusKemajuan: e.target.value })}
-            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors">
-            <option value="">-- Status --</option>
-            {STATUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Prioritas <span className="text-red-500">*</span></label>
-          <select required value={form.prioritas || ''} onChange={(e) => onChange({ ...form, prioritas: e.target.value })}
-            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors">
-            <option value="">-- Prioritas --</option>
-            {PRIORITAS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-        </div>
+        <SelectField
+          name="statusKemajuan" label="Status Kemajuan" required placeholder="-- Status --"
+          value={form.statusKemajuan || ''}
+          onChange={(e) => onChange({ ...form, statusKemajuan: e.target.value })}
+          options={STATUS_OPTIONS}
+        />
+        <SelectField
+          name="prioritas" label="Prioritas" required placeholder="-- Prioritas --"
+          value={form.prioritas || ''}
+          onChange={(e) => onChange({ ...form, prioritas: e.target.value })}
+          options={PRIORITAS_OPTIONS}
+        />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Kendala (opsional)</label>
-        <input type="text" value={form.kendala || ''} onChange={(e) => onChange({ ...form, kendala: e.target.value })}
-          placeholder="Contoh: Keuangan, Tenaga Kerja..."
-          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors" />
-      </div>
+      <InputComponent
+        name="kendala" label="Kendala (opsional)" placeholder="Contoh: Keuangan, Tenaga Kerja..."
+        value={form.kendala || ''}
+        onChangeValue={(e) => onChange({ ...form, kendala: e.target.value })}
+      />
       <div className="flex justify-end gap-3 pt-2">
-        <button type="button" onClick={onCancel} className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Batal</button>
-        <button type="submit" disabled={loading} className="px-4 py-2 text-sm font-medium text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors disabled:opacity-50">
+        <button type="button" onClick={onCancel} className="app-button-secondary">Batal</button>
+        <button type="submit" disabled={loading} className="app-button-primary">
           {loading ? 'Menyimpan...' : mode === 'edit' ? 'Simpan Perubahan' : 'Tambah Data'}
         </button>
       </div>
@@ -97,73 +111,52 @@ function RpForm({ form, onChange, onSubmit, onCancel, loading, mode, kuOptions }
 }
 
 export default function RencanaPerbaikanPage() {
-  const [items, setItems] = useState([]);
-  const [pagination, setPagination] = useState({ page: 1, total: 0 });
-  const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false);
   const [kuOptions, setKuOptions] = useState([]);
-  const [modal, setModal] = useState({ open: false, mode: 'add', form: EMPTY_FORM });
-  const [confirm, setConfirm] = useState({ open: false, id: null });
   const [saveLoading, setSaveLoading] = useState(false);
-  const searchTimeout = useRef(null);
+  const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
 
-  const fetchData = useCallback(async (page, q, reset = false) => {
-    setLoading(true);
-    try {
-      const res = await rencanaPerbaikanApi.getAll({ page, pageSize: PAGE_SIZE, search: q });
-      const { items: newItems, pagination: pg } = res.data.data;
-      setItems((prev) => reset ? newItems : [...prev, ...newItems]);
-      setPagination({ page: pg.page, total: pg.total });
-    } catch { } finally { setLoading(false); }
-  }, []);
+  const fetchPage = useCallback(
+    ({ page, pageSize, search }) => rencanaPerbaikanApi.getAll({ page, pageSize, search }).then((res) => res.data.data),
+    []
+  );
+  const { items, loading, hasMore, loadMore, search: runSearch, refetch } = usePaginatedFetch(fetchPage, { pageSize: PAGE_SIZE });
+  const { search, handleSearchChange } = useDebouncedSearch(runSearch, 400);
+
+  const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
+    delete: (row) => rencanaPerbaikanApi.remove(row.id).then(refetch),
+  });
 
   useEffect(() => {
-    fetchData(1, '', true);
-    kajiUlangApi.getAll({ pageSize: 200 }).then((res) => setKuOptions(res.data.data.items || [])).catch(() => {});
+    kajiUlangRisikoApi.getAll({ pageSize: 200 }).then((res) => setKuOptions(res.data.data.items || [])).catch(() => { });
   }, []);
-
-  const handleSearchChange = (val) => {
-    setSearch(val);
-    clearTimeout(searchTimeout.current);
-    searchTimeout.current = setTimeout(() => { setItems([]); fetchData(1, val, true); }, 400);
-  };
-
-  const hasMore = items.length < pagination.total;
-  const handleLoadMore = () => { if (!loading && hasMore) fetchData(pagination.page + 1, search); };
-
-  const openAdd = () => setModal({ open: true, mode: 'add', form: EMPTY_FORM });
-  const openEdit = (row) => setModal({ open: true, mode: 'edit', form: { ...row } });
-  const closeModal = () => setModal({ open: false, mode: 'add', form: EMPTY_FORM });
 
   const handleSave = async (e) => {
     e.preventDefault();
     setSaveLoading(true);
     try {
-      const { id, createdAt, updatedAt, kajiUlangRisiko, ...payload } = modal.form;
-      if (modal.mode === 'edit') { await rencanaPerbaikanApi.update(id, payload); }
-      else { await rencanaPerbaikanApi.create(payload); }
-      closeModal(); setItems([]); fetchData(1, search, true);
-    } catch (err) { alert(err.response?.data?.message || 'Gagal menyimpan data'); }
-    finally { setSaveLoading(false); }
+      const payload = omitFields(modal.form, READONLY_FIELDS);
+      if (modal.mode === 'edit') {
+        await rencanaPerbaikanApi.update(modal.form.id, payload);
+      } else {
+        await rencanaPerbaikanApi.create(payload);
+      }
+      closeModal();
+      refetch();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Gagal menyimpan data');
+    } finally {
+      setSaveLoading(false);
+    }
   };
-
-  const handleDelete = async () => {
-    try {
-      await rencanaPerbaikanApi.remove(confirm.id);
-      setConfirm({ open: false, id: null }); setItems([]); fetchData(1, search, true);
-    } catch (err) { alert(err.response?.data?.message || 'Gagal menghapus data'); }
-  };
-
-  const formatRupiah = (v) => v != null ? `Rp ${Number(v).toLocaleString('id-ID')}` : '-';
 
   const columns = [
     { key: 'rencanaPerbaikan', label: 'Rencana Perbaikan', render: (v) => <span className="line-clamp-2 max-w-xs">{v}</span> },
     { key: 'penanggungJawab', label: 'PIC' },
     { key: 'jadwal', label: 'Jadwal' },
-    { key: 'statusKemajuan', label: 'Status', render: (v) => <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_CLASS[v] || 'bg-gray-100 text-gray-500'}`}>{STATUS_LABEL[v] || v}</span> },
+    { key: 'statusKemajuan', label: 'Status', render: (v) => <Badge label={STATUS_LABEL[v] || v} variant={STATUS_VARIANT[v]} /> },
     { key: 'prioritas', label: 'Prioritas', render: (v) => <span className="text-xs capitalize">{v?.toLowerCase() || '-'}</span> },
     { key: 'biaya', label: 'Biaya', render: (v) => <span className="text-xs">{formatRupiah(v)}</span> },
-    { key: 'kajiUlangRisiko', label: 'Tingkat Risiko', render: (_, row) => <RiskLevelBadge level={row.kajiUlangRisiko?.tingkatRisikoSetelah} /> },
+    { key: 'kajiUlangRisiko', label: 'Tingkat Risiko', render: (_, row) => <RiskLevelBadge level={row.tingkatRisikoDenganPengendalian} /> },
   ];
 
   return (
@@ -173,29 +166,20 @@ export default function RencanaPerbaikanPage() {
         <p className="text-sm text-gray-500 mt-0.5">Perencanaan tindakan perbaikan risiko</p>
       </div>
       <DataTable
-        columns={columns} data={items} loading={loading} hasMore={hasMore} onLoadMore={handleLoadMore}
+        columns={columns} data={items} loading={loading} hasMore={hasMore} onLoadMore={loadMore}
         search={search} onSearchChange={handleSearchChange} searchPlaceholder="Cari rencana perbaikan..." emptyMessage="Data tidak ditemukan"
-        headerExtra={
-          <button id="btn-add-rencana-perbaikan" onClick={openAdd} className="flex items-center gap-2 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-sm font-medium rounded-lg transition-colors">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-            Tambah
-          </button>
-        }
+        headerExtra={<AddButton id="btn-add-rencana-perbaikan" onClick={openAdd} />}
         actions={(row) => (
           <>
-            <button onClick={() => openEdit(row)} className="p-1.5 text-gray-400 hover:text-teal-700 hover:bg-teal-50 rounded-md transition-colors" title="Edit">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-            </button>
-            <button onClick={() => setConfirm({ open: true, id: row.id })} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title="Hapus">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-            </button>
+            <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>
+            <IconButton onClick={() => openConfirm(row)} title="Hapus" colorClass="hover:text-red-600 hover:bg-red-50"><DeleteIcon /></IconButton>
           </>
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Rencana Perbaikan' : 'Tambah Rencana Perbaikan'} size="lg">
-        <RpForm form={modal.form} onChange={(f) => setModal((m) => ({ ...m, form: f }))} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} kuOptions={kuOptions} />
+        <RpForm form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} kuOptions={kuOptions} />
       </Modal>
-      <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data rencana perbaikan ini akan dihapus." onConfirm={handleDelete} onCancel={() => setConfirm({ open: false, id: null })} />
+      <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data rencana perbaikan ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
     </AppLayout>
   );
 }

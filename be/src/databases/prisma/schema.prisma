@@ -55,7 +55,6 @@ model LokasiSpam {
   penanggungJawabTelepon String?
   penanggungJawabEmail   String?
   referensi              String?
-  deletedAt              DateTime?
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
@@ -65,23 +64,23 @@ model LokasiSpam {
 }
 
 model Authentikasi {
-  token  String @id
-  userId String
+  token     String   @id
+  userId    String
   expiresAt DateTime
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@map("authentikasi")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  password  String
-  role      Role     @default(USER)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id            String         @id @default(cuid())
+  username      String         @unique
+  password      String
+  role          Role           @default(USER)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
   auditLogs     AuditLog[]
   authentikasis Authentikasi[]
 
@@ -103,9 +102,9 @@ model AuditLog {
 
 //Tabel 3.1 Identifikasi Bahaya dan Kejadian Bahaya
 model IdentifikasiBahaya {
-  id                String     @id @default(cuid())
+  id                String           @id @default(cuid())
   lokasiSpamId      String
-  lokasiSpam        LokasiSpam @relation(fields: [lokasiSpamId], references: [id])
+  lokasiSpam        LokasiSpam       @relation(fields: [lokasiSpamId], references: [id])
   kodeRisiko        String
   komponenSpam      String
   kontaminasiX      String
@@ -113,11 +112,10 @@ model IdentifikasiBahaya {
   penyebabZ         String
   kejadianBahayaXYZ String
   tipeBahaya        String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
   deletedAt         DateTime?
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-
-  penilaianRisiko PenilaianRisiko?
+  penilaianRisiko   PenilaianRisiko?
 
   @@map("identifikasi_bahaya")
 }
@@ -129,9 +127,9 @@ model PenilaianRisiko {
   peluangKejadianBahaya Int
   dampakKeparahan       Int
   skorRisiko            Int
-  deletedAt             DateTime?
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
+  deletedAt             DateTime?
 
   kajiUlangRisiko KajiUlangRisiko?
 
@@ -151,29 +149,30 @@ model KajiUlangRisiko {
   peluangKejadianBahaya Int
   dampakKeparahan       Int
   skorRisiko            Int
-  deletedAt             DateTime?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+  deletedAt             DateTime?
 
   @@map("kaji_ulang_risiko")
 }
 
 // M5 Rencana Perbaikan
 model RencanaPerbaikan {
-  id                String                    @id @default(cuid())
-  kajiUlangRisikoId String                    @unique
-  kajiUlangRisiko   KajiUlangRisiko           @relation(fields: [kajiUlangRisikoId], references: [id])
-  rencanaPerbaikan  String
-  penanggungJawab   String
-  jadwal            String
-  biaya             Decimal
-  sumberPembiayaan  String
-  statusKemajuan    StatusKemajuan            @default(BELUM_MULAI)
-  kendala           String?
-  prioritas         PrioritasRencanaPerbaikan
-  deletedAt         DateTime?
-  createdAt         DateTime                  @default(now())
-  updatedAt         DateTime                  @updatedAt
+  id                 String                    @id @default(cuid())
+  kajiUlangRisikoId  String                    @unique
+  kajiUlangRisiko    KajiUlangRisiko           @relation(fields: [kajiUlangRisikoId], references: [id])
+  rencanaPerbaikan   String
+  penanggungJawab    String
+  jadwalPelaksanaan  String
+  biaya              Decimal
+  sumberPembiayaan   String
+  statusKemajuan     String
+  kendalaKeuangan    Boolean                   @default(false)
+  kendalaTenagaKerja Boolean                   @default(false)
+  prioritas          PrioritasRencanaPerbaikan
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  deletedAt          DateTime?
 
   @@map("rencana_perbaikan")
 }
@@ -195,10 +194,9 @@ model PemantauanOperasional {
   siapaYangMelakukanTindakanKoreksi                    String
   seberapaCepat                                        String
   siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni String
-  deletedAt                                            DateTime?
   createdAt                                            DateTime        @default(now())
   updatedAt                                            DateTime        @updatedAt
+  deletedAt                                            DateTime?
 
   @@map("pemantauan_operasional")
 }
-

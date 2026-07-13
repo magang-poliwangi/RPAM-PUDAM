@@ -31,7 +31,7 @@ export default function InputComponent({
                     name={name}
                     required={required}
                     type={type}
-                    className={`w-full text-sm text-neutral-900 bg-brand-50 border rounded-lg py-2.5 ${
+                    className={`w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors ${
                         LeftIcon ? "pl-9" : "pl-3"
                     } ${toggle ? "pr-9" : "pr-3"} placeholder:text-neutral-400 transition-colors
                     ${

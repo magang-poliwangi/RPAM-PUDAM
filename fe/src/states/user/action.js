@@ -50,16 +50,16 @@ export function asyncReceiveUser() {
     };
 }
 
-export function asyncAddUser({ username, password, role }) {
+export function asyncAddUser({ username, password }) {
     return async (dispatch) => {
-        const user = await userApi.createUser({ username, password, role });
+        const user = await userApi.createUser({ username, password });
         dispatch(addUserActionCreator(user));
     };
 }
 
-export function asyncUpdateUser({ id, username, password, role }) {
+export function asyncUpdateUser({ id, username, password }) {
     return async (dispatch) => {
-        const user = await userApi.updateUser({ id, username, password, role });
+        const user = await userApi.updateUser({ id, username, password });
         dispatch(updateUserActionCreator(user));
     };
 }
