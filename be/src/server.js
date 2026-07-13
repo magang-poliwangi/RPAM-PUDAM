@@ -7,6 +7,9 @@ import ErrorHandler from './middlewares/error-handling.js';
 import Routers from './routes.js';
 import './container.js';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './docs/swagger.js';
 
 
 const app = express();
@@ -20,7 +23,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: process.env.URLFE,
+  origin: process.env.URL_FE,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true,
 }));
@@ -32,6 +35,16 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use(express.json());
+app.use(cookieParser());
+
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customSiteTitle: 'RPAM PUDAM API Docs',
+    customCss: '.swagger-ui .topbar { display: none }',
+    swaggerOptions: { persistAuthorization: true },
+  }));
+}
+
 app.use('/api', Routers);
 app.use(ErrorHandler);
 
@@ -41,5 +54,6 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(`server run at http://${process.env.HOST}:${process.env.PORT}`);
   });
 }
+
 
 export default app;

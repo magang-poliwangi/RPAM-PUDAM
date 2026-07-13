@@ -1,9 +1,11 @@
+
 import { AuthenticationError } from '../exceptions/error.js';
 import TokenManager from '../security/token-manager.js';
 
 async function authenticateToken(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
+    console.log(authHeader);
 
     if (!authHeader?.startsWith('Bearer ')) {
       console.log('no bearer');
@@ -16,7 +18,7 @@ async function authenticateToken(req, res, next) {
 
     req.user = user;
     return next();
-  // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
   } catch (error) {
     return next(new AuthenticationError('Token tidak valid'));
   }

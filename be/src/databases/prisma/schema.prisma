@@ -63,16 +63,26 @@ model LokasiSpam {
   @@map("lokasi_spam")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  password  String
-  role      Role     @default(USER)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Authentikasi {
+  token     String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
 
-  auditLogs AuditLog[]
+  @@map("authentikasi")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  username      String         @unique
+  password      String
+  role          Role           @default(USER)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  auditLogs     AuditLog[]
+  authentikasis Authentikasi[]
 
   @@map("users")
 }
@@ -92,20 +102,20 @@ model AuditLog {
 
 //Tabel 3.1 Identifikasi Bahaya dan Kejadian Bahaya
 model IdentifikasiBahaya {
-  id                String     @id @default(cuid())
+  id                String           @id @default(cuid())
   lokasiSpamId      String
-  lokasiSpam        LokasiSpam @relation(fields: [lokasiSpamId], references: [id])
-  kodeRisiko        String     
+  lokasiSpam        LokasiSpam       @relation(fields: [lokasiSpamId], references: [id])
+  kodeRisiko        String
   komponenSpam      String
   kontaminasiX      String
   komponenSpamY     String
   penyebabZ         String
   kejadianBahayaXYZ String
   tipeBahaya        String
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-
-  penilaianRisiko PenilaianRisiko?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  deletedAt         DateTime?
+  penilaianRisiko   PenilaianRisiko?
 
   @@map("identifikasi_bahaya")
 }
@@ -115,10 +125,11 @@ model PenilaianRisiko {
   identifikasiBahayaId  String             @unique
   identifikasiBahaya    IdentifikasiBahaya @relation(fields: [identifikasiBahayaId], references: [id])
   peluangKejadianBahaya Int
-  dampakKeparahan        Int
+  dampakKeparahan       Int
   skorRisiko            Int
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
+  deletedAt             DateTime?
 
   kajiUlangRisiko KajiUlangRisiko?
 
@@ -140,6 +151,7 @@ model KajiUlangRisiko {
   skorRisiko            Int
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+  deletedAt             DateTime?
 
   @@map("kaji_ulang_risiko")
 }
@@ -160,6 +172,7 @@ model RencanaPerbaikan {
   prioritas          PrioritasRencanaPerbaikan
   createdAt          DateTime                  @default(now())
   updatedAt          DateTime                  @updatedAt
+  deletedAt          DateTime?
 
   @@map("rencana_perbaikan")
 }
@@ -183,6 +196,7 @@ model PemantauanOperasional {
   siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni String
   createdAt                                            DateTime        @default(now())
   updatedAt                                            DateTime        @updatedAt
+  deletedAt                                            DateTime?
 
   @@map("pemantauan_operasional")
 }
