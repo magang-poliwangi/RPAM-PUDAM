@@ -48,15 +48,15 @@
 @layer components {
   .app-shell { @apply min-h-screen bg-app-canvas text-app-text; }
   .app-main { @apply flex-1 overflow-auto; }
-  .app-content { @apply mx-auto max-w-screen-xl p-6; }
+  .app-content { @apply mx-auto max-w-screen p-6; }
   .app-page-header { @apply mb-6; }
   .app-page-title { @apply text-xl font-bold text-app-text; }
   .app-page-subtitle { @apply mt-0.5 text-sm text-app-text-muted; }
   .app-card { @apply overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-sm; }
   .app-input { @apply w-full rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm transition-colors focus:border-app-primary focus:outline-none focus:ring-2 focus:ring-app-primary/20; }
-  .app-button-primary { @apply inline-flex items-center justify-center gap-2 rounded-lg bg-app-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-app-primary-hover disabled:cursor-not-allowed disabled:opacity-50; }
-  .app-button-secondary { @apply rounded-lg border border-app-border bg-app-surface px-4 py-2 text-sm font-medium text-app-text transition-colors hover:bg-app-surface-muted; }
-  .app-icon-button { @apply rounded-md p-1.5 text-app-text-muted transition-colors hover:bg-app-primary-soft hover:text-app-primary; }
+  .app-button-primary { @apply inline-flex items-center cursor-pointer justify-center gap-2 rounded-lg bg-app-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-app-primary-hover disabled:cursor-not-allowed disabled:opacity-50; }
+  .app-button-secondary { @apply rounded-lg border border-app-border cursor-pointer bg-app-surface px-4 py-2 text-sm font-medium text-app-text transition-colors hover:bg-app-surface-muted; }
+  .app-icon-button { @apply rounded-md p-1.5 text-app-text-muted  transition-colors hover:bg-app-primary-soft hover:text-app-primary; }
   .app-table-head { @apply border-b border-app-border bg-app-surface-muted; }
   .app-table-row { @apply transition-colors hover:bg-app-surface-muted; }
   .app-overlay { @apply fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4; }

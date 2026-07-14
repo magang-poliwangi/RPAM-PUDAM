@@ -22,26 +22,20 @@ export default class UserService {
     }
 
     async deleteUser({ id }) {
-        const user = await this.userRepository.findUserById({ id });
-        if (!user) throw new NotFoundError("User tidak ditemukan.");
+        const user = await this.getUserById({ id });
 
         if (user.role === "ADMIN") throw new ForbiddenError("Admin tidak dapat dihapus.");
         await this.userRepository.deleteUser({ id });
     }
 
     async changeActiveUser({ id, isActive }) {
-        const user = await this.userRepository.findUserById({ id });
-        if (!user) throw new NotFoundError("User tidak ditemukan.");
+        await this.getUserById({ id });
         const result = await this.userRepository.changeActive({ id, isActive });
         return result;
     }
 
     async updateUser({ id, username, password }) {
-        const user = await this.userRepository.findUserById({ id });
-
-        if (!user) {
-            throw new NotFoundError("User tidak ditemukan.");
-        }
+        await this.getUserById({ id });
 
         if (username) {
             const existingUser = await this.userRepository.findByUsername(username);

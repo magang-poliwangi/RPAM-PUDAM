@@ -1,12 +1,9 @@
-import { useEffect, useRef, useCallback } from 'react';
-
-
 export default function DataTable({
   columns = [],
   data = [],
   loading = false,
-  hasMore = false,
-  onLoadMore,
+  pagination = { total: 0, page: 1, limit: 10, totalPages: 1 },
+  onPageChange,
   search = '',
   onSearchChange,
   searchPlaceholder = 'Cari...',
@@ -14,22 +11,31 @@ export default function DataTable({
   actions,
   headerExtra,
 }) {
-  const bottomRef = useRef(null);
+  const { total, page, limit, totalPages } = pagination;
 
-  const handleObserver = useCallback(
-    (entries) => {
-      if (entries[0].isIntersecting && hasMore && !loading) {
-        onLoadMore?.();
-      }
-    },
-    [hasMore, loading, onLoadMore]
-  );
+  const startItem = total === 0 ? 0 : (page - 1) * limit + 1;
+  const endItem = Math.min(page * limit, total);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
-    if (bottomRef.current) observer.observe(bottomRef.current);
-    return () => observer.disconnect();
-  }, [handleObserver]);
+  const handlePrev = () => {
+    if (page > 1) onPageChange?.(page - 1);
+  };
+
+  const handleNext = () => {
+    if (page < totalPages) onPageChange?.(page + 1);
+  };
+
+  // bikin daftar nomor halaman yang ditampilin (maks 5 tombol biar gak kepanjangan)
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxButtons = 5;
+    let start = Math.max(1, page - Math.floor(maxButtons / 2));
+    let end = Math.min(totalPages, start + maxButtons - 1);
+    if (end - start + 1 < maxButtons) {
+      start = Math.max(1, end - maxButtons + 1);
+    }
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -46,7 +52,7 @@ export default function DataTable({
             className="app-input w-64 pl-9 pr-4"
           />
         </div>
-        {headerExtra && <div className="flex  items-center gap-2">{headerExtra}</div>}
+        {headerExtra && <div className="flex items-center gap-2">{headerExtra}</div>}
       </div>
 
       {/* Table */}
@@ -84,7 +90,7 @@ export default function DataTable({
               ) : (
                 data.map((row, idx) => (
                   <tr key={row.id || idx} className="app-table-row">
-                    <td className="px-4 py-3 text-xs text-app-text-muted">{idx + 1}</td>
+                    <td className="px-4 py-3 text-xs text-app-text-muted">{startItem + idx}</td>
                     {columns.map((col) => (
                       <td key={col.key} className="px-4 py-3 text-app-text">
                         {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '-')}
@@ -102,9 +108,6 @@ export default function DataTable({
           </table>
         </div>
 
-        {/* Infinite scroll trigger */}
-        <div ref={bottomRef} className="h-4" />
-
         {/* Loading indicator */}
         {loading && (
           <div className="flex items-center justify-center py-4 gap-2 text-sm text-gray-400 border-t border-gray-100">
@@ -116,9 +119,47 @@ export default function DataTable({
           </div>
         )}
 
-        {!hasMore && data.length > 0 && !loading && (
-          <div className="text-center py-3 text-xs text-gray-300 border-t border-gray-100">
-            Semua data telah dimuat ({data.length} item)
+        {/* Pagination controls */}
+        {!loading && total > 0 && (
+          <div className="flex items-center justify-between gap-3 flex-wrap px-4 py-3 border-t border-gray-100">
+            <span className="text-xs text-app-text-muted">
+              Menampilkan {startItem}-{endItem} dari {total} data
+            </span>
+
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handlePrev}
+                disabled={page <= 1}
+                className="px-2.5 py-1.5 text-xs rounded-md border border-gray-200 text-app-text-muted disabled:opacity-40 disabled:cursor-not-allowed hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-colors"
+              >
+                Sebelumnya
+              </button>
+
+              {getPageNumbers().map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => onPageChange?.(p)}
+                  className={`min-w-[2rem] px-2.5 py-1.5 text-xs rounded-md border transition-colors ${
+                    p === page
+                      ? 'bg-teal-600 border-teal-600 text-white'
+                      : 'border-gray-200 text-app-text-muted hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={page >= totalPages}
+                className="px-2.5 py-1.5 text-xs rounded-md border border-gray-200 text-app-text-muted disabled:opacity-40 disabled:cursor-not-allowed hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-colors"
+              >
+                Berikutnya
+              </button>
+            </div>
           </div>
         )}
       </div>

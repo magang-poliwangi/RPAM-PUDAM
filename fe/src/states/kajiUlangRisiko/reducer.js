@@ -1,26 +1,46 @@
 import { ActionType } from "./action";
+const initialState = {
+    items: [],
+    pagination: { total: 0, page: 1, limit: 10, totalPages: 1 },
+};
 
-function kajiUlangRisikosReducer(kajiUlangRisikos = [], action = {}) {
+
+function kajiUlangRisikoReducer(state = initialState, action = {}) {
     switch (action.type) {
-        case ActionType.RECEIVE_KAJI_ULANG_RISIKOS:
-            return action.payload.kajiUlangRisikos;
+        case ActionType.RECEIVE_KAJI_ULANG_RISIKO:
+            return {
+                ...state,
+                items: action.payload.items,
+                pagination: action.payload.pagination,
+            };
 
         case ActionType.ADD_KAJI_ULANG_RISIKO:
-            return [...kajiUlangRisikos, action.payload.kajiUlangRisiko];
+            return {
+                ...state,
+                items: [action.payload.kajiUlangRisiko, ...state.items],
+                pagination: { ...state.pagination, total: state.pagination.total + 1 },
+            };
 
         case ActionType.UPDATE_KAJI_ULANG_RISIKO:
-            return kajiUlangRisikos.map((item) => (
-                item.id === action.payload.kajiUlangRisiko.id
-                    ? { ...item, ...action.payload.kajiUlangRisiko }
-                    : item
-            ));
+            return {
+                ...state,
+                items: state.items.map((item) =>
+                    item.id === action.payload.kajiUlangRisiko.id
+                        ? { ...item, ...action.payload.kajiUlangRisiko }
+                        : item
+                ),
+            };
 
         case ActionType.DELETE_KAJI_ULANG_RISIKO:
-            return kajiUlangRisikos.filter((item) => item.id !== action.payload.id);
+            return {
+                ...state,
+                items: state.items.filter((item) => item.id !== action.payload.id),
+                pagination: { ...state.pagination, total: Math.max(0, state.pagination.total - 1) },
+            };
 
         default:
-            return kajiUlangRisikos;
+            return state;
     }
 }
 
-export default kajiUlangRisikosReducer;
+export default kajiUlangRisikoReducer;

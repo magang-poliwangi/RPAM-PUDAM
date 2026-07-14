@@ -1,18 +1,19 @@
 import { kajiUlangRisikoApi } from "../../api/kaji-ulang-risiko";
+import { getPayload } from "../../utils/response";
 
 export const ActionType = {
-    RECEIVE_KAJI_ULANG_RISIKOS: "RECEIVE_KAJI_ULANG_RISIKOS",
+    RECEIVE_KAJI_ULANG_RISIKO: "RECEIVE_KAJI_ULANG_RISIKO",
     ADD_KAJI_ULANG_RISIKO: "ADD_KAJI_ULANG_RISIKO",
     UPDATE_KAJI_ULANG_RISIKO: "UPDATE_KAJI_ULANG_RISIKO",
     DELETE_KAJI_ULANG_RISIKO: "DELETE_KAJI_ULANG_RISIKO",
 };
 
-const getPayload = (response) => response?.data?.data ?? response?.data ?? response;
 
-export function receiveKajiUlangRisikosActionCreator(kajiUlangRisikos) {
+
+export function receiveKajiUlangRisikosActionCreator({ items, pagination }) {
     return {
-        type: ActionType.RECEIVE_KAJI_ULANG_RISIKOS,
-        payload: { kajiUlangRisikos },
+        type: ActionType.RECEIVE_KAJI_ULANG_RISIKO,
+        payload: { items, pagination },
     };
 }
 
@@ -37,10 +38,16 @@ export function deleteKajiUlangRisikoActionCreator(id) {
     };
 }
 
-export function asyncReceiveKajiUlangRisikos(params = {}) {
+
+export function asyncReceiveKajiUlangRisiko(params = {}) {
     return async (dispatch) => {
         const result = getPayload(await kajiUlangRisikoApi.getAll(params));
-        dispatch(receiveKajiUlangRisikosActionCreator(result.items || []));
+
+        dispatch(receiveKajiUlangRisikosActionCreator({
+            items: result.items || [],
+            pagination: result.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 },
+        }));
+
         return result;
     };
 }

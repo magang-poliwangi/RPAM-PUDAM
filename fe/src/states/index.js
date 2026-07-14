@@ -5,6 +5,10 @@ import usersReducer from './user/reducer';
 import isPreloadReducer from './isPreload/reducer';
 import kajiUlangRisikosReducer from './kajiUlangRisiko/reducer';
 import rencanaPerbaikansReducer from './rencanaPerbaikan/reducer';
+import pemantauanOperasionalReducer from './pemantauanOperasional/reducer';
+import identifikasiDanKejadianBahayaReducer from './indentifikasiDanKejadianBahaya/reducer';
+import penilaianRisikoReducer from './penilaianRisiko/reducer';
+import lokasiSpamReducer from './lokasiSpam/reducer';
 
 const store = configureStore({
   reducer: {
@@ -12,9 +16,13 @@ const store = configureStore({
     error: errorReducer,
     users: usersReducer,
     isPreload : isPreloadReducer,
-    kajiUlangRisikos: kajiUlangRisikosReducer,
-    rencanaPerbaikans: rencanaPerbaikansReducer,
-  },
+    lokasiSpam: lokasiSpamReducer,
+    identifikasiDanKejadianBahaya:identifikasiDanKejadianBahayaReducer,
+    penilaianRisiko:penilaianRisikoReducer,
+    kajiUlangRisiko: kajiUlangRisikosReducer,
+    rencanaPerbaikan: rencanaPerbaikansReducer,
+    pemantauanOperasional:pemantauanOperasionalReducer,
+  }
 });
 
 export default store;

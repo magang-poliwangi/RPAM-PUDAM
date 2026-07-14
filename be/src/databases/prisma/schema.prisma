@@ -45,8 +45,8 @@ enum AksiAuditLog {
 }
 
 model LokasiSpam {
-  id                     String   @id @default(cuid())
-  kodeLokasi             String   @unique
+  id                     String                          @id @default(cuid())
+  kodeLokasi             String                          @unique
   simbol                 String?
   namaLokasi             String?
   deskripsi              String?
@@ -55,10 +55,10 @@ model LokasiSpam {
   penanggungJawabTelepon String?
   penanggungJawabEmail   String?
   referensi              String?
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
-
-  identifikasiBahaya IdentifikasiBahaya[]
+  createdAt              DateTime                        @default(now())
+  updatedAt              DateTime                        @updatedAt
+  deletedAt              DateTime?
+  identifikasiBahaya     IdentifikasiDanKejadianBahaya[]
 
   @@map("lokasi_spam")
 }
@@ -101,7 +101,7 @@ model AuditLog {
 }
 
 //Tabel 3.1 Identifikasi Bahaya dan Kejadian Bahaya
-model IdentifikasiBahaya {
+model IdentifikasiDanKejadianBahaya {
   id                String           @id @default(cuid())
   lokasiSpamId      String
   lokasiSpam        LokasiSpam       @relation(fields: [lokasiSpamId], references: [id])
@@ -117,18 +117,18 @@ model IdentifikasiBahaya {
   deletedAt         DateTime?
   penilaianRisiko   PenilaianRisiko?
 
-  @@map("identifikasi_bahaya")
+  @@map("identifikasi_dan_kejadian_bahaya")
 }
 
 model PenilaianRisiko {
-  id                    String             @id @default(cuid())
-  identifikasiBahayaId  String             @unique
-  identifikasiBahaya    IdentifikasiBahaya @relation(fields: [identifikasiBahayaId], references: [id])
+  id                    String                        @id @default(cuid())
+  identifikasiBahayaId  String                        @unique
+  identifikasiBahaya    IdentifikasiDanKejadianBahaya @relation(fields: [identifikasiBahayaId], references: [id])
   peluangKejadianBahaya Int
   dampakKeparahan       Int
   skorRisiko            Int
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  createdAt             DateTime                      @default(now())
+  updatedAt             DateTime                      @updatedAt
   deletedAt             DateTime?
 
   kajiUlangRisiko KajiUlangRisiko?

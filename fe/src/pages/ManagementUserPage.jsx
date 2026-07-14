@@ -7,7 +7,6 @@ import ConfirmDialog from '../components/common/ConfirmDialog';
 import Badge from '../components/common/Badge';
 import IconButton from '../components/common/IconButton';
 import AddButton from '../components/common/AddButton';
-import InputComponent from '../components/common/InputComponent';
 import { EditIcon, DeleteIcon, ActivateIcon, DeactivateIcon } from '../components/common/icons';
 import useModalForm from '../hooks/useModalForm';
 import useConfirmDialog from '../hooks/useConfirmDialog';
@@ -20,39 +19,16 @@ import {
   asyncDeleteUser,
 } from '../states/user/action';
 import { formatTime } from '../utils/format-time';
+import ManagementUserFormComponent from '../components/managementUser/ManagementUserFormComponent';
 
-const EMPTY_FORM = { username: '', password: '', role: 'USER' };
+const EMPTY_FORM = { username: '', password: '' };
 const CONFIRM_CONFIG = {
   delete: { title: 'Hapus User?', message: 'User ini akan dihapus secara permanen.', label: 'Hapus', danger: true },
   activate: { title: 'Aktifkan User?', message: 'User ini akan diaktifkan kembali.', label: 'Aktifkan', danger: false },
   deactivate: { title: 'Nonaktifkan User?', message: 'User ini tidak akan bisa login sampai diaktifkan kembali.', label: 'Nonaktifkan', danger: true },
 };
 
-function UserForm({ form, onChange, onSubmit, onCancel, loading, mode }) {
-  return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <InputComponent
-      placeholder='Isi username....'
-        name="username" label="Username" required
-        value={form.username || ''}
-        onChangeValue={(e) => onChange({ ...form, username: e.target.value })}
-      />
-   
-        <InputComponent
-        placeholder='Isi password...'
-          name="password" label="Password" type="password" required = {mode === "add"}
-          value={form.password || ''}
-          onChangeValue={(e) => onChange({ ...form, password: e.target.value })}
-        />
-      <div className="flex justify-end gap-3 pt-2">
-        <button type="button" onClick={onCancel} className="app-button-secondary cursor-pointer">Batal</button>
-        <button type="submit" disabled={loading} className="app-button-primary cursor-pointer">
-          {loading ? 'Menyimpan...' : mode === 'edit' ? 'Simpan Perubahan' : 'Tambah User'}
-        </button>
-      </div>
-    </form>
-  );
-}
+
 
 export default function ManagementUserPage() {
   const dispatch = useDispatch();
@@ -69,6 +45,7 @@ export default function ManagementUserPage() {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     dispatch(asyncReceiveUser()).catch(() => {}).finally(() => setLoading(false));
   }, [dispatch]);
@@ -124,7 +101,7 @@ export default function ManagementUserPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit User' : 'Tambah User'}>
-        <UserForm form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
+        <ManagementUserFormComponent form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
       </Modal>
       <ConfirmDialog
         open={confirm.open}

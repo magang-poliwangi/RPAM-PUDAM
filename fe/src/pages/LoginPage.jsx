@@ -9,7 +9,7 @@ import InputComponent from "../components/common/InputComponent";
 import useForm from "../hooks/useForm";
 import { asyncSetAuthUser } from "../states/authUser/action";
 import { setErrorActionCreator, unsetErrorActionCreator } from "../states/error/action";
-import { responseError } from "../utils/response-error";
+import { responseError } from "../utils/response";
 
 
 export default function LoginPage() {
@@ -90,3 +90,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

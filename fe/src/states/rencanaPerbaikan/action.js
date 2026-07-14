@@ -1,18 +1,18 @@
 import rencanaPerbaikanApi from "../../api/rencana-perbaikan";
+import { getPayload } from "../../utils/response";
 
 export const ActionType = {
-    RECEIVE_RENCANA_PERBAIKANS: "RECEIVE_RENCANA_PERBAIKANS",
+    RECEIVE_RENCANA_PERBAIKAN: "RECEIVE_RENCANA_PERBAIKAN",
     ADD_RENCANA_PERBAIKAN: "ADD_RENCANA_PERBAIKAN",
     UPDATE_RENCANA_PERBAIKAN: "UPDATE_RENCANA_PERBAIKAN",
     DELETE_RENCANA_PERBAIKAN: "DELETE_RENCANA_PERBAIKAN",
 };
 
-const getPayload = (response) => response?.data?.data ?? response?.data ?? response;
 
-export function receiveRencanaPerbaikansActionCreator(rencanaPerbaikans) {
+export function receiveRencanaPerbaikansActionCreator({ items, pagination }) {
     return {
-        type: ActionType.RECEIVE_RENCANA_PERBAIKANS,
-        payload: { rencanaPerbaikans },
+        type: ActionType.RECEIVE_RENCANA_PERBAIKAN,
+        payload: { items, pagination },
     };
 }
 
@@ -37,10 +37,13 @@ export function deleteRencanaPerbaikanActionCreator(id) {
     };
 }
 
-export function asyncReceiveRencanaPerbaikans(params = {}) {
+export function asyncReceiveRencanaPerbaikan(params = {}) {
     return async (dispatch) => {
         const result = getPayload(await rencanaPerbaikanApi.getAll(params));
-        dispatch(receiveRencanaPerbaikansActionCreator(result.items || []));
+        dispatch(receiveRencanaPerbaikansActionCreator({
+            items: result.items || [],
+            pagination: result.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 },
+        }));
         return result;
     };
 }

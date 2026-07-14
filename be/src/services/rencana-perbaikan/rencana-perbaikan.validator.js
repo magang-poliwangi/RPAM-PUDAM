@@ -13,7 +13,7 @@ export const rencanaPerbaikanPayloadValidatorPost = Joi.object({
         'any.required': 'Penanggung jawab wajib diisi',
         'string.empty': 'Penanggung jawab tidak boleh kosong',
     }),
-    jadwal: Joi.string().required().messages({
+    jadwalPelaksanaan: Joi.string().required().messages({
         'any.required': 'Jadwal wajib diisi',
         'string.empty': 'Jadwal tidak boleh kosong',
     }),
@@ -28,7 +28,8 @@ export const rencanaPerbaikanPayloadValidatorPost = Joi.object({
             'any.required': 'Status kemajuan wajib diisi',
             'any.only': 'Status kemajuan harus salah satu dari: BELUM_MULAI, SEDANG_BERJALAN, SELESAI, TERTUNDA',
         }),
-    kendala: Joi.string().allow('', null).optional(),
+    kendalaKeuangan: Joi.boolean(),
+    kendalaTenagaKerja: Joi.boolean(),
     prioritas: Joi.string().valid('PENDEK', 'MENENGAH', 'PANJANG').required().messages({
         'any.required': 'Prioritas wajib diisi',
         'any.only': 'Prioritas harus salah satu dari: PENDEK, MENENGAH, PANJANG',

@@ -24,10 +24,6 @@ function StatCard({ label, value, icon, color = 'teal' }) {
 
 export default function DashboardPage() {
    const { users = [] } = useSelector((states) => states);
-
-
-
-
   return (
     <AppLayout>
       <div className="mb-6">
