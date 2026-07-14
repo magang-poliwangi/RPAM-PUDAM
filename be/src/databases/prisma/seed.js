@@ -62,12 +62,12 @@ const bahayaList = [];
 for (const b of bahayaData) {
   const { lokasi, ...rest } = b;
 
-  let bahaya = await prisma.identifikasiBahaya.findFirst({
+  let bahaya = await prisma.identifikasiDanKejadianBahaya.findFirst({
     where: { kodeRisiko: rest.kodeRisiko, lokasiSpamId: lokasi.id },
   });
 
   if (!bahaya) {
-    bahaya = await prisma.identifikasiBahaya.create({
+    bahaya = await prisma.identifikasiDanKejadianBahaya.create({
       data: { ...rest, lokasiSpamId: lokasi.id },
     });
   }

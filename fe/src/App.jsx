@@ -6,10 +6,15 @@ import LoginPage from "./pages/LoginPage";
 import KajiUlangPage from "./pages/KajiUlangRisikoPage";
 import RencanaPerbaikanPage from "./pages/RencanaPerbaikanPage";
 import ManagementUserPage from "./pages/ManagementUserPage";
+import PemantauanOperasionalPage from "./pages/PemantauanOperasionalPage";
+import IdentifikasiDanKejadianBahayaPage from "./pages/IdentifikasiDanKejadianBahayaPage";
+import PenilaianRisikoPage from "./pages/PenilaianRisikoPage";
+import LokasiSpamPage from "./pages/LokasiSpamPage";
 
 function App() {
-  const { authUser, isPreload } = useSelector((state) => state);
-  const dispatch = useDispatch();
+const authUser = useSelector((state) => state.authUser);
+const isPreload = useSelector((state) => state.isPreload); 
+ const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(asyncPreloadProcess());
@@ -30,11 +35,16 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/lokasi-spam" element={<LokasiSpamPage />} />
+      <Route path="/identifikasi-dan-kejadian-bahaya" element={<IdentifikasiDanKejadianBahayaPage />} />
+      <Route path="/penilaian-risiko" element={<PenilaianRisikoPage />} />
       <Route path="/kaji-ulang" element={<KajiUlangPage />} />
       <Route path="/rencana-perbaikan" element={<RencanaPerbaikanPage />} />
+      <Route path="/pemantauan-operasional" element={<PemantauanOperasionalPage />} />
+      
       {authUser.role === "ADMIN" && <Route path="/management-user" element={<ManagementUserPage />} />}
-      <Route path="/" element={<Navigate to="/kaji-ulang" replace />} />
-      <Route path="*" element={<Navigate to="/kaji-ulang" replace />} />
+      <Route path="/" element={<Navigate to="/identifikasi-dan-kejadian-bahaya" replace />} />
+      <Route path="*" element={<Navigate to="/identifikasi-dan-kejadian-bahaya" replace />} />
     </Routes>
   );
 }

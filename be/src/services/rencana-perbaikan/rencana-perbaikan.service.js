@@ -1,5 +1,7 @@
+import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
-import { getPaginationQuery, hitungTingkatRisiko } from '../../utils/score-calculator.js';
+import { getPaginationQuery } from '../../utils/pagination.js';
+import { hitungTingkatRisiko } from '../../utils/score-calculator.js';
 
 export default class RencanaPerbaikanService {
     constructor({ rencanaPerbaikanRepository }) {
@@ -13,6 +15,7 @@ export default class RencanaPerbaikanService {
         if (existing && !existing.deletedAt) {
             throw new ConflictError('Rencana Perbaikan untuk Kaji Ulang ini sudah ada');
         }
+        data.id = `rencana-perbaikan-${nanoid()}`;
 
         const m5 = await this.rencanaPerbaikanRepository.create({ data });
 

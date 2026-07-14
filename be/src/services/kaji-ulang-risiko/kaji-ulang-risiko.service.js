@@ -1,5 +1,7 @@
+import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
-import { hitungSkorRisiko, hitungTingkatRisiko, getPaginationQuery } from '../../utils/score-calculator.js';
+import { getPaginationQuery } from '../../utils/pagination.js';
+import { hitungSkorRisiko, hitungTingkatRisiko } from '../../utils/score-calculator.js';
 
 export default class KajiUlangRisikoService {
     constructor({ kajiUlangRisikoRepository }) {
@@ -15,7 +17,7 @@ export default class KajiUlangRisikoService {
         }
 
         data.skorRisiko = hitungSkorRisiko(data.peluangKejadianBahaya, data.dampakKeparahan);
-
+        data.id = `kaji-ulang-risiko-${nanoid()}`;
         const kaji = await this.kajiUlangRisikoRepository.create({ data });
 
         return {
