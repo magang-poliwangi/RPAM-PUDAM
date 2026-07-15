@@ -75,6 +75,7 @@ export default function IdentifikasiDanKejadianBahayaPage() {
                 }
                 closeModal();
             } catch (err) {
+                console.error('ERROR ASLI:', err);
                 alert(err.response?.data?.message || 'Gagal menyimpan data');
             } finally {
                 setSaveLoading(false);
@@ -84,11 +85,11 @@ export default function IdentifikasiDanKejadianBahayaPage() {
     );
 
     const columns = [
-        {
-            key: 'lokasiSpam',
-            label: 'Kode Lokasi',
-            render: (v) => v.kodeLokasi,
-        },
+    {
+        key: 'lokasiSpam',
+        label: 'Kode Lokasi',
+        render: (v) => v?.kodeLokasi ?? '-',
+    },
         { key: 'kodeRisiko', label: 'Kode Risiko' },
         { key: 'komponenSpam', label: 'Komponen SPAM' },
         { key: 'kontaminasiX', label: 'Kontaminasi atau Sesuatu yang Berpotensi Buruk Terhadap Kualitas Air (X)' },

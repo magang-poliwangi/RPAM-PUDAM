@@ -5,7 +5,7 @@ const initialState = {
 };
 
 function penilaianRisikoReducer(state = initialState, action = {}) {
-       switch (action.type) {
+    switch (action.type) {
         case ActionType.RECEIVE_PENILAIAN_RISIKO:
             return {
                 ...state,
@@ -16,7 +16,7 @@ function penilaianRisikoReducer(state = initialState, action = {}) {
         case ActionType.ADD_PENILAIAN_RISIKO:
             return {
                 ...state,
-                items: [action.payload.kajiUlangRisiko, ...state.items],
+                items: [action.payload.penilaianrisiko, ...state.items],
                 pagination: { ...state.pagination, total: state.pagination.total + 1 },
             };
 
@@ -24,8 +24,8 @@ function penilaianRisikoReducer(state = initialState, action = {}) {
             return {
                 ...state,
                 items: state.items.map((item) =>
-                    item.id === action.payload.kajiUlangRisiko.id
-                        ? { ...item, ...action.payload.kajiUlangRisiko }
+                    item.id === action.payload.penilaianrisiko.id
+                        ? { ...item, ...action.payload.penilaianrisiko }
                         : item
                 ),
             };
@@ -40,7 +40,6 @@ function penilaianRisikoReducer(state = initialState, action = {}) {
         default:
             return state;
     }
-
 }
 
 export default penilaianRisikoReducer;
