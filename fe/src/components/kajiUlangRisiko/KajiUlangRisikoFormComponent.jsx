@@ -7,19 +7,27 @@ const VALIDASI_OPTIONS = [
   { value: 'TIDAK_EFEKTIF', label: 'Tidak Efektif' },
   { value: 'TIDAK_PASTI', label: 'Tidak Pasti' },
 ];
-export default function KajiUlangRisikoFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, penilaianRisiko }) {
-  const penilaianRisikoOptions = (penilaianRisiko?.items || []).map((item) => ({
-    value: item.id,
-    label: item.id,
-  }));
+export default function KajiUlangRisikoFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, penilaianRisiko, usedPenilaianRisikoIds = [] }) {
+  const penilaianRisikoOptions = (penilaianRisiko?.items || [])
+    .filter(item => mode === 'edit' || !usedPenilaianRisikoIds.includes(item.id))
+    .map((item) => {
+      const identifikasi = item.identifikasiDanKejadianBahaya;
+      const labelText = identifikasi 
+        ? `${identifikasi.kodeRisiko} — ${identifikasi.kejadianBahayaXYZ} (Skor: ${item.skorRisiko} [${item.tingkatRisiko}])`
+        : `ID: ${item.id} — Skor: ${item.skorRisiko}`;
+      return {
+        value: item.id,
+        label: labelText,
+      };
+    });
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       {mode === 'edit' ? (
         <div className="px-3 py-2 bg-gray-50 rounded-lg text-sm">
           <span className="text-gray-500">Penilaian Risiko: </span>
           <span className="font-medium text-gray-900">
-            {form.penilaianRisiko
-              ? `Skor ${form.penilaianRisiko.skorRisiko} — ${form.penilaianRisiko.tingkatRisiko}`
+            {form.penilaianRisiko?.identifikasiDanKejadianBahaya
+              ? `${form.penilaianRisiko.identifikasiDanKejadianBahaya.kodeRisiko} — ${form.penilaianRisiko.identifikasiDanKejadianBahaya.kejadianBahayaXYZ} (Skor: ${form.penilaianRisiko.skorRisiko} [${form.penilaianRisiko.tingkatRisiko}])`
               : form.penilaianRisikoId}
           </span>
         </div>

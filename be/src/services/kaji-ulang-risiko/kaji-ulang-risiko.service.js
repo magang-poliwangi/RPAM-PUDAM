@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
@@ -12,13 +13,45 @@ export default class KajiUlangRisikoService {
         const existing = await this.kajiUlangRisikoRepository.findByPenilaianRisikoId({
             penilaianRisikoId: data.penilaianRisikoId,
         });
-        if (existing && !existing.deletedAt) {
-            throw new ConflictError('Kaji Ulang Risiko untuk Penilaian ini sudah ada');
+        if (existing) {
+            if (!existing.deletedAt) {
+                throw new ConflictError('Kaji Ulang Risiko untuk Penilaian ini sudah ada');
+            }
+
+            const dbData = {
+                tindakanPengendalian: data.tindakanPengendalian,
+                referensi: data.referensi || '',
+                validasi: data.validasi,
+                peluangKejadianBahaya: data.peluangSetelah,
+                dampakKeparahan: data.dampakSetelah,
+                skorRisiko: hitungSkorRisiko(data.peluangSetelah, data.dampakSetelah),
+                deletedAt: null,
+            };
+
+            const kaji = await this.kajiUlangRisikoRepository.update({
+                id: existing.id,
+                data: dbData,
+            });
+
+            return {
+                ...kaji,
+                skorSetelah: kaji.skorRisiko,
+                tingkatRisikoSetelah: hitungTingkatRisiko(kaji.skorRisiko),
+            };
         }
 
-        data.skorRisiko = hitungSkorRisiko(data.peluangKejadianBahaya, data.dampakKeparahan);
-        data.id = `kaji-ulang-risiko-${nanoid()}`;
-        const kaji = await this.kajiUlangRisikoRepository.create({ data });
+        const dbData = {
+            id: `kaji-ulang-risiko-${nanoid()}`,
+            penilaianRisikoId: data.penilaianRisikoId,
+            tindakanPengendalian: data.tindakanPengendalian,
+            referensi: data.referensi || '',
+            validasi: data.validasi,
+            peluangKejadianBahaya: data.peluangSetelah,
+            dampakKeparahan: data.dampakSetelah,
+            skorRisiko: hitungSkorRisiko(data.peluangSetelah, data.dampakSetelah),
+        };
+
+        const kaji = await this.kajiUlangRisikoRepository.create({ data: dbData });
 
         return {
             ...kaji,
@@ -76,9 +109,21 @@ export default class KajiUlangRisikoService {
         const existing = await this.kajiUlangRisikoRepository.findById({ id });
         if (!existing) throw new NotFoundError('Data tidak ditemukan');
 
-        data.skorRisiko = hitungSkorRisiko(data.peluangKejadianBahaya, data.dampakKeparahan);
+        const dbData = {};
+        if (data.penilaianRisikoId !== undefined) dbData.penilaianRisikoId = data.penilaianRisikoId;
+        if (data.tindakanPengendalian !== undefined) dbData.tindakanPengendalian = data.tindakanPengendalian;
+        if (data.referensi !== undefined) dbData.referensi = data.referensi || '';
+        if (data.validasi !== undefined) dbData.validasi = data.validasi;
+        
+        const peluang = data.peluangSetelah !== undefined ? data.peluangSetelah : existing.peluangKejadianBahaya;
+        const dampak = data.dampakSetelah !== undefined ? data.dampakSetelah : existing.dampakKeparahan;
+        
+        if (data.peluangSetelah !== undefined) dbData.peluangKejadianBahaya = data.peluangSetelah;
+        if (data.dampakSetelah !== undefined) dbData.dampakKeparahan = data.dampakSetelah;
+        
+        dbData.skorRisiko = hitungSkorRisiko(peluang, dampak);
 
-        const updated = await this.kajiUlangRisikoRepository.update({ id, data });
+        const updated = await this.kajiUlangRisikoRepository.update({ id, data: dbData });
 
         return {
             ...updated,
