@@ -1,101 +1,127 @@
 import InputComponent from "../common/InputComponent";
+import SelectField from "../common/SelectField";
 
-const FORM_FIELDS = [
-  {
-    name: "lokasiSpamId",
-    label: "Lokasi SPAM",
-    placeholder: "Pilih lokasi SPAM",
-    required: true,
-  },
-  {
-    name: "kodeRisiko",
-    label: "Kode Risiko",
-    placeholder: "Masukkan kode risiko",
-    required: true,
-  },
-  {
-    name: "komponenSpam",
-    label: "Komponen SPAM",
-    placeholder: "Masukkan komponen SPAM",
-    required: true,
-  },
-  {
-    name: "kontaminasiX",
-    label: "Kontaminasi (X)",
-    placeholder: "Masukkan kontaminasi (X)",
-    required: true,
-  },
-  {
-    name: "komponenSpamY",
-    label: "Komponen SPAM (Y)",
-    placeholder: "Masukkan komponen SPAM (Y)",
-    required: true,
-  },
-  {
-    name: "penyebabZ",
-    label: "Penyebab (Z)",
-    placeholder: "Masukkan penyebab (Z)",
-    required: true,
-  },
-  {
-    name: "kejadianBahayaXYZ",
-    label: "Kejadian Bahaya (XYZ)",
-    placeholder: "Masukkan kejadian bahaya (XYZ)",
-    required: true,
-  },
-  {
-    name: "tipeBahaya",
-    label: "Tipe Bahaya",
-    placeholder: "Masukkan tipe bahaya",
-    required: true,
-  },
-];
+export default function IdentifikasiDanKejadianBahayaFormComponent({ form, lokasiSpam, onChange, onSubmit, onCancel, loading, mode }) {
 
-export default function IdentifikasiDanKejadianBahayaFormComponent({ form, onChange, onSubmit, onCancel, loading, mode }) {
-    const handleChange = (e) => {
-        onChange({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
-    };
+  
+  const lokasiSpamOptions = (lokasiSpam?.items || []).map((item) => ({
+    value: item.id,
+    label: item.namaLokasi,
+  }));
 
-    return (
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+  const handleChange = (e) => {
+    onChange({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-            {FORM_FIELDS.map((field) => (
-                <InputComponent
-                    key={field.name}
-                    label={field.label}
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    required={field.required}
-                    value={form[field.name] || ""}
-                    onChangeValue={handleChange}
-                />
-            ))}
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col gap-4">
 
-            <div className="flex justify-end gap-3 pt-2">
-                <button
-                    type="button"
-                    onClick={onCancel}
-                    className="app-button-secondary cursor-pointer"
-                >
-                    Batal
-                </button>
+      {mode === 'edit' ? (
+        <div className="px-3 py-2 bg-gray-50 rounded-lg text-sm">
+          <span className="text-gray-500">Penilaian Risiko: </span>
+          <span className="font-medium text-gray-900">
+            {form.penilaianRisiko
+              ? `Skor ${form.penilaianRisiko.skorRisiko} — ${form.penilaianRisiko.tingkatRisiko}`
+              : form.penilaianRisikoId}
+          </span>
+        </div>
+      ) : (
+          <SelectField
+          name="lokasiSpamId" label="Lokasi SPAM" required
+          value={form.lokasiSpamId || ''}
+          onChange={(e) => onChange({ ...form, lokasiSpamId: e.target.value })}
+          options={lokasiSpamOptions}
+        />
+      )}
 
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="app-button-primary cursor-pointer"
-                >
-                    {loading
-                        ? "Menyimpan..."
-                        : mode === "edit"
-                            ? "Simpan Perubahan"
-                            : "Tambah Data"}
-                </button>
-            </div>
+      <InputComponent
+        label="Kode Risiko"
+        name="kodeRisiko"
+        placeholder="Masukkan kode risiko"
+        required
+        value={form.kodeRisiko || ""}
+        onChangeValue={handleChange}
+      />
 
-        </form>
-    );
+      <InputComponent
+        label="Komponen SPAM"
+        name="komponenSpam"
+        placeholder="Masukkan komponen SPAM"
+        required
+        value={form.komponenSpam || ""}
+        onChangeValue={handleChange}
+      />
+
+      <InputComponent
+        label="Kontaminasi (X)"
+        name="kontaminasiX"
+        placeholder="Masukkan kontaminasi (X)"
+        required
+        value={form.kontaminasiX || ""}
+        onChangeValue={handleChange}
+      />
+
+      <InputComponent
+        label="Komponen SPAM (Y)"
+        name="komponenSpamY"
+        placeholder="Masukkan komponen SPAM (Y)"
+        required
+        value={form.komponenSpamY || ""}
+        onChangeValue={handleChange}
+      />
+
+      <InputComponent
+        label="Penyebab (Z)"
+        name="penyebabZ"
+        placeholder="Masukkan penyebab (Z)"
+        required
+        value={form.penyebabZ || ""}
+        onChangeValue={handleChange}
+      />
+
+      <InputComponent
+        label="Kejadian Bahaya (XYZ)"
+        name="kejadianBahayaXYZ"
+        placeholder="Masukkan kejadian bahaya (XYZ)"
+        required
+        value={form.kejadianBahayaXYZ || ""}
+        onChangeValue={handleChange}
+      />
+
+      <InputComponent
+        label="Tipe Bahaya"
+        name="tipeBahaya"
+        placeholder="Masukkan tipe bahaya"
+        required
+        value={form.tipeBahaya || ""}
+        onChangeValue={handleChange}
+      />
+
+      <div className="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="app-button-secondary cursor-pointer"
+        >
+          Batal
+        </button>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="app-button-primary cursor-pointer"
+        >
+          {loading
+            ? "Menyimpan..."
+            : mode === "edit"
+              ? "Simpan Perubahan"
+              : "Tambah Data"}
+        </button>
+      </div>
+
+    </form>
+  );
 }

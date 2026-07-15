@@ -7,12 +7,11 @@ const VALIDASI_OPTIONS = [
   { value: 'TIDAK_EFEKTIF', label: 'Tidak Efektif' },
   { value: 'TIDAK_PASTI', label: 'Tidak Pasti' },
 ];
-export default function KajiUlangRisikoFormComponent({ form, onChange,  onSubmit, onCancel, loading, mode, prOptions }) {
-  const prSelectOptions = prOptions.map((pr) => ({
-    value: pr.id,
-    label: `Skor ${pr.skorRisiko} — ${pr.tingkatRisiko} (${pr.identifikasiBahaya?.kodeRisiko || pr.identifikasiBahayaId})`,
+export default function KajiUlangRisikoFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, penilaianRisiko }) {
+  const penilaianRisikoOptions = (penilaianRisiko?.items || []).map((item) => ({
+    value: item.id,
+    label: item.id,
   }));
-
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       {mode === 'edit' ? (
@@ -29,7 +28,7 @@ export default function KajiUlangRisikoFormComponent({ form, onChange,  onSubmit
           name="penilaianRisikoId" label="Penilaian Risiko" required
           value={form.penilaianRisikoId || ''}
           onChange={(e) => onChange({ ...form, penilaianRisikoId: e.target.value })}
-          options={prSelectOptions}
+          options={penilaianRisikoOptions}
         />
       )}
       <InputComponent

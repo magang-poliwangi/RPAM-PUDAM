@@ -14,6 +14,7 @@ import PenilaianRisikoFormComponent from "../components/penilaianRisiko/Penilaia
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
 import useConfirmDialog from "../hooks/useConfirmDialog";
+import { asyncReceiveIdentifikasiDanKejadianBahaya } from "../states/indentifikasiDanKejadianBahaya/action";
 
 
 const EMPTY_FORM = { identifikasiBahayaId: '', peluangKejadianBahaya: '', dampakKeparahan: '' };
@@ -24,6 +25,10 @@ export default function PenilaianRisikoPage() {
   const dispatch = useDispatch();
   const { items, pagination } = useSelector(
     (state) => state.penilaianRisiko || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
+  );
+
+    const identifikasiDanKejadianBahayaState = useSelector(
+    (state) => state.identifikasiDanKejadianBahaya
   );
 
   const [search, setSearch] = useState('');
@@ -39,6 +44,9 @@ export default function PenilaianRisikoPage() {
   useEffect(() => {
     setLoading(true);
     dispatch(asyncReceivePenilaianRisiko({ page, limit: 10, search }))
+      .catch(() => { })
+      .finally(() => setLoading(false));
+    dispatch(asyncReceiveIdentifikasiDanKejadianBahaya())
       .catch(() => { })
       .finally(() => setLoading(false));
   }, [dispatch, page, search]);
@@ -70,7 +78,7 @@ export default function PenilaianRisikoPage() {
   );
 
   const columns = [
-    { key: 'identifikasiBahaya', label: 'Kode Risiko', render: (_, row) => <span className="font-mono text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded">{row.identifikasiBahaya?.kodeRisiko || row.identifikasiBahayaId}</span> },
+    { key: 'identifikasiDanKejadianBahaya', label: 'Kode Risiko', render: (_, row) => <span className="font-mono text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded">{row.identifikasiDanKejadianBahaya?.kodeRisiko || row.identifikasiBahayaId}</span> },
     { key: 'peluangKejadianBahaya', label: 'Peluang Kejadian Bahaya' },
     { key: 'dampakKeparahan', label: 'Dampak Keparahan' },
     { key: 'skorRisiko', label: 'Skor Risiko', render: (v) => <span className="font-semibold text-gray-900">{v}</span> },
@@ -102,7 +110,7 @@ export default function PenilaianRisikoPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Penilaian Risiko' : 'Tambah Penilaian Risiko'}>
-        <PenilaianRisikoFormComponent form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
+        <PenilaianRisikoFormComponent identifikasiDanKejadianBahaya={identifikasiDanKejadianBahayaState} form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
       </Modal>
       <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data penilaian risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
     </AppLayout>

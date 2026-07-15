@@ -19,6 +19,7 @@ import {
   asyncUpdateKajiUlangRisiko,
 } from '../states/kajiUlangRisiko/action';
 import KajiUlangRisikoFormComponent from '../components/kajiUlangRisiko/KajiUlangRisikoFormComponent';
+import { asyncReceivePenilaianRisiko } from '../states/penilaianRisiko/action';
 
 const EMPTY_FORM = { penilaianRisikoId: '', tindakanPengendalian: '', referensi: '', validasi: '', peluangSetelah: '', dampakSetelah: '' };
 
@@ -32,6 +33,10 @@ export default function KajiUlangRisikoPage() {
   const { items, pagination } = useSelector(
     (state) => state.kajiUlangRisiko || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
   );
+  const penilaianRisikoState = useSelector(
+    (state) => state.penilaianRisiko
+  );
+
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -48,6 +53,9 @@ export default function KajiUlangRisikoPage() {
     dispatch(asyncReceiveKajiUlangRisiko({ page, limit: 10, search }))
       .catch(() => { })
       .finally(() => setLoading(false));
+       dispatch(asyncReceivePenilaianRisiko())
+            .catch(() => { })
+            .finally(() => setLoading(false));
   }, [dispatch, page, search]);
 
   const handleSearchChange = useCallback((value) => {
@@ -111,9 +119,9 @@ export default function KajiUlangRisikoPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Kaji Ulang Risiko' : 'Tambah Kaji Ulang Risiko'}>
-        <KajiUlangRisikoFormComponent form={modal.form} onChange={setForm} mode={modal.mode} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} prOptions={[]} />
+        <KajiUlangRisikoFormComponent penilaianRisiko={penilaianRisikoState} form={modal.form} onChange={setForm} mode={modal.mode} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} prOptions={[]} />
       </Modal>
-      <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
+      <ConfirmDialog open={confirm.open}  title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
     </AppLayout>
   );
 }

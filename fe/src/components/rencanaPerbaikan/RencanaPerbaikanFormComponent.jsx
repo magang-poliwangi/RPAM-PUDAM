@@ -13,20 +13,33 @@ const PRIORITAS_OPTIONS = [
 ];
 
 
-export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, kuOptions }) {
-  // const kuSelectOptions = kuOptions.map((ku) => ({
-  //   value: ku.id,
-  //   label: `${ku.tindakanPengendalian?.slice(0, 50)} (Skor: ${ku.skorSetelah} — ${ku.tingkatRisikoSetelah})`,
-  // }));
+export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, kajiUlangRisiko }) {
+  console.log(kajiUlangRisiko);
+
+  const kajiUlangRisikoOptions = (kajiUlangRisiko?.items || []).map((item) => ({
+    value: item.id,
+    label: item.id,
+  }));
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      {/* <SelectField
-        name="kajiUlangRisikoId" label="Kaji Ulang Risiko" required
-        value={form.kajiUlangRisikoId || ''}
-        onChange={(e) => onChange({ ...form, kajiUlangRisikoId: e.target.value })}
-        options={kuSelectOptions}
-      /> */}
+      {mode === 'edit' ? (
+        <div className="px-3 py-2 bg-gray-50 rounded-lg text-sm">
+          <span className="text-gray-500">Penilaian Risiko: </span>
+          <span className="font-medium text-gray-900">
+            {form.penilaianRisiko
+              ? `Skor ${form.penilaianRisiko.skorRisiko} — ${form.penilaianRisiko.tingkatRisiko}`
+              : form.penilaianRisikoId}
+          </span>
+        </div>
+      ) : (
+        <SelectField
+          name="penilaianRisikoId" label="Data Identifikasi Dan Kejadian Bahaya" required
+          value={form.penilaianRisikoId || ''}
+          onChange={(e) => onChange({ ...form, penilaianRisikoId: e.target.value })}
+          options={kajiUlangRisikoOptions}
+        />
+      )}
       <InputComponent
         name="rencanaPerbaikan" label="Rencana Perbaikan" required
         value={form.rencanaPerbaikan || ''}

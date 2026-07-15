@@ -10,7 +10,7 @@ const includeRelasi = {
             penilaianRisiko: {
                 select: {
                     id: true,
-                    identifikasiBahaya: {
+                    identifikasiDanKejadianBahaya: {
                         select: {
                             kodeRisiko: true,
                             kejadianBahayaXYZ: true,
@@ -86,7 +86,7 @@ export default class PemantauanOperasionalRepository {
                 validasi: true,
                 penilaianRisiko: {
                     select: {
-                        identifikasiBahaya: {
+                        identifikasiDanKejadianBahaya: {
                             select: {
                                 kodeRisiko: true,
                                 kejadianBahayaXYZ: true,

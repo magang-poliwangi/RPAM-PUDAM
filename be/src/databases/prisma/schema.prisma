@@ -58,7 +58,7 @@ model LokasiSpam {
   createdAt              DateTime                        @default(now())
   updatedAt              DateTime                        @updatedAt
   deletedAt              DateTime?
-  identifikasiBahaya     IdentifikasiDanKejadianBahaya[]
+  identifikasiDanKejadianBahaya     IdentifikasiDanKejadianBahaya[]
 
   @@map("lokasi_spam")
 }
@@ -122,8 +122,8 @@ model IdentifikasiDanKejadianBahaya {
 
 model PenilaianRisiko {
   id                    String                        @id @default(cuid())
-  identifikasiBahayaId  String                        @unique
-  identifikasiBahaya    IdentifikasiDanKejadianBahaya @relation(fields: [identifikasiBahayaId], references: [id])
+  identifikasiDanKejadianBahayaId  String                        @unique
+  identifikasiDanKejadianBahaya    IdentifikasiDanKejadianBahaya @relation(fields: [identifikasiDanKejadianBahayaId], references: [id])
   peluangKejadianBahaya Int
   dampakKeparahan       Int
   skorRisiko            Int

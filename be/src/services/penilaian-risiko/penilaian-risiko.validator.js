@@ -1,6 +1,6 @@
 import Joi from 'joi';
 export const penilaianRisikoPayloadValidatorPost = Joi.object({
-    identifikasiBahayaId: Joi.string().required().messages({
+    identifikasiDanKejadianBahayaId: Joi.string().required().messages({
         'any.required': 'ID identifikasi bahaya wajib diisi',
         'string.empty': 'ID identifikasi bahaya tidak boleh kosong',
     }),
