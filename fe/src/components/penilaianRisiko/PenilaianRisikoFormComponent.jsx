@@ -2,17 +2,31 @@ import InputComponent from "../common/InputComponent";
 import RiskLevelBadge from "../common/RiskLevelBadge";
 import SelectField from "../common/SelectField";
 
-export default function PenilaianRisikoFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, ibOptions }) {
-    // const ibSelectOptions = ibOptions.map((ib) => ({ value: ib.id, label: `${ib.kodeRisiko} — ${ib.kejadianBahayaXYZ}` }));
+export default function PenilaianRisikoFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, identifikasiDanKejadianBahaya }) {
+    const identifikasiDanKejadianBahayaOptions = (identifikasiDanKejadianBahaya?.items || []).map((item) => ({
+        value: item.id,
+        label: item.id,
+    }));
 
     return (
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
-            {/* <SelectField
-                name="identifikasiBahayaId" label="Identifikasi Bahaya" required
-                value={form.identifikasiBahayaId || ''}
-                onChange={(e) => onChange({ ...form, identifikasiBahayaId: e.target.value })}
-                // options={ibSelectOptions}
-            /> */}
+            {mode === 'edit' ? (
+                <div className="px-3 py-2 bg-gray-50 rounded-lg text-sm">
+                    <span className="text-gray-500">Penilaian Risiko: </span>
+                    <span className="font-medium text-gray-900">
+                        {form.penilaianRisiko
+                            ? `Skor ${form.penilaianRisiko.skorRisiko} — ${form.penilaianRisiko.tingkatRisiko}`
+                            : form.penilaianRisikoId}
+                    </span>
+                </div>
+            ) : (
+                <SelectField
+                    name="penilaianRisikoId" label="Data Identifikasi Dan Kejadian Bahaya" required
+                    value={form.identifikasiDanKejadianBahayaId || ''}
+                    onChange={(e) => onChange({ ...form, identifikasiDanKejadianBahayaId: e.target.value })}
+                    options={identifikasiDanKejadianBahayaOptions}
+                />
+            )}
             <InputComponent
                 name="peluangKejadianBahaya" label="Peluang (1-5)" type="number" required
                 value={form.peluangKejadianBahaya || ''}

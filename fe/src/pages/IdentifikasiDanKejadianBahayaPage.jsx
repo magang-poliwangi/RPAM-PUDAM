@@ -12,6 +12,7 @@ import useConfirmDialog from "../hooks/useConfirmDialog";
 import { asyncAddIdentifikasiDanKejadianBahaya, asyncDeleteIdentifikasiDanKejadianBahaya, asyncReceiveIdentifikasiDanKejadianBahaya, asyncUpdateIdentifikasiDanKejadianBahaya } from "../states/indentifikasiDanKejadianBahaya/action";
 import { omitFields } from "../utils/omit-fields";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
+import { asyncReceiveLokasiSpam } from "../states/lokasiSpam/action";
 
 const EMPTY_FORM = {
     lokasiSpamId: "",
@@ -31,6 +32,9 @@ export default function IdentifikasiDanKejadianBahayaPage() {
     const { items, pagination } = useSelector(
         (state) => state.identifikasiDanKejadianBahaya || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
     );
+    const lokasiSpamState = useSelector(
+        (state) => state.lokasiSpam
+    );
     
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
@@ -46,6 +50,9 @@ export default function IdentifikasiDanKejadianBahayaPage() {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
         dispatch(asyncReceiveIdentifikasiDanKejadianBahaya({ page, limit: 10, search }))
+            .catch(() => { })
+            .finally(() => setLoading(false));
+        dispatch(asyncReceiveLokasiSpam())
             .catch(() => { })
             .finally(() => setLoading(false));
     }, [dispatch, page, search]);
@@ -115,8 +122,9 @@ export default function IdentifikasiDanKejadianBahayaPage() {
                     </>
                 )}
             />
-            <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Kaji Ulang Risiko' : 'Tambah Kaji Ulang Risiko'}>
-                <IdentifikasiDanKejadianBahayaFormComponent form={modal.form} onChange={setForm} mode={modal.mode} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} prOptions={[]} />
+            <Modal 
+                open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Kaji Ulang Risiko' : 'Tambah Kaji Ulang Risiko'}>
+                <IdentifikasiDanKejadianBahayaFormComponent lokasiSpam={lokasiSpamState} form={modal.form} onChange={setForm} mode={modal.mode} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} prOptions={[]} />
             </Modal>
             <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
         </AppLayout>

@@ -17,7 +17,7 @@ export default class KajiUlangRisikoRepository {
             skip,
             take,
             orderBy,
-            include: { penilaianRisiko: { include: { identifikasiBahaya: true } } },
+            include: { penilaianRisiko: { include: { identifikasiDanKejadianBahaya: { include: { lokasiSpam: true } } } } },
         });
     }
 
@@ -28,7 +28,7 @@ export default class KajiUlangRisikoRepository {
     async findById({ id }) {
         return prisma.kajiUlangRisiko.findFirst({
             where: { id, deletedAt: null },
-            include: { penilaianRisiko: { include: { identifikasiBahaya: true } } },
+            include: { penilaianRisiko: { include: { identifikasiDanKejadianBahaya: true } } },
         });
     }
 

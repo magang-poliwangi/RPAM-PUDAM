@@ -2,18 +2,21 @@
 import { prisma } from '../../databases/client.js';
 
 const includeRelasi = {
-    identifikasiBahaya: { include: { lokasiSpam: true } },
+    identifikasiDanKejadianBahaya: { include: { lokasiSpam: true } },
 };
 
 export default class PenilaianRisikoRepository {
-    async findByIdentifikasiBahayaId({ identifikasiBahayaId }) {
+    async findByIdentifikasiDanKejadianBahayaId({ identifikasiDanKejadianBahayaId }) {
         return prisma.penilaianRisiko.findFirst({
-            where: { identifikasiBahayaId, deletedAt: null },
+            where: { identifikasiDanKejadianBahayaId, deletedAt: null },
         });
     }
 
     async create({ data }) {
-        return prisma.penilaianRisiko.create({ data });
+        return prisma.penilaianRisiko.create({
+            data,
+            include: includeRelasi,
+        });
     }
 
     async findAll({ where, skip, take, orderBy }) {

@@ -15,6 +15,7 @@ import { DeleteIcon, EditIcon } from "../components/common/icons";
 import RencanaPerbaikanFormComponent from "../components/rencanaPerbaikan/RencanaPerbaikanFormComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { asyncAddRencanaPerbaikan, asyncDeleteRencanaPerbaikan, asyncReceiveRencanaPerbaikan } from "../states/rencanaPerbaikan/action";
+import { asyncReceiveKajiUlangRisiko } from "../states/kajiUlangRisiko/action";
 
 const EMPTY_FORM = {
   kajiUlangRisikoId: '', rencanaPerbaikan: '', penanggungJawab: '',
@@ -33,6 +34,9 @@ export default function RencanaPerbaikanPage() {
   const { items, pagination } = useSelector(
     (state) => state.rencanaPerbaikan || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
   );
+  const kajiUlangRisikoState = useSelector(
+    (state) => state.kajiUlangRisiko
+  );
 
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,6 +54,10 @@ export default function RencanaPerbaikanPage() {
       .catch(() => { })
       .finally(() => setLoading(false));
   }, [dispatch, page, search]);
+  
+  dispatch(asyncReceiveKajiUlangRisiko())
+    .catch(() => { })
+    .finally(() => setLoading(false));
 
   const handleSearchChange = useCallback((value) => {
     setSearch(value);
@@ -97,7 +105,7 @@ export default function RencanaPerbaikanPage() {
         <h1 className="text-xl font-bold text-gray-900">Rencana Perbaikan</h1>
         <p className="text-sm text-gray-500 mt-0.5">Perencanaan tindakan perbaikan risiko</p>
       </div>
-       <DataTable
+      <DataTable
         columns={columns}
         data={items}
         loading={loading}
@@ -116,7 +124,7 @@ export default function RencanaPerbaikanPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Rencana Perbaikan' : 'Tambah Rencana Perbaikan'} size="lg">
-        <RencanaPerbaikanFormComponent form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
+        <RencanaPerbaikanFormComponent kajiUlangRisiko={kajiUlangRisikoState} form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
       </Modal>
       <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data rencana perbaikan ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
     </AppLayout>

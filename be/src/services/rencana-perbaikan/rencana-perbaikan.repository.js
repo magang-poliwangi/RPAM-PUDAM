@@ -21,7 +21,7 @@ export default class RencanaPerbaikanRepository {
                 kajiUlangRisiko: {
                     include: {
                         penilaianRisiko: {
-                            include: { identifikasiBahaya: true },
+                            include: { identifikasiDanKejadianBahaya: true },
                         },
                     },
                 },
@@ -40,7 +40,7 @@ export default class RencanaPerbaikanRepository {
                 kajiUlangRisiko: {
                     include: {
                         penilaianRisiko: {
-                            include: { identifikasiBahaya: true },
+                            include: { identifikasiDanKejadianBahaya: true },
                         },
                     },
                 },

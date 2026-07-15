@@ -90,10 +90,10 @@ console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
   const penilaianList = [];
   for (const p of penilaianData) {
     const penilaian = await prisma.penilaianRisiko.upsert({
-      where: { identifikasiBahayaId: p.bahaya.id },
+      where: { identifikasiDanKejadianBahayaId: p.bahaya.id },
       update: {},
       create: {
-        identifikasiBahayaId: p.bahaya.id,
+        identifikasiDanKejadianBahayaId: p.bahaya.id,
         peluangKejadianBahaya: p.peluang,
         dampakKeparahan: p.dampak,
         skorRisiko: hitungSkor(p.peluang, p.dampak),

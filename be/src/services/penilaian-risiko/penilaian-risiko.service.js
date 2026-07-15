@@ -10,11 +10,10 @@ export default class PenilaianRisikoService {
     }
 
     async create({ data, userId }) {
-        const { identifikasiBahayaId, peluangKejadianBahaya, dampakKeparahan } = data;
+        const { identifikasiDanKejadianBahayaId, peluangKejadianBahaya, dampakKeparahan } = data;
 
-        // relasi 1-ke-1 (@unique di schema) - cek dulu biar errornya jelas
-        const existing = await this.penilaianRisikoRepository.findByIdentifikasiBahayaId({
-            identifikasiBahayaId,
+        const existing = await this.penilaianRisikoRepository.findByIdentifikasiDanKejadianBahayaId({
+            identifikasiDanKejadianBahayaId,
         });
         if (existing) {
             throw new ConflictError('Identifikasi bahaya ini sudah punya penilaian risiko');
@@ -36,12 +35,12 @@ export default class PenilaianRisikoService {
 
         const where = { deletedAt: null };
         if (req.query.search) {
-            where.identifikasiBahaya = {
+            where.identifikasiDanKejadianBahaya = {
                 kodeRisiko: { contains: req.query.search, mode: 'insensitive' },
             };
         }
-        if (req.query.identifikasiBahayaId) {
-            where.identifikasiBahayaId = req.query.identifikasiBahayaId;
+        if (req.query.identifikasiDanKejadianBahayaId) {
+            where.identifikasiDanKejadianBahayaId = req.query.identifikasiDanKejadianBahayaId;
         }
 
         const [data, total] = await Promise.all([
