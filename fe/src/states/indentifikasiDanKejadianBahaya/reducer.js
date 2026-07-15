@@ -16,7 +16,7 @@ function identifikasiDanKejadianBahayaReducer(state = initialState, action = {})
         case ActionType.ADD_IDENTIFIKASI_DAN_KEJADIAN_BAHAYA:
             return {
                 ...state,
-                items: [action.payload.kajiUlangRisiko, ...state.items],
+                items: [action.payload.identifikasiDanKejadianBahaya, ...state.items],
                 pagination: { ...state.pagination, total: state.pagination.total + 1 },
             };
 
@@ -24,8 +24,8 @@ function identifikasiDanKejadianBahayaReducer(state = initialState, action = {})
             return {
                 ...state,
                 items: state.items.map((item) =>
-                    item.id === action.payload.kajiUlangRisiko.id
-                        ? { ...item, ...action.payload.kajiUlangRisiko }
+                    item.id === action.payload.identifikasiDanKejadianBahaya.id
+                        ? { ...item, ...action.payload.identifikasiDanKejadianBahaya }
                         : item
                 ),
             };
