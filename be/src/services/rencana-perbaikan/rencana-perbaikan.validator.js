@@ -13,11 +13,13 @@ export const rencanaPerbaikanPayloadValidatorPost = Joi.object({
         'any.required': 'Penanggung jawab wajib diisi',
         'string.empty': 'Penanggung jawab tidak boleh kosong',
     }),
-    jadwalPelaksanaan: Joi.string().required().messages({
-        'any.required': 'Jadwal wajib diisi',
+    jadwalPelaksanaan: Joi.string().optional().messages({
         'string.empty': 'Jadwal tidak boleh kosong',
     }),
-    biaya: Joi.number().min(0).allow(null).optional().messages({
+    jadwal: Joi.string().optional().messages({
+        'string.empty': 'Jadwal tidak boleh kosong',
+    }),
+    biaya: Joi.number().min(0).allow(null, '').optional().messages({
         'number.min': 'Biaya tidak boleh negatif',
     }),
     sumberPembiayaan: Joi.string().allow('', null).optional(),
@@ -28,8 +30,9 @@ export const rencanaPerbaikanPayloadValidatorPost = Joi.object({
             'any.required': 'Status kemajuan wajib diisi',
             'any.only': 'Status kemajuan harus salah satu dari: BELUM_MULAI, SEDANG_BERJALAN, SELESAI, TERTUNDA',
         }),
-    kendalaKeuangan: Joi.boolean(),
-    kendalaTenagaKerja: Joi.boolean(),
+    kendala: Joi.string().allow('', null).optional(),
+    kendalaKeuangan: Joi.boolean().optional(),
+    kendalaTenagaKerja: Joi.boolean().optional(),
     prioritas: Joi.string().valid('PENDEK', 'MENENGAH', 'PANJANG').required().messages({
         'any.required': 'Prioritas wajib diisi',
         'any.only': 'Prioritas harus salah satu dari: PENDEK, MENENGAH, PANJANG',
@@ -46,10 +49,13 @@ export const rencanaPerbaikanPayloadValidatorPut = Joi.object({
     penanggungJawab: Joi.string().optional().messages({
         'string.empty': 'Penanggung jawab tidak boleh kosong',
     }),
+    jadwalPelaksanaan: Joi.string().optional().messages({
+        'string.empty': 'Jadwal tidak boleh kosong',
+    }),
     jadwal: Joi.string().optional().messages({
         'string.empty': 'Jadwal tidak boleh kosong',
     }),
-    biaya: Joi.number().min(0).allow(null).optional().messages({
+    biaya: Joi.number().min(0).allow(null, '').optional().messages({
         'number.min': 'Biaya tidak boleh negatif',
     }),
     sumberPembiayaan: Joi.string().allow('', null).optional(),
@@ -60,6 +66,8 @@ export const rencanaPerbaikanPayloadValidatorPut = Joi.object({
             'any.only': 'Status kemajuan harus salah satu dari: BELUM_MULAI, SEDANG_BERJALAN, SELESAI, TERTUNDA',
         }),
     kendala: Joi.string().allow('', null).optional(),
+    kendalaKeuangan: Joi.boolean().optional(),
+    kendalaTenagaKerja: Joi.boolean().optional(),
     prioritas: Joi.string().valid('PENDEK', 'MENENGAH', 'PANJANG').optional().messages({
         'any.only': 'Prioritas harus salah satu dari: PENDEK, MENENGAH, PANJANG',
     }),

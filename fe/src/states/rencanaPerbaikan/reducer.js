@@ -16,7 +16,7 @@ function rencanaPerbaikanReducer(state = initialState, action = {}) {
         case ActionType.ADD_RENCANA_PERBAIKAN:
             return {
                 ...state,
-                items: [action.payload.kajiUlangRisiko, ...state.items],
+                items: [action.payload.rencanaPerbaikan, ...state.items],
                 pagination: { ...state.pagination, total: state.pagination.total + 1 },
             };
 
@@ -24,8 +24,8 @@ function rencanaPerbaikanReducer(state = initialState, action = {}) {
             return {
                 ...state,
                 items: state.items.map((item) =>
-                    item.id === action.payload.kajiUlangRisiko.id
-                        ? { ...item, ...action.payload.kajiUlangRisiko }
+                    item.id === action.payload.rencanaPerbaikan.id
+                        ? { ...item, ...action.payload.rencanaPerbaikan }
                         : item
                 ),
             };

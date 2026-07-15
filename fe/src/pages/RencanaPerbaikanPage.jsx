@@ -14,7 +14,7 @@ import { formatRupiah } from "../utils/format-rupiah";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
 import RencanaPerbaikanFormComponent from "../components/rencanaPerbaikan/RencanaPerbaikanFormComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { asyncAddRencanaPerbaikan, asyncDeleteRencanaPerbaikan, asyncReceiveRencanaPerbaikan } from "../states/rencanaPerbaikan/action";
+import { asyncAddRencanaPerbaikan, asyncDeleteRencanaPerbaikan, asyncReceiveRencanaPerbaikan, asyncUpdateRencanaPerbaikan } from "../states/rencanaPerbaikan/action";
 import { asyncReceiveKajiUlangRisiko } from "../states/kajiUlangRisiko/action";
 
 const EMPTY_FORM = {
@@ -50,14 +50,13 @@ export default function RencanaPerbaikanPage() {
 
   useEffect(() => {
     setLoading(true);
-    dispatch(asyncReceiveRencanaPerbaikan({ page, limit: 10, search }))
+    Promise.all([
+      dispatch(asyncReceiveRencanaPerbaikan({ page, limit: 10, search })),
+      dispatch(asyncReceiveKajiUlangRisiko({ limit: 1000 }))
+    ])
       .catch(() => { })
       .finally(() => setLoading(false));
   }, [dispatch, page, search]);
-  
-  dispatch(asyncReceiveKajiUlangRisiko())
-    .catch(() => { })
-    .finally(() => setLoading(false));
 
   const handleSearchChange = useCallback((value) => {
     setSearch(value);
@@ -73,7 +72,7 @@ export default function RencanaPerbaikanPage() {
       try {
         const payload = omitFields(modal.form, READONLY_FIELDS);
         if (modal.mode === 'edit') {
-          await dispatch(asyncReceiveRencanaPerbaikan({ id: modal.form.id, payload }));
+          await dispatch(asyncUpdateRencanaPerbaikan({ id: modal.form.id, payload }));
         } else {
           await dispatch(asyncAddRencanaPerbaikan(payload));
         }
@@ -124,7 +123,16 @@ export default function RencanaPerbaikanPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Rencana Perbaikan' : 'Tambah Rencana Perbaikan'} size="lg">
-        <RencanaPerbaikanFormComponent kajiUlangRisiko={kajiUlangRisikoState} form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
+        <RencanaPerbaikanFormComponent 
+          kajiUlangRisiko={kajiUlangRisikoState} 
+          usedKajiUlangRisikoIds={items.map(rp => rp.kajiUlangRisikoId)}
+          form={modal.form} 
+          onChange={setForm} 
+          onSubmit={handleSave} 
+          onCancel={closeModal} 
+          loading={saveLoading} 
+          mode={modal.mode} 
+        />
       </Modal>
       <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data rencana perbaikan ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
     </AppLayout>

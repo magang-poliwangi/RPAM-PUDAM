@@ -53,7 +53,7 @@ export default function KajiUlangRisikoPage() {
     dispatch(asyncReceiveKajiUlangRisiko({ page, limit: 10, search }))
       .catch(() => { })
       .finally(() => setLoading(false));
-       dispatch(asyncReceivePenilaianRisiko())
+       dispatch(asyncReceivePenilaianRisiko({ limit: 1000 }))
             .catch(() => { })
             .finally(() => setLoading(false));
   }, [dispatch, page, search]);
@@ -119,7 +119,16 @@ export default function KajiUlangRisikoPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Kaji Ulang Risiko' : 'Tambah Kaji Ulang Risiko'}>
-        <KajiUlangRisikoFormComponent penilaianRisiko={penilaianRisikoState} form={modal.form} onChange={setForm} mode={modal.mode} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} prOptions={[]} />
+        <KajiUlangRisikoFormComponent 
+          penilaianRisiko={penilaianRisikoState} 
+          usedPenilaianRisikoIds={items.map(k => k.penilaianRisikoId)}
+          form={modal.form} 
+          onChange={setForm} 
+          mode={modal.mode} 
+          onSubmit={handleSave} 
+          onCancel={closeModal} 
+          loading={saveLoading} 
+        />
       </Modal>
       <ConfirmDialog open={confirm.open}  title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
     </AppLayout>
