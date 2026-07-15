@@ -1,89 +1,19 @@
 import InputComponent from "../common/InputComponent";
+import SelectField from "../common/SelectField";
 
-const FORM_FIELDS = [
-    {
-        name: "kajiUlangRisikoId",
-        label: "Kaji Ulang Risiko",
-        placeholder: "Masukkan ID Kaji Ulang Risiko",
-        required: true,
-    },
-    {
-        name: "batasKritis",
-        label: "Batas Kritis",
-        placeholder: "Masukkan batas kritis",
-        required: false,
-    },
-    {
-        name: "apaYangDimonitor",
-        label: "Apa yang Dimonitor",
-        placeholder: "Masukkan apa yang dimonitor",
-        required: true,
-    },
-    {
-        name: "dimana",
-        label: "Dimana",
-        placeholder: "Masukkan lokasi",
-        required: true,
-    },
-    {
-        name: "kapan",
-        label: "Kapan",
-        placeholder: "Masukkan waktu pemantauan",
-        required: true,
-    },
-    {
-        name: "bagaimana",
-        label: "Bagaimana",
-        placeholder: "Masukkan cara pemantauan",
-        required: true,
-    },
-    {
-        name: "siapaYangMelakukan",
-        label: "Siapa yang Melakukan",
-        placeholder: "Masukkan penanggung jawab",
-        required: true,
-    },
-    {
-        name: "siapaYangAkanMenganalisisHasilnya",
-        label: "Siapa yang Akan Menganalisis Hasilnya",
-        placeholder: "Masukkan nama",
-        required: true,
-    },
-    {
-        name: "siapaYangMenerimaHasilAnalisisDanMengambilTindakan",
-        label: "Siapa yang Menerima Hasil Analisis dan Mengambil Tindakan",
-        placeholder: "Masukkan nama",
-        required: true,
-    },
-    {
-        name: "apaTindakanKoreksinya",
-        label: "Apa Tindakan Koreksinya",
-        placeholder: "Masukkan tindakan koreksi",
-        required: true,
-    },
-    {
-        name: "siapaYangMelakukanTindakanKoreksi",
-        label: "Siapa yang Melakukan Tindakan Koreksi",
-        placeholder: "Masukkan nama",
-        required: true,
-    },
-    {
-        name: "seberapaCepat",
-        label: "Seberapa Cepat",
-        placeholder: "Masukkan waktu penyelesaian",
-        required: true,
-    },
-    {
-        name: "siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni",
-        label: "Siapa yang Wajib Menerima Laporan",
-        placeholder: "Masukkan nama",
-        required: true,
-    },
-];
-
-
-
-export default function PemantauanOperasionalFormComponent({ form, onChange, onSubmit, onCancel, loading, mode }) {
+export default function PemantauanOperasionalFormComponent({
+    form,
+    onChange,
+    onSubmit,
+    onCancel,
+    loading,
+    mode,
+    kajiUlangRisiko
+}) {
+    const kajiUlangRisikoOptions = (kajiUlangRisiko?.items || []).map((item) => ({
+        value: item.id,
+        label: item.id,
+    }));
     const handleChange = (e) => {
         onChange({
             ...form,
@@ -94,17 +24,130 @@ export default function PemantauanOperasionalFormComponent({ form, onChange, onS
     return (
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
 
-            {FORM_FIELDS.map((field) => (
-                <InputComponent
-                    key={field.name}
-                    label={field.label}
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    required={field.required}
-                    value={form[field.name] || ""}
-                    onChangeValue={handleChange}
+            {mode === 'edit' ? (
+                <div className="px-3 py-2 bg-gray-50 rounded-lg text-sm">
+                    <span className="text-gray-500">Penilaian Risiko: </span>
+                    <span className="font-medium text-gray-900">
+                        {form.penilaianRisiko
+                            ? `Skor ${form.penilaianRisiko.skorRisiko} — ${form.penilaianRisiko.tingkatRisiko}`
+                            : form.penilaianRisikoId}
+                    </span>
+                </div>
+            ) : (
+                <SelectField
+                    name="penilaianRisikoId" label="Data Identifikasi Dan Kejadian Bahaya" required
+                    value={form.penilaianRisikoId || ''}
+                    onChange={(e) => onChange({ ...form, penilaianRisikoId: e.target.value })}
+                    options={kajiUlangRisikoOptions}
                 />
-            ))}
+            )}
+
+            <InputComponent
+                label="Batas Kritis"
+                name="batasKritis"
+                placeholder="Masukkan batas kritis"
+                value={form.batasKritis || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Apa yang Dimonitor"
+                name="apaYangDimonitor"
+                placeholder="Masukkan apa yang dimonitor"
+                required
+                value={form.apaYangDimonitor || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Dimana"
+                name="dimana"
+                placeholder="Masukkan lokasi"
+                required
+                value={form.dimana || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Kapan"
+                name="kapan"
+                placeholder="Masukkan waktu pemantauan"
+                required
+                value={form.kapan || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Bagaimana"
+                name="bagaimana"
+                placeholder="Masukkan cara pemantauan"
+                required
+                value={form.bagaimana || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Siapa yang Melakukan"
+                name="siapaYangMelakukan"
+                placeholder="Masukkan penanggung jawab"
+                required
+                value={form.siapaYangMelakukan || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Siapa yang Akan Menganalisis Hasilnya"
+                name="siapaYangAkanMenganalisisHasilnya"
+                placeholder="Masukkan nama"
+                required
+                value={form.siapaYangAkanMenganalisisHasilnya || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Siapa yang Menerima Hasil Analisis dan Mengambil Tindakan"
+                name="siapaYangMenerimaHasilAnalisisDanMengambilTindakan"
+                placeholder="Masukkan nama"
+                required
+                value={form.siapaYangMenerimaHasilAnalisisDanMengambilTindakan || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Apa Tindakan Koreksinya"
+                name="apaTindakanKoreksinya"
+                placeholder="Masukkan tindakan koreksi"
+                required
+                value={form.apaTindakanKoreksinya || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Siapa yang Melakukan Tindakan Koreksi"
+                name="siapaYangMelakukanTindakanKoreksi"
+                placeholder="Masukkan nama"
+                required
+                value={form.siapaYangMelakukanTindakanKoreksi || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Seberapa Cepat"
+                name="seberapaCepat"
+                placeholder="Masukkan waktu penyelesaian"
+                required
+                value={form.seberapaCepat || ""}
+                onChangeValue={handleChange}
+            />
+
+            <InputComponent
+                label="Siapa yang Wajib Menerima Laporan"
+                name="siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni"
+                placeholder="Masukkan nama"
+                required
+                value={form.siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni || ""}
+                onChangeValue={handleChange}
+            />
 
             <div className="flex justify-end gap-3 pt-2">
                 <button
