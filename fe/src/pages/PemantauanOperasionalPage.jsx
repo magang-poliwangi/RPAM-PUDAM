@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import useConfirmDialog from "../hooks/useConfirmDialog";
 import useModalForm from "../hooks/useModalForm";
+import { asyncReceiveKajiUlangRisiko } from "../states/kajiUlangRisiko/action";
 
 const EMPTY_FORM = {
     kajiUlangRisikoId: "",
@@ -39,6 +40,9 @@ export default function PemantauanOperasionalPage() {
     const { items, pagination } = useSelector(
         (state) => state.pemantauanOperasional || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
     );
+    const kajiUlangRisikoState = useSelector(
+        (state) => state.kajiUlangRisiko
+    );
 
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
@@ -53,6 +57,9 @@ export default function PemantauanOperasionalPage() {
     useEffect(() => {
         setLoading(true);
         dispatch(asyncReceivePemantauanOperasional({ page, limit: 10, search }))
+            .catch(() => { })
+            .finally(() => setLoading(false));
+        dispatch(asyncReceiveKajiUlangRisiko())
             .catch(() => { })
             .finally(() => setLoading(false));
     }, [dispatch, page, search]);
@@ -142,6 +149,7 @@ export default function PemantauanOperasionalPage() {
                     onCancel={closeModal}
                     loading={saveLoading}
                     mode={modal.mode}
+                    kajiUlangRisiko={kajiUlangRisikoState}
                 />
             </Modal>
             <ConfirmDialog
