@@ -2,7 +2,8 @@
 import { nanoid } from 'nanoid';
 import { NotFoundError, ConflictError, InvariantError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
-
+import { catatAuditLog } from '../../utils/audit-log.helper.js';
+const NAMA_TABEL = 'pemantauan_operasional';
 const searchableFields = [
   'apaYangDimonitor',
   'dimana',
@@ -13,9 +14,10 @@ const searchableFields = [
 ];
 
 export default class PemantauanOperasionalService {
-  constructor({ pemantauanOperasionalRepository, kajiUlangRisikoRepository }) {
+  constructor({ pemantauanOperasionalRepository, kajiUlangRisikoRepository, auditLogRepository }) {
     this.pemantauanOperasionalRepository = pemantauanOperasionalRepository;
     this.kajiUlangRisikoRepository = kajiUlangRisikoRepository;
+    this.auditLogRepository = auditLogRepository;
   }
 
   async _ensureKajiUlangRisikoTersedia(kajiUlangRisikoId, excludeId = null) {
@@ -36,7 +38,17 @@ export default class PemantauanOperasionalService {
   async create({ data, userId }) {
     data.id = `pemantauan-operasional-${nanoid()}`;
     await this._ensureKajiUlangRisikoTersedia(data.kajiUlangRisikoId);
-    return this.pemantauanOperasionalRepository.create({ data });
+    const result = await this.pemantauanOperasionalRepository.create({ data });
+
+    await catatAuditLog(this.auditLogRepository, {
+      userId,
+      aksi: 'CREATE',
+      namaTabel: NAMA_TABEL,
+      recordId: result.id,
+      keterangan: `Menambah data pemantauan operasional`,
+    });
+
+    return result;
   }
 
   async findAll({ req }) {
@@ -80,12 +92,28 @@ export default class PemantauanOperasionalService {
       await this._ensureKajiUlangRisikoTersedia(data.kajiUlangRisikoId, id);
     }
 
-    return this.pemantauanOperasionalRepository.update({ id, data });
+    const result = await this.pemantauanOperasionalRepository.update({ id, data });
+    await catatAuditLog(this.auditLogRepository, {
+      userId,
+      aksi: 'UPDATE',
+      namaTabel: NAMA_TABEL,
+      recordId: result.id,
+      keterangan: `Mengubah data pemantauan operasional`,
+    });
+    return result;
   }
 
   async remove({ id, userId }) {
     const current = await this.findById({ id });
     await this.pemantauanOperasionalRepository.softDelete({ id });
+
+    await catatAuditLog(this.auditLogRepository, {
+      userId,
+      aksi: 'DELETE',
+      namaTabel: NAMA_TABEL,
+      recordId: id,
+      keterangan: `Menghapus data pemantauan operasional`,
+    });
     return current;
   }
 

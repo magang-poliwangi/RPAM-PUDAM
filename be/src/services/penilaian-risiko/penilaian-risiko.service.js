@@ -3,10 +3,14 @@ import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
 import { hitungSkorRisiko, hitungTingkatRisiko } from '../../utils/score-calculator.js';
+import { catatAuditLog } from '../../utils/audit-log.helper.js';
+
+const NAMA_TABEL = 'penilaian_risiko';
 
 export default class PenilaianRisikoService {
-    constructor({ penilaianRisikoRepository }) {
+    constructor({ penilaianRisikoRepository, auditLogRepository }) {
         this.penilaianRisikoRepository = penilaianRisikoRepository;
+        this.auditLogRepository = auditLogRepository;
     }
 
     async create({ data, userId }) {
@@ -20,9 +24,18 @@ export default class PenilaianRisikoService {
         }
 
         data.skorRisiko = hitungSkorRisiko(peluangKejadianBahaya, dampakKeparahan);
+        data.tingkatRisiko = hitungTingkatRisiko(data.skorRisiko);
         data.id = `penilaian-risiko-${nanoid()}`;
 
         const penilaian = await this.penilaianRisikoRepository.create({ data });
+
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'CREATE',
+            namaTabel: NAMA_TABEL,
+            recordId: penilaian.id,
+            keterangan: `Menambah data penilaian risiko`,
+        });
 
         return {
             ...penilaian,
@@ -81,8 +94,17 @@ export default class PenilaianRisikoService {
         const peluang = data.peluangKejadianBahaya ?? existing.peluangKejadianBahaya;
         const dampak = data.dampakKeparahan ?? existing.dampakKeparahan;
         data.skorRisiko = hitungSkorRisiko(peluang, dampak);
+        data.tingkatRisiko = hitungTingkatRisiko(data.skorRisiko);
 
         const updated = await this.penilaianRisikoRepository.update({ id, data });
+
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'UPDATE',
+            namaTabel: NAMA_TABEL,
+            recordId: updated.id,
+            keterangan: `Mengubah data penilaian risiko`,
+        });
 
         return {
             ...updated,
@@ -93,6 +115,14 @@ export default class PenilaianRisikoService {
     async remove({ id, userId }) {
         const existing = await this.penilaianRisikoRepository.findById({ id });
         if (!existing) throw new NotFoundError('Data penilaian risiko tidak ditemukan');
+
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'DELETE',
+            namaTabel: NAMA_TABEL,
+            recordId: id,
+            keterangan: `Menghapus data penilaian risiko`,
+        });
 
         await this.penilaianRisikoRepository.softDelete({ id });
     }

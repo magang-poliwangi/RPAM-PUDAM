@@ -2,10 +2,12 @@ import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
 import { hitungSkorRisiko, hitungTingkatRisiko } from '../../utils/score-calculator.js';
-
+import { catatAuditLog } from '../../utils/audit-log.helper.js';
+const NAMA_TABEL = 'kaji_ulang_risiko';
 export default class KajiUlangRisikoService {
-    constructor({ kajiUlangRisikoRepository }) {
+    constructor({ kajiUlangRisikoRepository, auditLogRepository }) {
         this.kajiUlangRisikoRepository = kajiUlangRisikoRepository;
+        this.auditLogRepository = auditLogRepository;
     }
 
     async create({ data, userId }) {
@@ -17,8 +19,16 @@ export default class KajiUlangRisikoService {
         }
 
         data.skorRisiko = hitungSkorRisiko(data.peluangKejadianBahaya, data.dampakKeparahan);
+        data.tingkatRisiko = hitungTingkatRisiko(data.skorRisiko);
         data.id = `kaji-ulang-risiko-${nanoid()}`;
         const kaji = await this.kajiUlangRisikoRepository.create({ data });
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'CREATE',
+            namaTabel: NAMA_TABEL,
+            recordId: kaji.id,
+            keterangan: `Menambah data kaji ulang risiko `,
+        });
 
         return {
             ...kaji,
@@ -77,8 +87,16 @@ export default class KajiUlangRisikoService {
         if (!existing) throw new NotFoundError('Data tidak ditemukan');
 
         data.skorRisiko = hitungSkorRisiko(data.peluangKejadianBahaya, data.dampakKeparahan);
+        data.tingkatRisiko = hitungTingkatRisiko(data.skorRisiko);
 
         const updated = await this.kajiUlangRisikoRepository.update({ id, data });
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'UPDATE',
+            namaTabel: NAMA_TABEL,
+            recordId: updated.id,
+            keterangan: `Mengubah data kaji ulang risiko `,
+        });
 
         return {
             ...updated,
@@ -90,6 +108,13 @@ export default class KajiUlangRisikoService {
     async remove({ id, userId }) {
         const existing = await this.kajiUlangRisikoRepository.findById({ id });
         if (!existing) throw new NotFoundError('Data tidak ditemukan');
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'DELETE',
+            namaTabel: NAMA_TABEL,
+            recordId: id,
+            keterangan: `Menghapus data kaji ulang risiko `,
+        });
 
         await this.kajiUlangRisikoRepository.softDelete({ id });
     }
