@@ -10,6 +10,7 @@ import PemantauanOperasionalPage from "./pages/PemantauanOperasionalPage";
 import IdentifikasiDanKejadianBahayaPage from "./pages/IdentifikasiDanKejadianBahayaPage";
 import PenilaianRisikoPage from "./pages/PenilaianRisikoPage";
 import LokasiSpamPage from "./pages/LokasiSpamPage";
+import AuditLogPage from "./pages/AuditLogPage";
 
 function App() {
 const authUser = useSelector((state) => state.authUser);
@@ -42,9 +43,10 @@ const isPreload = useSelector((state) => state.isPreload);
       <Route path="/rencana-perbaikan" element={<RencanaPerbaikanPage />} />
       <Route path="/pemantauan-operasional" element={<PemantauanOperasionalPage />} />
       
+      {authUser.role === "ADMIN" && <Route path="/audit-log" element={<AuditLogPage />} />}
       {authUser.role === "ADMIN" && <Route path="/management-user" element={<ManagementUserPage />} />}
       <Route path="/" element={<Navigate to="/identifikasi-dan-kejadian-bahaya" replace />} />
-      <Route path="*" element={<Navigate to="/identifikasi-dan-kejadian-bahaya" replace />} />
+      <Route path="*" element={<Navigate to="/lokasi-spam" replace />} />
     </Routes>
   );
 }

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, Link } from 'react-router';
-
+import { CiLogin } from "react-icons/ci";
+import { asyncUnsetAuthUser } from '../../states/authUser/action';
 const navItems = [
   {
     group: 'Utama',
@@ -86,10 +87,11 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const authUser = useSelector((state) => state.authUser); 
+  const authUser = useSelector((state) => state.authUser);
+  const dispatch = useDispatch();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const enabledRoutes = new Set(['/lokasi-spam','/identifikasi-dan-kejadian-bahaya','/penilaian-risiko', '/kaji-ulang', '/rencana-perbaikan', '/pemantauan-operasional', '/management-user']);
+  const enabledRoutes = new Set(['/lokasi-spam', '/identifikasi-dan-kejadian-bahaya', '/penilaian-risiko', '/kaji-ulang', '/rencana-perbaikan', '/pemantauan-operasional', '/management-user', '/audit-log']);
 
   const isActive = (to) => location.pathname === to || location.pathname.startsWith(to + '/');
 
@@ -133,8 +135,8 @@ export default function Sidebar() {
                   to={item.to}
                   title={collapsed ? item.label : undefined}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-medium transition-all duration-150 ${isActive(item.to)
-                      ? 'bg-teal-50 text-teal-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-teal-50 text-teal-700'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                 >
                   <span className={`flex-shrink-0 ${isActive(item.to) ? 'text-teal-700' : 'text-gray-400'}`}>{item.icon}</span>
@@ -158,6 +160,10 @@ export default function Sidebar() {
               <p className="text-xs text-gray-400">{authUser?.role === 'ADMIN' ? 'Admin' : 'User'}</p>
             </div>
           )}
+          <button onClick={() => {try {dispatch(asyncUnsetAuthUser())} catch(error) {console.log(error);
+          } }} className='cursor-pointer hover:bg-red-200 active:bg-red-200 p-1 hover:ring-1 active:ring-1 hover:ring-red-500 transition ease-in rounded-md '>
+            <CiLogin className='text-2xl  text-red-500' />
+          </button>
         </div>
       </div>
     </aside>

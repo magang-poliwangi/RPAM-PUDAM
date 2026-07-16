@@ -45,20 +45,20 @@ enum AksiAuditLog {
 }
 
 model LokasiSpam {
-  id                     String                          @id @default(cuid())
-  kodeLokasi             String                          @unique
-  simbol                 String?
-  namaLokasi             String?
-  deskripsi              String?
-  penanggungJawabNama    String?
-  penanggungJawabPosisi  String?
-  penanggungJawabTelepon String?
-  penanggungJawabEmail   String?
-  referensi              String?
-  createdAt              DateTime                        @default(now())
-  updatedAt              DateTime                        @updatedAt
-  deletedAt              DateTime?
-  identifikasiDanKejadianBahaya     IdentifikasiDanKejadianBahaya[]
+  id                            String                          @id @default(cuid())
+  kodeLokasi                    String                          @unique
+  simbol                        String?
+  namaLokasi                    String?
+  deskripsi                     String?
+  penanggungJawabNama           String?
+  penanggungJawabPosisi         String?
+  penanggungJawabTelepon        String?
+  penanggungJawabEmail          String?
+  referensi                     String?
+  createdAt                     DateTime                        @default(now())
+  updatedAt                     DateTime                        @updatedAt
+  deletedAt                     DateTime?
+  identifikasiDanKejadianBahaya IdentifikasiDanKejadianBahaya[]
 
   @@map("lokasi_spam")
 }
@@ -121,15 +121,16 @@ model IdentifikasiDanKejadianBahaya {
 }
 
 model PenilaianRisiko {
-  id                    String                        @id @default(cuid())
-  identifikasiDanKejadianBahayaId  String                        @unique
-  identifikasiDanKejadianBahaya    IdentifikasiDanKejadianBahaya @relation(fields: [identifikasiDanKejadianBahayaId], references: [id])
-  peluangKejadianBahaya Int
-  dampakKeparahan       Int
-  skorRisiko            Int
-  createdAt             DateTime                      @default(now())
-  updatedAt             DateTime                      @updatedAt
-  deletedAt             DateTime?
+  id                              String                        @id @default(cuid())
+  identifikasiDanKejadianBahayaId String                        @unique
+  identifikasiDanKejadianBahaya   IdentifikasiDanKejadianBahaya @relation(fields: [identifikasiDanKejadianBahayaId], references: [id])
+  peluangKejadianBahaya           Int
+  dampakKeparahan                 Int
+  skorRisiko                      Int
+  tingkatRisiko                   String
+  createdAt                       DateTime                      @default(now())
+  updatedAt                       DateTime                      @updatedAt
+  deletedAt                       DateTime?
 
   kajiUlangRisiko KajiUlangRisiko?
 
@@ -149,6 +150,7 @@ model KajiUlangRisiko {
   peluangKejadianBahaya Int
   dampakKeparahan       Int
   skorRisiko            Int
+  tingkatRisiko         String
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
   deletedAt             DateTime?

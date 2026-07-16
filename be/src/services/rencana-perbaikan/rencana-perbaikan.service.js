@@ -3,10 +3,12 @@ import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
 import { hitungTingkatRisiko } from '../../utils/score-calculator.js';
-
+import { catatAuditLog } from '../../utils/audit-log.helper.js';
+const NAMA_TABEL = 'rencana_perbaikan';
 export default class RencanaPerbaikanService {
-    constructor({ rencanaPerbaikanRepository }) {
+    constructor({ rencanaPerbaikanRepository, auditLogRepository }) {
         this.rencanaPerbaikanRepository = rencanaPerbaikanRepository;
+        this.auditLogRepository = auditLogRepository;
     }
 
     _mapPayload(data, isUpdate = false) {
@@ -52,9 +54,17 @@ export default class RencanaPerbaikanService {
             return m5;
         }
         mappedData.id = `rencana-perbaikan-${nanoid()}`;
-
+    
         const m5 = await this.rencanaPerbaikanRepository.create({ data: mappedData });
-
+        
+        await catatAuditLog(this.auditLogRepository, {
+                userId,
+                aksi: 'CREATE',
+                namaTabel: NAMA_TABEL,
+                recordId: m5.id,
+                keterangan: `Menambah data rencana perbaikan`,
+        });
+      
         return m5;
     }
 
@@ -98,16 +108,29 @@ export default class RencanaPerbaikanService {
         const existing = await this.rencanaPerbaikanRepository.findById({ id });
         if (!existing) throw new NotFoundError('Data tidak ditemukan');
 
+
         const mappedData = this._mapPayload(data, true);
         const updated = await this.rencanaPerbaikanRepository.update({ id, data: mappedData });
-
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'UPDATE',
+            namaTabel: NAMA_TABEL,
+            recordId: updated.id,
+            keterangan: `Mengubah data rencana perbaikan`,
+        });
         return updated;
     }
 
     async remove({ id, userId }) {
         const existing = await this.rencanaPerbaikanRepository.findById({ id });
         if (!existing) throw new NotFoundError('Data tidak ditemukan');
-
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'DELETE',
+            namaTabel: NAMA_TABEL,
+            recordId: id,
+            keterangan: `Menghapus data rencana perbaikan`,
+        });
         await this.rencanaPerbaikanRepository.softDelete({ id });
     }
 }

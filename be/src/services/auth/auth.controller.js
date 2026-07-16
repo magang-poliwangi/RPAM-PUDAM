@@ -25,9 +25,10 @@ export default class AuthController {
 
     //FR-05
     logoutController = async (req, res, next) => {
-        const { id } = req.user;
+        try {
+                    const { id } = req.user;
         const refreshToken = req.cookies.refreshToken;
-        await this.authService.logout({ token: refreshToken })
+        await this.authService.logout({ token: refreshToken ,userId:id})
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
@@ -35,6 +36,11 @@ export default class AuthController {
             sameSite: 'strict',
         });
         return response(res, 200, 'Logout berhasil');
+
+        } catch (error) {
+            console.log(error);
+            
+        }
     };
 
     newAccesToken = async (req, res, next) => {

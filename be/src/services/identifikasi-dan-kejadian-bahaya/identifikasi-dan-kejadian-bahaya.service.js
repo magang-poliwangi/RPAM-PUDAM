@@ -2,13 +2,15 @@
 import { nanoid } from 'nanoid';
 import { NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
+import { catatAuditLog } from '../../utils/audit-log.helper.js';
 
 
-const NAMA_TABEL = 'identifikasi_bahaya';
+const NAMA_TABEL = 'identifikasi_dan_kejadian_bahaya';
 
 export default class IdentifikasiDanKejadianBahayaService {
-    constructor({ identifikasiDanKejadianBahayaRepository }) {
+    constructor({ identifikasiDanKejadianBahayaRepository,auditLogRepository }) {
         this.identifikasiDanKejadianBahayaRepository = identifikasiDanKejadianBahayaRepository;
+        this.auditLogRepository = auditLogRepository;
     }
 
     async create({ data, userId }) {
@@ -16,13 +18,13 @@ export default class IdentifikasiDanKejadianBahayaService {
 
         const m3_1 = await this.identifikasiDanKejadianBahayaRepository.create({ data });
 
-        // await catatAuditLog({
-        //     userId,
-        //     aksi: 'CREATE',
-        //     namaTabel: NAMA_TABEL,
-        //     recordId: m3_1.id,
-        //     keterangan: `Menambah data identifikasi bahaya ${m3_1.kodeRisiko}`,
-        // });
+        await catatAuditLog({
+            userId,
+            aksi: 'CREATE',
+            namaTabel: NAMA_TABEL,
+            recordId: m3_1.id,
+            keterangan: `Menambah data identifikasi bahaya `,
+        });
 
         return m3_1;
     }
@@ -72,13 +74,13 @@ export default class IdentifikasiDanKejadianBahayaService {
 
         const updated = await this.identifikasiDanKejadianBahayaRepository.update({ id, data });
 
-        // await catatAuditLog({
-        //     userId,
-        //     aksi: 'UPDATE',
-        //     namaTabel: NAMA_TABEL,
-        //     recordId: updated.id,
-        //     keterangan: `Mengubah data identifikasi bahaya ${updated.kodeRisiko}`,
-        // });
+        await catatAuditLog({
+            userId,
+            aksi: 'UPDATE',
+            namaTabel: NAMA_TABEL,
+            recordId: updated.id,
+            keterangan: `Mengubah data identifikasi bahaya`,
+        });
 
         return updated;
     }
@@ -86,7 +88,13 @@ export default class IdentifikasiDanKejadianBahayaService {
     async remove({ id, userId }) {
         const existing = await this.identifikasiDanKejadianBahayaRepository.findById({ id });
         if (!existing) throw new NotFoundError('Data identifikasi bahaya tidak ditemukan');
-
+        await catatAuditLog(this.auditLogRepository, {
+            userId,
+            aksi: 'CREATE',
+            namaTabel: NAMA_TABEL,
+            recordId: id,
+            keterangan: `Menambah data lokasi spam`,
+        });
         await this.identifikasiDanKejadianBahayaRepository.softDelete({ id });
 
 

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { authController, userController, kajiUlangRisikoController, rencanaPerbaikanController, pemantauanOperasionalController, penilaianRisikoController, identifikasiDanKejadianBahayaController, lokasiSpamController } from './container.js';
+import { authController, userController, kajiUlangRisikoController, rencanaPerbaikanController, pemantauanOperasionalController, penilaianRisikoController, identifikasiDanKejadianBahayaController, lokasiSpamController, auditLogController } from './container.js';
 
 import authRoute from './services/auth/auth.route.js';
 import userRoute from './services/user/user.route.js';
@@ -51,6 +51,7 @@ import pemantauanOperasionalRoute from './services/pemantauan-operasional/pemant
 import penilaianRisikoRoute from './services/penilaian-risiko/penilaian-risiko.route.js';
 import identifikasiDanKejadianBahayaRoute from './services/identifikasi-dan-kejadian-bahaya/identifikasi-dan-kejadian-bahaya.route.js';
 import lokasiSpamRoute from './services/lokasi-spam/lokasi-spam.route.js';
+import auditLogRoute from './services/audit-log/audit-log.route.js';
 
 const routers = express.Router();
 
@@ -141,5 +142,12 @@ routers.use(
     })
 );
 
+
+//log
+
+routers.use(
+    '/audit-log',
+    auditLogRoute(auditLogController)
+);
 
 export default routers;

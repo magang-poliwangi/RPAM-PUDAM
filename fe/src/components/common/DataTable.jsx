@@ -9,12 +9,17 @@ export default function DataTable({
   searchPlaceholder = 'Cari...',
   emptyMessage = 'Data tidak ditemukan',
   actions,
+  actionsWidth,
   headerExtra,
 }) {
   const { total, page, limit, totalPages } = pagination;
 
   const startItem = total === 0 ? 0 : (page - 1) * limit + 1;
   const endItem = Math.min(page * limit, total);
+
+  const leafColumns = columns.flatMap((col) => (col.children ? col.children : [col]));
+  const hasGroups = columns.some((col) => col.children);
+  const totalColSpan = 1 + leafColumns.length + (actions ? 1 : 0);
 
   const handlePrev = () => {
     if (page > 1) onPageChange?.(page - 1);
@@ -24,7 +29,6 @@ export default function DataTable({
     if (page < totalPages) onPageChange?.(page + 1);
   };
 
-  // bikin daftar nomor halaman yang ditampilin (maks 5 tombol biar gak kepanjangan)
   const getPageNumbers = () => {
     const pages = [];
     const maxButtons = 5;
@@ -57,28 +61,75 @@ export default function DataTable({
 
       {/* Table */}
       <div className="app-card">
-        <div className="overflow-x-auto scrollbar-thin">
+        <div className="overflow-auto scrollbar-thin" style={{ maxHeight: '75vh' }}>
           <table className="w-full text-sm">
+            {/* colgroup nentuin lebar per kolom fisik, gak kebentur grouped header */}
+            <colgroup>
+              <col style={{ width: '2rem' }} />
+              {leafColumns.map((col) => (
+                <col key={col.key} style={col.width ? { width: col.width } : undefined} />
+              ))}
+              {actions && <col style={actionsWidth ? { width: actionsWidth } : undefined} />}
+            </colgroup>
+
             <thead>
-              <tr className="app-table-head">
-                <th className="w-8 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-app-text-muted">#</th>
-                {columns.map((col) => (
-                  <th
-                    key={col.key}
-                    className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-app-text-muted"
-                  >
-                    {col.label}
-                  </th>
-                ))}
+              {/* Baris header pertama */}
+              <tr className="app-table-head h-11 sticky top-0 z-20">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-app-text-muted sticky top-0 bg-inherit"
+                    rowSpan={hasGroups ? 2 : 1}>
+                  #
+                </th>
+                {columns.map((col) =>
+                  col.children ? (
+                    <th
+                      key={col.label}
+                      colSpan={col.children.length}
+                      className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-app-text-muted sticky top-0 bg-inherit border-b border-gray-100"
+                    >
+                      {col.label}
+                    </th>
+                  ) : (
+                    <th
+                      key={col.key}
+                      rowSpan={hasGroups ? 2 : 1}
+                      className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-app-text-muted sticky top-0 bg-inherit"
+                    >
+                      {col.label}
+                    </th>
+                  )
+                )}
                 {actions && (
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-app-text-muted">Aksi</th>
+                  <th
+                    rowSpan={hasGroups ? 2 : 1}
+                    className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-app-text-muted sticky top-0 bg-inherit"
+                  >
+                    Aksi
+                  </th>
                 )}
               </tr>
+
+              {/* Baris header kedua — cuma muncul kalau ada grup */}
+              {hasGroups && (
+                <tr className="app-table-head h-11 sticky top-11 z-20">
+                  {columns.map((col) =>
+                    col.children
+                      ? col.children.map((child) => (
+                          <th
+                            key={child.key}
+                            className="whitespace-nowrap px-4 py-2 text-center text-xs font-medium text-app-text-muted sticky top-11 bg-inherit border-t border-gray-100"
+                          >
+                            {child.label}
+                          </th>
+                        ))
+                      : null
+                  )}
+                </tr>
+              )}
             </thead>
             <tbody className="divide-y divide-gray-100">
               {data.length === 0 && !loading ? (
                 <tr>
-                  <td colSpan={columns.length + (actions ? 2 : 1)} className="text-center py-12 text-gray-400 text-sm">
+                  <td colSpan={totalColSpan} className="text-center py-12 text-gray-400 text-sm">
                     <div className="flex flex-col items-center gap-2">
                       <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
@@ -91,7 +142,7 @@ export default function DataTable({
                 data.map((row, idx) => (
                   <tr key={row.id || idx} className="app-table-row">
                     <td className="px-4 py-3 text-xs text-app-text-muted">{startItem + idx}</td>
-                    {columns.map((col) => (
+                    {leafColumns.map((col) => (
                       <td key={col.key} className="px-4 py-3 text-app-text">
                         {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '-')}
                       </td>
