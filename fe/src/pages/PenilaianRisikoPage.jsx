@@ -5,7 +5,6 @@ import useModalForm from "../hooks/useModalForm";
 import { asyncAddPenilaianRisiko, asyncDeletePenilaianRisiko, asyncReceivePenilaianRisiko, asyncUpdatePenilaianRisiko } from "../states/penilaianRisiko/action";
 import { omitFields } from "../utils/omit-fields";
 import RiskLevelBadge from "../components/common/RiskLevelBadge";
-import AppLayout from "../components/common/AppLayout";
 import DataTable from "../components/common/DataTable";
 import AddButton from "../components/common/AddButton";
 import IconButton from "../components/common/IconButton";
@@ -86,7 +85,7 @@ export default function PenilaianRisikoPage() {
   ];
 
   return (
-    <AppLayout>
+    <>
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">Penilaian Risiko</h1>
         <p className="text-sm text-gray-500 mt-0.5">Penilaian peluang dan dampak untuk setiap bahaya</p>
@@ -113,6 +112,6 @@ export default function PenilaianRisikoPage() {
         <PenilaianRisikoFormComponent identifikasiDanKejadianBahaya={identifikasiDanKejadianBahayaState} form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
       </Modal>
       <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data penilaian risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
-    </AppLayout>
+    </>
   );
 }

@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import AppLayout from '../components/common/AppLayout';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -95,7 +94,7 @@ export default function KajiUlangRisikoPage() {
   ];
 
   return (
-    <AppLayout>
+    <>
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">Kaji Ulang Risiko</h1>
         <p className="text-sm text-gray-500 mt-0.5">Tindakan pengendalian dan evaluasi efektivitas</p>
@@ -131,6 +130,6 @@ export default function KajiUlangRisikoPage() {
         />
       </Modal>
       <ConfirmDialog open={confirm.open}  title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
-    </AppLayout>
+    </>
   );
 }

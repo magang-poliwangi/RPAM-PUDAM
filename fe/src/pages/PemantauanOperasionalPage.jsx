@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback } from "react";
 import AddButton from "../components/common/AddButton";
-import AppLayout from "../components/common/AppLayout";
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import DataTable from "../components/common/DataTable";
 import IconButton from "../components/common/IconButton";
@@ -106,7 +105,7 @@ export default function PemantauanOperasionalPage() {
     ];
 
     return (
-        <AppLayout>
+        <>
             <div className="mb-6">
                 <h1 className="text-xl font-bold text-gray-900">
                     Pemantauan Operasional
@@ -154,6 +153,6 @@ export default function PemantauanOperasionalPage() {
             </Modal>
             <ConfirmDialog
                 open={confirm.open} title="Hapus Data?" message="Data pemantauan operasional ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
-        </AppLayout>)
+        </>)
 
 }
