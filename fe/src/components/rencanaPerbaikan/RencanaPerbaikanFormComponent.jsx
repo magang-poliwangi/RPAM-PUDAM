@@ -13,30 +13,38 @@ const PRIORITAS_OPTIONS = [
 ];
 
 
-export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, kajiUlangRisiko }) {
+export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, kajiUlangRisiko, usedKajiUlangRisikoIds = [] }) {
   console.log(kajiUlangRisiko);
 
-  const kajiUlangRisikoOptions = (kajiUlangRisiko?.items || []).map((item) => ({
-    value: item.id,
-    label: item.id,
-  }));
+  const kajiUlangRisikoOptions = (kajiUlangRisiko?.items || [])
+    .filter(item => mode === 'edit' || !usedKajiUlangRisikoIds.includes(item.id))
+    .map((item) => {
+      const identifikasi = item.penilaianRisiko?.identifikasiDanKejadianBahaya;
+      const labelText = identifikasi
+        ? `${identifikasi.kodeRisiko} — ${identifikasi.kejadianBahayaXYZ} (Tindakan: ${item.tindakanPengendalian})`
+        : `Tindakan: ${item.tindakanPengendalian}`;
+      return {
+        value: item.id,
+        label: labelText,
+      };
+    });
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       {mode === 'edit' ? (
         <div className="px-3 py-2 bg-gray-50 rounded-lg text-sm">
-          <span className="text-gray-500">Penilaian Risiko: </span>
+          <span className="text-gray-500">Kaji Ulang Risiko: </span>
           <span className="font-medium text-gray-900">
-            {form.penilaianRisiko
-              ? `Skor ${form.penilaianRisiko.skorRisiko} — ${form.penilaianRisiko.tingkatRisiko}`
-              : form.penilaianRisikoId}
+            {form.kajiUlangRisiko?.penilaianRisiko?.identifikasiDanKejadianBahaya
+              ? `${form.kajiUlangRisiko.penilaianRisiko.identifikasiDanKejadianBahaya.kodeRisiko} — ${form.kajiUlangRisiko.penilaianRisiko.identifikasiDanKejadianBahaya.kejadianBahayaXYZ} (Tindakan: ${form.kajiUlangRisiko.tindakanPengendalian})`
+              : form.kajiUlangRisikoId}
           </span>
         </div>
       ) : (
         <SelectField
-          name="penilaianRisikoId" label="Data Identifikasi Dan Kejadian Bahaya" required
-          value={form.penilaianRisikoId || ''}
-          onChange={(e) => onChange({ ...form, penilaianRisikoId: e.target.value })}
+          name="kajiUlangRisikoId" label="Data Kaji Ulang Risiko" required
+          value={form.kajiUlangRisikoId || ''}
+          onChange={(e) => onChange({ ...form, kajiUlangRisikoId: e.target.value })}
           options={kajiUlangRisikoOptions}
         />
       )}

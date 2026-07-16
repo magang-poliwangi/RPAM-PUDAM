@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
@@ -10,23 +11,60 @@ export default class RencanaPerbaikanService {
         this.auditLogRepository = auditLogRepository;
     }
 
-    async create({ data, userId }) {
-        const existing = await this.rencanaPerbaikanRepository.findByKajiUlangRisikoId({
-            kajiUlangRisikoId: data.kajiUlangRisikoId,
-        });
-        if (existing && !existing.deletedAt) {
-            throw new ConflictError('Rencana Perbaikan untuk Kaji Ulang ini sudah ada');
+    _mapPayload(data, isUpdate = false) {
+        const mapped = { ...data };
+        
+        if (mapped.jadwal !== undefined) {
+            mapped.jadwalPelaksanaan = mapped.jadwal || '';
+            delete mapped.jadwal;
+        } else if (!isUpdate && mapped.jadwalPelaksanaan === undefined) {
+            mapped.jadwalPelaksanaan = '';
         }
-        data.id = `rencana-perbaikan-${nanoid()}`;
 
-        const m5 = await this.rencanaPerbaikanRepository.create({ data });
-        await catatAuditLog(this.auditLogRepository, {
-            userId,
-            aksi: 'CREATE',
-            namaTabel: NAMA_TABEL,
-            recordId: m5.id,
-            keterangan: `Menambah data rencana perbaikan`,
+        if (mapped.kendala !== undefined) {
+            const kendalaStr = (mapped.kendala || '').toLowerCase();
+            mapped.kendalaKeuangan = kendalaStr.includes('keuangan');
+            mapped.kendalaTenagaKerja = kendalaStr.includes('tenaga') || kendalaStr.includes('kerja');
+            delete mapped.kendala;
+        }
+
+        if (mapped.biaya === '' || mapped.biaya === null) {
+            mapped.biaya = 0;
+        }
+
+        return mapped;
+    }
+
+    async create({ data, userId }) {
+        const mappedData = this._mapPayload(data, false);
+        const existing = await this.rencanaPerbaikanRepository.findByKajiUlangRisikoId({
+            kajiUlangRisikoId: mappedData.kajiUlangRisikoId,
         });
+        if (existing) {
+            if (!existing.deletedAt) {
+                throw new ConflictError('Rencana Perbaikan untuk Kaji Ulang ini sudah ada');
+            }
+
+            mappedData.deletedAt = null;
+            const m5 = await this.rencanaPerbaikanRepository.update({
+                id: existing.id,
+                data: mappedData,
+            });
+
+            return m5;
+        }
+        mappedData.id = `rencana-perbaikan-${nanoid()}`;
+    
+        const m5 = await this.rencanaPerbaikanRepository.create({ data: mappedData });
+        
+        await catatAuditLog(this.auditLogRepository, {
+                userId,
+                aksi: 'CREATE',
+                namaTabel: NAMA_TABEL,
+                recordId: m5.id,
+                keterangan: `Menambah data rencana perbaikan`,
+        });
+      
         return m5;
     }
 
@@ -70,7 +108,9 @@ export default class RencanaPerbaikanService {
         const existing = await this.rencanaPerbaikanRepository.findById({ id });
         if (!existing) throw new NotFoundError('Data tidak ditemukan');
 
-        const updated = await this.rencanaPerbaikanRepository.update({ id, data });
+
+        const mappedData = this._mapPayload(data, true);
+        const updated = await this.rencanaPerbaikanRepository.update({ id, data: mappedData });
         await catatAuditLog(this.auditLogRepository, {
             userId,
             aksi: 'UPDATE',
