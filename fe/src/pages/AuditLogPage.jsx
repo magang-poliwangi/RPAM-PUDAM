@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
-import AppLayout from "../components/common/AppLayout";
 import DataTable from "../components/common/DataTable";
 import { asyncReceiveAuditLog } from "../states/auditLog/action";
 
@@ -126,7 +125,7 @@ export default function AuditLogPage() {
     ];
 
     return (
-        <AppLayout>
+        <>
             <div className="mb-6">
                 <h1 className="text-xl font-bold text-gray-900">Audit Log</h1>
                 <p className="text-sm text-gray-500 mt-0.5">Riwayat aktivitas pengguna pada sistem</p>
@@ -202,6 +201,6 @@ export default function AuditLogPage() {
                 searchPlaceholder="Cari keterangan..."
                 emptyMessage="Belum ada aktivitas tercatat"
             />
-        </AppLayout>
+        </>
     );
 }

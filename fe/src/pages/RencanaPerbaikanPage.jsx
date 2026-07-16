@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import useModalForm from "../hooks/useModalForm";
 import useConfirmDialog from "../hooks/useConfirmDialog";
 import { omitFields } from "../utils/omit-fields";
-import AppLayout from "../components/common/AppLayout";
 import DataTable from "../components/common/DataTable";
 import AddButton from "../components/common/AddButton";
 import IconButton from "../components/common/IconButton";
@@ -99,7 +98,7 @@ export default function RencanaPerbaikanPage() {
   ];
 
   return (
-    <AppLayout>
+    <>
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">Rencana Perbaikan</h1>
         <p className="text-sm text-gray-500 mt-0.5">Perencanaan tindakan perbaikan risiko</p>
@@ -135,6 +134,6 @@ export default function RencanaPerbaikanPage() {
         />
       </Modal>
       <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data rencana perbaikan ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
-    </AppLayout>
+    </>
   );
 }

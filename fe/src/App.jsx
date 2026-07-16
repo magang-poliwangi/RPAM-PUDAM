@@ -11,11 +11,12 @@ import IdentifikasiDanKejadianBahayaPage from "./pages/IdentifikasiDanKejadianBa
 import PenilaianRisikoPage from "./pages/PenilaianRisikoPage";
 import LokasiSpamPage from "./pages/LokasiSpamPage";
 import AuditLogPage from "./pages/AuditLogPage";
+import AppLayout from "./components/common/AppLayout";
 
 function App() {
-const authUser = useSelector((state) => state.authUser);
-const isPreload = useSelector((state) => state.isPreload); 
- const dispatch = useDispatch();
+  const authUser = useSelector((state) => state.authUser);
+  const isPreload = useSelector((state) => state.isPreload);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(asyncPreloadProcess());
@@ -35,19 +36,21 @@ const isPreload = useSelector((state) => state.isPreload);
   }
 
   return (
-    <Routes>
-      <Route path="/lokasi-spam" element={<LokasiSpamPage />} />
-      <Route path="/identifikasi-dan-kejadian-bahaya" element={<IdentifikasiDanKejadianBahayaPage />} />
-      <Route path="/penilaian-risiko" element={<PenilaianRisikoPage />} />
-      <Route path="/kaji-ulang" element={<KajiUlangPage />} />
-      <Route path="/rencana-perbaikan" element={<RencanaPerbaikanPage />} />
-      <Route path="/pemantauan-operasional" element={<PemantauanOperasionalPage />} />
-      
-      {authUser.role === "ADMIN" && <Route path="/audit-log" element={<AuditLogPage />} />}
-      {authUser.role === "ADMIN" && <Route path="/management-user" element={<ManagementUserPage />} />}
-      <Route path="/" element={<Navigate to="/identifikasi-dan-kejadian-bahaya" replace />} />
-      <Route path="*" element={<Navigate to="/lokasi-spam" replace />} />
-    </Routes>
+    <AppLayout>
+      <Routes>
+        <Route path="/lokasi-spam" element={<LokasiSpamPage />} />
+        <Route path="/identifikasi-dan-kejadian-bahaya" element={<IdentifikasiDanKejadianBahayaPage />} />
+        <Route path="/penilaian-risiko" element={<PenilaianRisikoPage />} />
+        <Route path="/kaji-ulang" element={<KajiUlangPage />} />
+        <Route path="/rencana-perbaikan" element={<RencanaPerbaikanPage />} />
+        <Route path="/pemantauan-operasional" element={<PemantauanOperasionalPage />} />
+
+        {authUser.role === "ADMIN" && <Route path="/audit-log" element={<AuditLogPage />} />}
+        {authUser.role === "ADMIN" && <Route path="/management-user" element={<ManagementUserPage />} />}
+        <Route path="/" element={<Navigate to="/identifikasi-dan-kejadian-bahaya" replace />} />
+        <Route path="*" element={<Navigate to="/lokasi-spam" replace />} />
+      </Routes>
+    </AppLayout>
   );
 }
 

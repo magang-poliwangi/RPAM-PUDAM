@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import AppLayout from '../components/common/AppLayout';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import IconButton from '../components/common/IconButton';
@@ -117,7 +116,7 @@ export default function LokasiSpamPage() {
     ];
 
     return (
-        <AppLayout>
+        <>
             <div className="mb-6">
                 <h1 className="text-xl font-bold text-gray-900">Lokasi Spam</h1>
                 <p className="text-sm text-gray-500 mt-0.5">Kelola Lokasi Spam sistem RPAM</p>
@@ -156,6 +155,6 @@ export default function LokasiSpamPage() {
             </Modal>
             <ConfirmDialog
                 open={confirm.open} title="Hapus Data?" message="Data Lokasi Spam ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
-        </AppLayout>
+        </>
     );
 }

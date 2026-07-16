@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import AddButton from "../components/common/AddButton";
-import AppLayout from "../components/common/AppLayout";
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import DataTable from "../components/common/DataTable";
 import IconButton from "../components/common/IconButton";
@@ -100,7 +99,7 @@ export default function IdentifikasiDanKejadianBahayaPage() {
     ];
 
     return (
-        <AppLayout>
+        <>
             <div className="mb-6">
                 <h1 className="text-xl font-bold text-gray-900">Identifikas Dan Kejadian Bahaya</h1>
                 <p className="text-sm text-gray-500 mt-0.5">Tindakan pengendalian dan evaluasi efektivitas</p>
@@ -128,6 +127,6 @@ export default function IdentifikasiDanKejadianBahayaPage() {
                 <IdentifikasiDanKejadianBahayaFormComponent lokasiSpam={lokasiSpamState} form={modal.form} onChange={setForm} mode={modal.mode} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} prOptions={[]} />
             </Modal>
             <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
-        </AppLayout>
+        </>
     );
 }

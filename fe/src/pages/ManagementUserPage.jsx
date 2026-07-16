@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import AppLayout from '../components/common/AppLayout';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -79,7 +78,7 @@ export default function ManagementUserPage() {
   ];
 
   return (
-    <AppLayout>
+    <>
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">Manajemen User</h1>
         <p className="text-sm text-gray-500 mt-0.5">Kelola akun pengguna sistem RPAM</p>
@@ -112,6 +111,6 @@ export default function ManagementUserPage() {
         onConfirm={confirmAction}
         onCancel={closeConfirm}
       />
-    </AppLayout>
+    </>
   );
 }
