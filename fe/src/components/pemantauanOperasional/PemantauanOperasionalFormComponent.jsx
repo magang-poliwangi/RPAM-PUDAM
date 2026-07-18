@@ -1,5 +1,8 @@
+import { useCallback, useState } from "react";
+import AsyncSelectField from "../common/AsyncSelectField";
 import InputComponent from "../common/InputComponent";
-import SelectField from "../common/SelectField";
+import { getPayload } from "../../utils/response";
+import { kajiUlangRisikoApi } from "../../api/kaji-ulang-risiko";
 
 export default function PemantauanOperasionalFormComponent({
     form,
@@ -8,17 +11,26 @@ export default function PemantauanOperasionalFormComponent({
     onCancel,
     loading,
     mode,
-    kajiUlangRisiko
 }) {
-    const kajiUlangRisikoOptions = (kajiUlangRisiko?.items || []).map((item) => ({
-        value: item.id,
-        label: item.id,
-    }));
+    const [selectedOption, setSelectedOption] = useState(null);
+
+    const loadIdentifikasiOptions = useCallback(async (inputValue) => {
+        const result = getPayload(
+            await kajiUlangRisikoApi.getAll({ search: inputValue, limit: 20, tanpaPemantauanOperasional: 'true' })
+        );
+        return (result.items || []).map((item) => ({
+            value: item.id,
+            label: `${item.penilaianRisiko.identifikasiDanKejadianBahaya.kodeRisiko} - ${item.penilaianRisiko.identifikasiDanKejadianBahaya.kejadianBahayaXYZ} - ${item.tindakanPengendalian}`,
+        }));
+    }, []);
+
     const handleChange = (e) => {
-        onChange({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
+        onChange({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleKajiUlangChange = (e) => {
+        setSelectedOption(e.target.selectedOption || null);
+        onChange({ ...form, kajiUlangRisikoid: e.target.value });
     };
 
     return (
@@ -34,12 +46,16 @@ export default function PemantauanOperasionalFormComponent({
                     </span>
                 </div>
             ) : (
-                <SelectField
-                    name="penilaianRisikoId" label="Data Identifikasi Dan Kejadian Bahaya" required
-                    value={form.penilaianRisikoId || ''}
-                    onChange={(e) => onChange({ ...form, penilaianRisikoId: e.target.value })}
-                    options={kajiUlangRisikoOptions}
+                <AsyncSelectField
+                    name="kajiUlangRisikoid"
+                    label="Data Kaji Ulang Risiko"
+                    required
+                    value={selectedOption}
+                    loadOptions={loadIdentifikasiOptions}
+                    onChange={handleKajiUlangChange}
+                    placeholder="Ketik kode risiko,kejadian Bahaya(XYZ) atau Tindakan Pengendalian  untuk mencari..."
                 />
+
             )}
 
             <InputComponent

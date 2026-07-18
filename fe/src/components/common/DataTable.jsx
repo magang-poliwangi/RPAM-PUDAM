@@ -61,7 +61,7 @@ export default function DataTable({
 
       {/* Table */}
       <div className="app-card">
-        <div className="overflow-auto scrollbar-thin" style={{ maxHeight: '75vh' }}>
+        <div className="overflow-auto scrollbar-thin" style={{ maxHeight: '73vh' }}>
           <table className="w-full text-sm">
             {/* colgroup nentuin lebar per kolom fisik, gak kebentur grouped header */}
             <colgroup>

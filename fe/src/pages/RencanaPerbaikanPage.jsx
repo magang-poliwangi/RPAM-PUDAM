@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useModalForm from "../hooks/useModalForm";
 import useConfirmDialog from "../hooks/useConfirmDialog";
 import { omitFields } from "../utils/omit-fields";
@@ -8,23 +8,20 @@ import AddButton from "../components/common/AddButton";
 import IconButton from "../components/common/IconButton";
 import Modal from "../components/common/Modal";
 import ConfirmDialog from "../components/common/ConfirmDialog";
-import Badge from "../components/common/Badge";
-import { formatRupiah } from "../utils/format-rupiah";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
 import RencanaPerbaikanFormComponent from "../components/rencanaPerbaikan/RencanaPerbaikanFormComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { asyncAddRencanaPerbaikan, asyncDeleteRencanaPerbaikan, asyncReceiveRencanaPerbaikan, asyncUpdateRencanaPerbaikan } from "../states/rencanaPerbaikan/action";
-import { asyncReceiveKajiUlangRisiko } from "../states/kajiUlangRisiko/action";
+import { RELATION_COLUMN_GROUPS, RELATION_ORDER } from "../components/rencanaPerbaikan/rencanaPerbaikan.relationColumns";
+import { rencanaPerbaikanColumns } from "../components/rencanaPerbaikan/rencanaPerbaikan.columns";
+import Select from "react-select";
 
 const EMPTY_FORM = {
-  kajiUlangRisikoId: '', rencanaPerbaikan: '', penanggungJawab: '',
+  kajiUlangRisikoId: '', rencanaPerbaikan: '', jadwalPelaksanaan: '', penanggungJawab: '',
   jadwal: '', biaya: '', sumberPembiayaan: '',
-  statusKemajuan: '', kendala: '', prioritas: '',
+  statusKemajuan: '', prioritas: '', kendalaKeuangan: false, kendalaTenagaKerja: false
 };
 
-
-const STATUS_LABEL = { BELUM_MULAI: 'Belum Mulai', SEDANG_BERJALAN: 'Sedang Berjalan', SELESAI: 'Selesai', TERTUNDA: 'Tertunda' };
-const STATUS_VARIANT = { BELUM_MULAI: 'gray', SEDANG_BERJALAN: 'blue', SELESAI: 'green', TERTUNDA: 'yellow' };
 const READONLY_FIELDS = ['id', 'createdAt', 'updatedAt', 'kajiUlangRisiko'];
 
 
@@ -33,15 +30,12 @@ export default function RencanaPerbaikanPage() {
   const { items, pagination } = useSelector(
     (state) => state.rencanaPerbaikan || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
   );
-  const kajiUlangRisikoState = useSelector(
-    (state) => state.kajiUlangRisiko
-  );
 
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(false);
-
+  const [selectedColumns, setSelectedColumns] = useState([]);
   const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
   const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
     delete: (row) => dispatch(asyncDeleteRencanaPerbaikan(row.id)),
@@ -49,10 +43,8 @@ export default function RencanaPerbaikanPage() {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      dispatch(asyncReceiveRencanaPerbaikan({ page, limit: 10, search })),
-      dispatch(asyncReceiveKajiUlangRisiko({ limit: 1000 }))
-    ])
+
+    dispatch(asyncReceiveRencanaPerbaikan({ page, limit: 10, search }))
       .catch(() => { })
       .finally(() => setLoading(false));
   }, [dispatch, page, search]);
@@ -84,18 +76,20 @@ export default function RencanaPerbaikanPage() {
     },
     [dispatch, modal, closeModal]
   );
+  const columnOptions = RELATION_ORDER.map((value) => ({
+    value,
+    label: RELATION_COLUMN_GROUPS[value].label,
+  }))
 
-  const columns = [
-    { key: 'rencanaPerbaikan', label: 'Rencana Perbaikan', render: (v) => <span className="line-clamp-2 max-w-xs">{v}</span> },
-    { key: 'penanggungJawab', label: 'Penanggung Jawab' },
-    { key: 'jadwalPelaksanaan', label: 'Jadwal Pelaksanaan' },
-    { key: 'biaya', label: 'Biaya', render: (v) => <span className="text-xs">{formatRupiah(v)}</span> },
-    { key: 'sumberPembiayaan', label: 'Sumber Pembiayaan' },
-    { key: 'statusKemajuan', label: 'Status Kemajuan', render: (v) => <Badge label={STATUS_LABEL[v] || v} variant={STATUS_VARIANT[v]} /> },
-    { key: 'kendalaKeuangan', label: 'Kendala Keungan', render: (v) => <span className="text-xs capitalize">{v ? 'Iya' : '-'}</span> },
-    { key: 'kendalaTenagaKerja', label: 'Kendala Tenaga Kerja', render: (v) => <span className="text-xs capitalize">{v ? 'Iya' : '-'}</span> },
-    { key: 'prioritas', label: 'Skala Prioritas', render: (v) => <span className="text-xs capitalize">{v?.toLowerCase() || '-'}</span> },
-  ];
+  const columns = useMemo(() => {
+    const sorted = [...selectedColumns].sort(
+      (a, b) => RELATION_ORDER.indexOf(a.value) - RELATION_ORDER.indexOf(b.value)
+    );
+    return [
+      ...rencanaPerbaikanColumns,
+      ...sorted.flatMap(({ value }) => RELATION_COLUMN_GROUPS[value]?.columns ?? []),
+    ];
+  }, [selectedColumns]);
 
   return (
     <>
@@ -113,7 +107,19 @@ export default function RencanaPerbaikanPage() {
         onSearchChange={handleSearchChange}
         searchPlaceholder="Cari..."
         emptyMessage="Data tidak ditemukan"
-        headerExtra={<AddButton id="btn-add-kaji-ulang" onClick={openAdd} />}
+        headerExtra={<>
+          <div className="flex flex-wrap items-end gap-3">
+            <Select
+              className="z-50"
+              isMulti
+              options={columnOptions}
+              value={selectedColumns}
+              onChange={(value) => setSelectedColumns(value || [])}
+              placeholder="Pilih kolom..."
+            />
+            <AddButton id="btn-add-kaji-ulang" onClick={openAdd} />
+          </div>
+        </>}
         actions={(row) => (
           <>
             <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>
@@ -122,15 +128,13 @@ export default function RencanaPerbaikanPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Rencana Perbaikan' : 'Tambah Rencana Perbaikan'} size="lg">
-        <RencanaPerbaikanFormComponent 
-          kajiUlangRisiko={kajiUlangRisikoState} 
-          usedKajiUlangRisikoIds={items.map(rp => rp.kajiUlangRisikoId)}
-          form={modal.form} 
-          onChange={setForm} 
-          onSubmit={handleSave} 
-          onCancel={closeModal} 
-          loading={saveLoading} 
-          mode={modal.mode} 
+        <RencanaPerbaikanFormComponent
+          form={modal.form}
+          onChange={setForm}
+          onSubmit={handleSave}
+          onCancel={closeModal}
+          loading={saveLoading}
+          mode={modal.mode}
         />
       </Modal>
       <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data rencana perbaikan ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />

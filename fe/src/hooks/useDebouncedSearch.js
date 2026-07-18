@@ -1,19 +1,24 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-export default function useDebouncedSearch(onSearch, delay = 400) {
-  const [search, setSearch] = useState('');
-  const timeoutRef = useRef(null);
+export default function useDebouncedSearch(delay = 400) {
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  useEffect(() => () => clearTimeout(timeoutRef.current), []);
+  const timeoutRef = useRef();
 
-  const handleSearchChange = useCallback(
-    (value) => {
-      setSearch(value);
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => onSearch(value), delay);
-    },
-    [onSearch, delay]
-  );
+  useEffect(() => {
+    clearTimeout(timeoutRef.current);
 
-  return { search, handleSearchChange };
+    timeoutRef.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, delay);
+
+    return () => clearTimeout(timeoutRef.current);
+  }, [search, delay]);
+
+  return {
+    search,
+    debouncedSearch,
+    setSearch,
+  };
 }

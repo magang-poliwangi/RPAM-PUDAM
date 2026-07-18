@@ -46,7 +46,7 @@
 }
 
 @layer components {
-  .app-shell { @apply min-h-screen bg-app-canvas text-app-text; }
+  .app-shell { @apply  h-screen bg-app-canvas text-app-text; }
   .app-main { @apply flex-1 overflow-auto; }
   .app-content { @apply mx-auto max-w-screen p-6; }
   .app-page-header { @apply mb-6; }

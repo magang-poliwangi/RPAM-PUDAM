@@ -50,7 +50,9 @@ export function asyncReceiveLokasiSpam(params = {}) {
 export function asyncAddLokasiSpam(payload) {
     return async (dispatch) => {
         const lokasiSpam = getPayload(await lokasiSpamApi.create(payload));
+        
         dispatch(addLokasiSpamActionCreator(lokasiSpam));
+
         return lokasiSpam;
     };
 }
@@ -58,10 +60,7 @@ export function asyncAddLokasiSpam(payload) {
 export function asyncUpdateLokasiSpam({ id, payload }) {
     return async (dispatch) => {
         const result = getPayload(await lokasiSpamApi.update(id, payload));
-        dispatch(updateLokasiSpamActionCreator({
-            items: result.items || [],
-            pagination: result.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 },
-        }));
+        dispatch(updateLokasiSpamActionCreator(result));
         return result;
     };
 }

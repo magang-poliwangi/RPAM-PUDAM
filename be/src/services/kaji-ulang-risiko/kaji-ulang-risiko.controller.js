@@ -5,7 +5,7 @@ export default class KajiUlangRisikoController {
     constructor({ kajiUlangRisikoService }) {
         this.kajiUlangRisikoService = kajiUlangRisikoService;
     }
-
+    
     createController = async (req, res, next) => {
         const data = req.validated;
         const result = await this.kajiUlangRisikoService.create({ data, userId: req.user.id });

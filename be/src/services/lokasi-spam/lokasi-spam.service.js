@@ -6,7 +6,7 @@ import { catatAuditLog } from '../../utils/audit-log.helper.js';
 
 const NAMA_TABEL = 'lokasi_spam'
 export default class LokasiSpamService {
-    constructor({ lokasiSpamRepository,auditLogRepository }) {
+    constructor({ lokasiSpamRepository, auditLogRepository }) {
         this.lokasiSpamRepository = lokasiSpamRepository;
         this.auditLogRepository = auditLogRepository;
     }
@@ -60,7 +60,10 @@ export default class LokasiSpamService {
 
     async update({ id, data, userId }) {
         await this.findById({ id });
-        const result = this.lokasiSpamRepository.update({ id, data });
+        console.log(data);
+
+        const result = await this.lokasiSpamRepository.update({ id, data });
+
         await catatAuditLog(this.auditLogRepository, {
             userId,
             aksi: 'CREATE',

@@ -16,7 +16,7 @@ function lokasiSpamReducer(state = initialState, action = {}) {
         case ActionType.ADD_LOKASI_SPAM:
             return {
                 ...state,
-                items: [action.payload.kajiUlangRisiko, ...state.items],
+                items: [action.payload.lokasiSpam , ...state.items],
                 pagination: { ...state.pagination, total: state.pagination.total + 1 },
             };
 
@@ -24,8 +24,8 @@ function lokasiSpamReducer(state = initialState, action = {}) {
             return {
                 ...state,
                 items: state.items.map((item) =>
-                    item.id === action.payload.kajiUlangRisiko.id
-                        ? { ...item, ...action.payload.kajiUlangRisiko }
+                    item.id === action.payload.lokasiSpam .id
+                        ? { ...item, ...action.payload.lokasiSpam  }
                         : item
                 ),
             };

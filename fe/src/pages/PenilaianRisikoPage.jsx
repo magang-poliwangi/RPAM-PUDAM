@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useModalForm from "../hooks/useModalForm";
 import { asyncAddPenilaianRisiko, asyncDeletePenilaianRisiko, asyncReceivePenilaianRisiko, asyncUpdatePenilaianRisiko } from "../states/penilaianRisiko/action";
 import { omitFields } from "../utils/omit-fields";
-import RiskLevelBadge from "../components/common/RiskLevelBadge";
 import DataTable from "../components/common/DataTable";
 import AddButton from "../components/common/AddButton";
 import IconButton from "../components/common/IconButton";
@@ -13,7 +12,9 @@ import PenilaianRisikoFormComponent from "../components/penilaianRisiko/Penilaia
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
 import useConfirmDialog from "../hooks/useConfirmDialog";
-import { asyncReceiveIdentifikasiDanKejadianBahaya } from "../states/indentifikasiDanKejadianBahaya/action";
+import { penilaianRisikoColumns } from "../components/penilaianRisiko/penilaianRisiko.columns";
+import { RELATION_COLUMN_GROUPS, RELATION_ORDER } from "../components/penilaianRisiko/penilaianRisiko.relationColumns";
+import Select from "react-select";
 
 
 const EMPTY_FORM = { identifikasiBahayaId: '', peluangKejadianBahaya: '', dampakKeparahan: '' };
@@ -26,15 +27,12 @@ export default function PenilaianRisikoPage() {
     (state) => state.penilaianRisiko || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
   );
 
-    const identifikasiDanKejadianBahayaState = useSelector(
-    (state) => state.identifikasiDanKejadianBahaya
-  );
 
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(false);
-
+  const [selectedColumns, setSelectedColumns] = useState([]);
   const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
   const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
     delete: (row) => dispatch(asyncDeletePenilaianRisiko(row.id)),
@@ -43,9 +41,6 @@ export default function PenilaianRisikoPage() {
   useEffect(() => {
     setLoading(true);
     dispatch(asyncReceivePenilaianRisiko({ page, limit: 10, search }))
-      .catch(() => { })
-      .finally(() => setLoading(false));
-    dispatch(asyncReceiveIdentifikasiDanKejadianBahaya())
       .catch(() => { })
       .finally(() => setLoading(false));
   }, [dispatch, page, search]);
@@ -75,15 +70,19 @@ export default function PenilaianRisikoPage() {
     },
     [dispatch, modal, closeModal]
   );
-
-  const columns = [
-    { key: 'identifikasiDanKejadianBahaya', label: 'Kode Risiko', render: (_, row) => <span className="font-mono text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded">{row.identifikasiDanKejadianBahaya?.kodeRisiko || row.identifikasiBahayaId}</span> },
-    { key: 'peluangKejadianBahaya', label: 'Peluang Kejadian Bahaya' },
-    { key: 'dampakKeparahan', label: 'Dampak Keparahan' },
-    { key: 'skorRisiko', label: 'Skor Risiko', render: (v) => <span className="font-semibold text-gray-900">{v}</span> },
-    { key: 'tingkatRisiko', label: 'Tingkat Risiko', render: (v) => <RiskLevelBadge level={v} /> },
-  ];
-
+  const columnOptions = Object.entries(RELATION_COLUMN_GROUPS).map(([value, group]) => ({
+    value,
+    label: group.label,
+  }));
+  const columns = useMemo(() => {
+    const sorted = [...selectedColumns].sort(
+      (a, b) => RELATION_ORDER.indexOf(a.value) - RELATION_ORDER.indexOf(b.value)
+    );
+    return [
+      ...penilaianRisikoColumns,
+      ...sorted.flatMap(({ value }) => RELATION_COLUMN_GROUPS[value]?.columns ?? []),
+    ];
+  }, [selectedColumns]);
   return (
     <>
       <div className="mb-6">
@@ -100,7 +99,19 @@ export default function PenilaianRisikoPage() {
         onSearchChange={handleSearchChange}
         searchPlaceholder="Cari..."
         emptyMessage="Data tidak ditemukan"
-        headerExtra={<AddButton id="btn-add-kaji-ulang" onClick={openAdd} />}
+        headerExtra={<>
+          <div className="flex flex-wrap items-end gap-3">
+            <Select
+              className="z-50"
+              isMulti
+              options={columnOptions}
+              value={selectedColumns}
+              onChange={(value) => setSelectedColumns(value || [])}
+              placeholder="Pilih kolom..."
+            />
+            <AddButton id="btn-add-kaji-ulang" onClick={openAdd} />
+          </div>
+        </>}
         actions={(row) => (
           <>
             <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>
@@ -109,7 +120,7 @@ export default function PenilaianRisikoPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Penilaian Risiko' : 'Tambah Penilaian Risiko'}>
-        <PenilaianRisikoFormComponent identifikasiDanKejadianBahaya={identifikasiDanKejadianBahayaState} form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
+        <PenilaianRisikoFormComponent form={modal.form} onChange={setForm} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} mode={modal.mode} />
       </Modal>
       <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data penilaian risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
     </>

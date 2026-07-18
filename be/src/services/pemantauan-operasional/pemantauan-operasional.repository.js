@@ -1,20 +1,17 @@
 // pemantauanOperasional.repository.js
 import { prisma } from "../../databases/client.js";
 
+
+
 const includeRelasi = {
     kajiUlangRisiko: {
-        select: {
-            id: true,
-            tindakanPengendalian: true,
-            validasi: true,
+        include: {
+            rencanaPerbaikan: true,
             penilaianRisiko: {
-                select: {
-                    id: true,
+                include: {
                     identifikasiDanKejadianBahaya: {
-                        select: {
-                            kodeRisiko: true,
-                            kejadianBahayaXYZ: true,
-                            lokasiSpam: { select: { kodeLokasi: true } },
+                        include: {
+                            lokasiSpam: true,
                         },
                     },
                 },

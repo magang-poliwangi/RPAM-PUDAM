@@ -1,19 +1,34 @@
+import { useCallback, useState } from "react";
 import InputComponent from "../common/InputComponent";
-import SelectField from "../common/SelectField";
+import { getPayload } from "../../utils/response";
+import AsyncSelectField from "../common/AsyncSelectField";
+import { lokasiSpamApi } from "../../api/lokasi-spam";
 
-export default function IdentifikasiDanKejadianBahayaFormComponent({ form, lokasiSpam, onChange, onSubmit, onCancel, loading, mode }) {
+export default function IdentifikasiDanKejadianBahayaFormComponent({ form,  onChange, onSubmit, onCancel, loading, mode }) {
 
-  
-  const lokasiSpamOptions = (lokasiSpam?.items || []).map((item) => ({
-    value: item.id,
-    label: item.namaLokasi,
-  }));
+
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const lokasiSpamOptions = useCallback(async (inputValue) => {
+    const result = getPayload(
+      await lokasiSpamApi.getAll({ search: inputValue, limit: 20 })
+    );
+    return (result.items || []).map((item) => ({
+      value: item.id,
+      label: `${item.kodeLokasi} - ${item.namaLokasi}  `
+    }));
+  }, []);
 
   const handleChange = (e) => {
     onChange({
       ...form,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleLokasiSpamChange = (e) => {
+    setSelectedOption(e.target.selectedOption || null);
+    onChange({ ...form, lokasiSpamId: e.target.value });
   };
 
   return (
@@ -29,13 +44,15 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form, lokas
           </span>
         </div>
       ) : (
-          <SelectField
-          name="lokasiSpamId" label="Lokasi SPAM" required
-          value={form.lokasiSpamId || ''}
-          onChange={(e) => onChange({ ...form, lokasiSpamId: e.target.value })}
-          options={lokasiSpamOptions}
-        />
-      )}
+        <AsyncSelectField
+          name="lokasiSpamId"
+          label="Data Lokasi Spam"
+          required
+          value={selectedOption}
+          loadOptions={lokasiSpamOptions}
+          onChange={handleLokasiSpamChange}
+          placeholder="Ketik Kode Lokasi Spam atau Nama Lokasi untuk mencari..."
+        />)}
 
       <InputComponent
         label="Kode Risiko"

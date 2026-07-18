@@ -49,17 +49,17 @@ export function asyncReceiveIdentifikasiDanKejadianBahaya(params = {}) {
 
 export function asyncAddIdentifikasiDanKejadianBahaya(payload) {
     return async (dispatch) => {
-        const pemantauanOperasional = getPayload(await identifikasiDanKejadianBahayaApi.create(payload));
-        dispatch(addIdentifikasiDanKejadianBahayaActionCreator(pemantauanOperasional));
-        return pemantauanOperasional;
+        const identifikasiDanKejadianBahaya = getPayload(await identifikasiDanKejadianBahayaApi.create(payload));
+        dispatch(addIdentifikasiDanKejadianBahayaActionCreator(identifikasiDanKejadianBahaya));
+        return identifikasiDanKejadianBahaya;
     };
 }
 
 export function asyncUpdateIdentifikasiDanKejadianBahaya({ id, payload }) {
     return async (dispatch) => {
-        const pemantauanOperasional = getPayload(await identifikasiDanKejadianBahayaApi.update(id, payload));
-        dispatch(updateIdentifikasiDanKejadianBahayaActionCreator(pemantauanOperasional));
-        return pemantauanOperasional;
+        const identifikasiDanKejadianBahaya = getPayload(await identifikasiDanKejadianBahayaApi.update(id, payload));
+        dispatch(updateIdentifikasiDanKejadianBahayaActionCreator(identifikasiDanKejadianBahaya));
+        return identifikasiDanKejadianBahaya;
     };
 }
 

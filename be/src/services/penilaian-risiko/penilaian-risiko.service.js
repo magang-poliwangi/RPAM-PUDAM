@@ -46,15 +46,20 @@ export default class PenilaianRisikoService {
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
 
-        const where = { deletedAt: null };
-        if (req.query.search) {
-            where.identifikasiDanKejadianBahaya = {
-                kodeRisiko: { contains: req.query.search, mode: 'insensitive' },
-            };
-        }
-        if (req.query.identifikasiDanKejadianBahayaId) {
-            where.identifikasiDanKejadianBahayaId = req.query.identifikasiDanKejadianBahayaId;
-        }
+        const { search, tanpaKajiUlangRisiko, tingkatRisiko } = req.query;
+        const where = {
+            deletedAt: null,
+            ...(tanpaKajiUlangRisiko === 'true' && { kajiUlangRisiko: null }),
+            ...(tingkatRisiko && { tingkatRisiko }),
+            ...(search && {
+                OR: [
+                    { identifikasiDanKejadianBahaya: { kodeRisiko: { contains: search, mode: 'insensitive' } } },
+                    { identifikasiDanKejadianBahaya: { kejadianBahayaXYZ: { contains: search, mode: 'insensitive' } } },
+                    { identifikasiDanKejadianBahaya: { lokasiSpam: { kodeLokasi: { contains: search, mode: 'insensitive' } } } },
+                ],
+            }),
+        };
+
 
         const [data, total] = await Promise.all([
             this.penilaianRisikoRepository.findAll({
