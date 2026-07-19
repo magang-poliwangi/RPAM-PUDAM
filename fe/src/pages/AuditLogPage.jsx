@@ -132,63 +132,7 @@ export default function AuditLogPage() {
             </div>
 
             {/* Filter bar */}
-            <div className="app-card p-4 mb-4 flex flex-wrap items-end gap-3">
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-gray-500">Aksi</label>
-                    <select
-                        value={filters.aksi}
-                        onChange={(e) => handleFilterChange('aksi', e.target.value)}
-                        className="app-input text-sm min-w-[10rem]"
-                    >
-                        {AKSI_OPTIONS.map((opt) => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                    </select>
-                </div>
 
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-gray-500">Tabel</label>
-                    <select
-                        value={filters.namaTabel}
-                        onChange={(e) => handleFilterChange('namaTabel', e.target.value)}
-                        className="app-input text-sm min-w-[14rem]"
-                    >
-                        {NAMA_TABEL_OPTIONS.map((opt) => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-gray-500">Dari Tanggal</label>
-                    <input
-                        type="date"
-                        value={filters.startDate}
-                        onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                        className="app-input text-sm"
-                    />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-gray-500">Sampai Tanggal</label>
-                    <input
-                        type="date"
-                        value={filters.endDate}
-                        onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                        className="app-input text-sm"
-                    />
-                </div>
-
-                {hasActiveFilters && (
-                    <button
-                        type="button"
-                        onClick={handleResetFilters}
-                        className="text-sm text-teal-700 hover:text-teal-800 font-medium px-3 py-2"
-                    >
-                        Reset Filter
-                    </button>
-                )}
-            </div>
 
             <DataTable
                 columns={columns}
@@ -200,6 +144,67 @@ export default function AuditLogPage() {
                 onSearchChange={handleSearchChange}
                 searchPlaceholder="Cari keterangan..."
                 emptyMessage="Belum ada aktivitas tercatat"
+                headerExtra={(
+                    <>
+                        <div className="flex flex-wrap items-end gap-3">
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-xs font-medium text-gray-500">Aksi</label>
+                                <select
+                                    value={filters.aksi}
+                                    onChange={(e) => handleFilterChange('aksi', e.target.value)}
+                                    className="app-input text-sm min-w-[10rem]"
+                                >
+                                    {AKSI_OPTIONS.map((opt) => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-xs font-medium text-gray-500">Tabel</label>
+                                <select
+                                    value={filters.namaTabel}
+                                    onChange={(e) => handleFilterChange('namaTabel', e.target.value)}
+                                    className="app-input text-sm min-w-[14rem]"
+                                >
+                                    {NAMA_TABEL_OPTIONS.map((opt) => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-xs font-medium text-gray-500">Dari Tanggal</label>
+                                <input
+                                    type="date"
+                                    value={filters.startDate}
+                                    onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                                    className="app-input text-sm"
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-xs font-medium text-gray-500">Sampai Tanggal</label>
+                                <input
+                                    type="date"
+                                    value={filters.endDate}
+                                    onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                                    className="app-input text-sm"
+                                />
+                            </div>
+
+                            {hasActiveFilters && (
+                                <button
+                                    type="button"
+                                    onClick={handleResetFilters}
+                                    className="text-sm text-teal-700 hover:text-teal-800 font-medium px-3 py-2"
+                                >
+                                    Reset Filter
+                                </button>
+                            )}
+                        </div>
+                    </>
+                )}
             />
         </>
     );

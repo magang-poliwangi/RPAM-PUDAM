@@ -1,5 +1,17 @@
 import { prisma } from '../../databases/client.js';
-
+const includeRelasi = {
+    pemantauanOperasional:true,
+    rencanaPerbaikan:true,
+    penilaianRisiko: {
+        include: {
+            identifikasiDanKejadianBahaya: {
+                include: {
+                    lokasiSpam: true
+                }
+            }
+        }
+    }
+}
 export default class KajiUlangRisikoRepository {
     async findByPenilaianRisikoId({ penilaianRisikoId }) {
         return prisma.kajiUlangRisiko.findUnique({
@@ -17,7 +29,7 @@ export default class KajiUlangRisikoRepository {
             skip,
             take,
             orderBy,
-            include: { penilaianRisiko: { include: { identifikasiDanKejadianBahaya: { include: { lokasiSpam: true } } } } },
+            include: includeRelasi,
         });
     }
 
@@ -28,7 +40,7 @@ export default class KajiUlangRisikoRepository {
     async findById({ id }) {
         return prisma.kajiUlangRisiko.findFirst({
             where: { id, deletedAt: null },
-            include: { penilaianRisiko: { include: { identifikasiDanKejadianBahaya: true } } },
+            include: includeRelasi,
         });
     }
 

@@ -1,15 +1,29 @@
 import { prisma } from '../../databases/client.js';
 
+const includeRelasi = {
+    lokasiSpam: true,
+    penilaianRisiko: {
+        include: {
+            kajiUlangRisiko: {
+                include:{
+                    rencanaPerbaikan:true,
+                    pemantauanOperasional:true,
+                },
+            }
+        },
+    },
+
+}
 export default class IdentifikasiDanKejadianBahayaRepository {
     async create({ data }) {
-    return prisma.identifikasiDanKejadianBahaya.create({
-        data,
-        include: {
-            lokasiSpam: true,
-            penilaianRisiko: true,
-        },
-    });
-}
+        return prisma.identifikasiDanKejadianBahaya.create({
+            data,
+            include: {
+                lokasiSpam: true,
+                penilaianRisiko: true,
+            },
+        });
+    }
 
     async findAll({ where, skip, take, orderBy }) {
         return prisma.identifikasiDanKejadianBahaya.findMany({
@@ -17,10 +31,7 @@ export default class IdentifikasiDanKejadianBahayaRepository {
             skip,
             take,
             orderBy,
-            include: {
-                lokasiSpam: true,
-                penilaianRisiko: true,
-            },
+            include:includeRelasi,
         });
     }
 
@@ -31,10 +42,7 @@ export default class IdentifikasiDanKejadianBahayaRepository {
     async findById({ id }) {
         return prisma.identifikasiDanKejadianBahaya.findFirst({
             where: { id, deletedAt: null },
-            include: {
-                lokasiSpam: true,
-                penilaianRisiko: true,
-            },
+            include:includeRelasi,
         });
     }
 

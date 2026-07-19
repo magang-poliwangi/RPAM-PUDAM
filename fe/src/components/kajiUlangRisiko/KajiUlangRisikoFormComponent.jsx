@@ -1,25 +1,36 @@
+import { useCallback, useState } from "react";
+import { penilaianRisikoApi } from "../../api/penilaian-risiko";
+import { getPayload } from "../../utils/response";
 import InputComponent from "../common/InputComponent";
 import RiskLevelBadge from "../common/RiskLevelBadge";
 import SelectField from "../common/SelectField";
+import AsyncSelectField from "../common/AsyncSelectField";
 
 const VALIDASI_OPTIONS = [
   { value: 'EFEKTIF', label: 'Efektif' },
   { value: 'TIDAK_EFEKTIF', label: 'Tidak Efektif' },
   { value: 'TIDAK_PASTI', label: 'Tidak Pasti' },
 ];
-export default function KajiUlangRisikoFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, penilaianRisiko, usedPenilaianRisikoIds = [] }) {
-  const penilaianRisikoOptions = (penilaianRisiko?.items || [])
-    .filter(item => mode === 'edit' || !usedPenilaianRisikoIds.includes(item.id))
-    .map((item) => {
-      const identifikasi = item.identifikasiDanKejadianBahaya;
-      const labelText = identifikasi 
-        ? `${identifikasi.kodeRisiko} — ${identifikasi.kejadianBahayaXYZ} (Skor: ${item.skorRisiko} [${item.tingkatRisiko}])`
-        : `ID: ${item.id} — Skor: ${item.skorRisiko}`;
-      return {
-        value: item.id,
-        label: labelText,
-      };
-    });
+export default function KajiUlangRisikoFormComponent({ form, onChange, onSubmit, onCancel, loading, mode }) {
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const loadIdentifikasiOptions = useCallback(async (inputValue) => {
+    const result = getPayload(
+      await penilaianRisikoApi.getAll({ search: inputValue, limit: 20, tanpaKajiUlangRisiko: 'true', })
+    );
+    return (result.items || []).map((item) => ({
+      value: item.id,
+
+      label: `${item.identifikasiDanKejadianBahaya.lokasiSpam.kodeLokasi} - ${item.identifikasiDanKejadianBahaya.kodeRisiko} - ${item.identifikasiDanKejadianBahaya.kejadianBahayaXYZ}`,
+    }));
+  }, []);
+
+
+  const handlePenilaianChange = (e) => {
+    setSelectedOption(e.target.selectedOption || null);
+    onChange({ ...form, penilaianRisikoId: e.target.value });
+  };
+
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       {mode === 'edit' ? (
@@ -32,13 +43,16 @@ export default function KajiUlangRisikoFormComponent({ form, onChange, onSubmit,
           </span>
         </div>
       ) : (
-        <SelectField
-          name="penilaianRisikoId" label="Penilaian Risiko" required
-          value={form.penilaianRisikoId || ''}
-          onChange={(e) => onChange({ ...form, penilaianRisikoId: e.target.value })}
-          options={penilaianRisikoOptions}
-        />
-      )}
+        <AsyncSelectField
+          name="penilaianRisikoId"
+          label="Data Identifikasi Dan Kejadian Bahaya"
+          required
+          value={selectedOption}
+          loadOptions={loadIdentifikasiOptions}
+          onChange={handlePenilaianChange}
+          placeholder="Ketik Kode Lokasi, Kode Risiko, atau Kejadian Bahaya(XYZ) untuk mencari..."
+        />)}
+
       <InputComponent
         name="tindakanPengendalian" label="Tindakan Pengendalian" required
         value={form.tindakanPengendalian || ''}

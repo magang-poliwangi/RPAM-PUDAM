@@ -30,7 +30,6 @@ export const rencanaPerbaikanPayloadValidatorPost = Joi.object({
             'any.required': 'Status kemajuan wajib diisi',
             'any.only': 'Status kemajuan harus salah satu dari: BELUM_MULAI, SEDANG_BERJALAN, SELESAI, TERTUNDA',
         }),
-    kendala: Joi.string().allow('', null).optional(),
     kendalaKeuangan: Joi.boolean().optional(),
     kendalaTenagaKerja: Joi.boolean().optional(),
     prioritas: Joi.string().valid('PENDEK', 'MENENGAH', 'PANJANG').required().messages({
@@ -65,7 +64,6 @@ export const rencanaPerbaikanPayloadValidatorPut = Joi.object({
         .messages({
             'any.only': 'Status kemajuan harus salah satu dari: BELUM_MULAI, SEDANG_BERJALAN, SELESAI, TERTUNDA',
         }),
-    kendala: Joi.string().allow('', null).optional(),
     kendalaKeuangan: Joi.boolean().optional(),
     kendalaTenagaKerja: Joi.boolean().optional(),
     prioritas: Joi.string().valid('PENDEK', 'MENENGAH', 'PANJANG').optional().messages({

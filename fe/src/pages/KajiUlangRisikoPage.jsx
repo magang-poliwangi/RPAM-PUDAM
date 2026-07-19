@@ -1,10 +1,8 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
-import RiskLevelBadge from '../components/common/RiskLevelBadge';
-import Badge from '../components/common/Badge';
 import IconButton from '../components/common/IconButton';
 import AddButton from '../components/common/AddButton';
 import { EditIcon, DeleteIcon } from '../components/common/icons';
@@ -18,12 +16,14 @@ import {
   asyncUpdateKajiUlangRisiko,
 } from '../states/kajiUlangRisiko/action';
 import KajiUlangRisikoFormComponent from '../components/kajiUlangRisiko/KajiUlangRisikoFormComponent';
-import { asyncReceivePenilaianRisiko } from '../states/penilaianRisiko/action';
+import { RELATION_COLUMN_GROUPS, RELATION_ORDER } from '../components/kajiUlangRisiko/kajiUlangRisiko.relationColumns';
+import { kajiUlangRisikoColumns } from '../components/kajiUlangRisiko/kajiUlangRisiko.columns';
+import Select from 'react-select';
 
-const EMPTY_FORM = { penilaianRisikoId: '', tindakanPengendalian: '', referensi: '', validasi: '', peluangSetelah: '', dampakSetelah: '' };
+const EMPTY_FORM = { penilaianRisikoId: '', tindakanPengendalian: '', referensi: '', validasi: '', peluangSetelah: 0, dampakSetelah: 0 };
 
-const VALIDASI_VARIANT = { EFEKTIF: 'green', TIDAK_EFEKTIF: 'red', TIDAK_PASTI: 'yellow' };
-const VALIDASI_LABEL = { EFEKTIF: 'Efektif', TIDAK_EFEKTIF: 'Tidak Efektif', TIDAK_PASTI: 'Tidak Pasti' };
+// const VALIDASI_VARIANT = { EFEKTIF: 'green', TIDAK_EFEKTIF: 'red', TIDAK_PASTI: 'yellow' };
+// const VALIDASI_LABEL = { EFEKTIF: 'Efektif', TIDAK_EFEKTIF: 'Tidak Efektif', TIDAK_PASTI: 'Tidak Pasti' };
 const READONLY_FIELDS = ['id', 'skorSetelah', 'tingkatRisikoSetelah', 'createdAt', 'updatedAt', 'penilaianRisiko'];
 
 
@@ -31,9 +31,6 @@ export default function KajiUlangRisikoPage() {
   const dispatch = useDispatch();
   const { items, pagination } = useSelector(
     (state) => state.kajiUlangRisiko || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
-  );
-  const penilaianRisikoState = useSelector(
-    (state) => state.penilaianRisiko
   );
 
   const [search, setSearch] = useState('');
@@ -45,16 +42,13 @@ export default function KajiUlangRisikoPage() {
   const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
     delete: (row) => dispatch(asyncDeleteKajiUlangRisiko(row.id)),
   });
-
+  const [selectedColumns, setSelectedColumns] = useState([]);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     dispatch(asyncReceiveKajiUlangRisiko({ page, limit: 10, search }))
       .catch(() => { })
       .finally(() => setLoading(false));
-       dispatch(asyncReceivePenilaianRisiko({ limit: 1000 }))
-            .catch(() => { })
-            .finally(() => setLoading(false));
   }, [dispatch, page, search]);
 
   const handleSearchChange = useCallback((value) => {
@@ -83,15 +77,19 @@ export default function KajiUlangRisikoPage() {
     [dispatch, modal, closeModal]
   );
 
-  const columns = [
-    { key: 'tindakanPengendalian', label: 'Tindakan Pengendalian', render: (v) => <span className="line-clamp-2 max-w-xs">{v}</span> },
-    { key: 'referensi', label: 'Referensi', render: (v) => <span className="line-clamp-2 max-w-xs">{v}</span> },
-    { key: 'validasi', label: 'Validasi', render: (v) => <Badge label={VALIDASI_LABEL[v] || v} variant={VALIDASI_VARIANT[v]} /> },
-    { key: 'peluangSetelah', label: 'Peluang Kejadian Bahaya' },
-    { key: 'dampakSetelah', label: 'Dampak Keparahan' },
-    { key: 'skorSetelah', label: 'Skor Risiko', render: (v) => <span className="font-semibold">{v}</span> },
-    { key: 'tingkatRisikoSetelah', label: 'Tingkat Risiko', render: (v) => <RiskLevelBadge level={v} /> },
-  ];
+  const columnOptions = Object.entries(RELATION_COLUMN_GROUPS).map(([value, group]) => ({
+    value,
+    label: group.label,
+  }));
+  const columns = useMemo(() => {
+    const sorted = [...selectedColumns].sort(
+      (a, b) => RELATION_ORDER.indexOf(a.value) - RELATION_ORDER.indexOf(b.value)
+    );
+    return [
+      ...kajiUlangRisikoColumns,
+      ...sorted.flatMap(({ value }) => RELATION_COLUMN_GROUPS[value]?.columns ?? []),
+    ];
+  }, [selectedColumns]);
 
   return (
     <>
@@ -109,7 +107,19 @@ export default function KajiUlangRisikoPage() {
         onSearchChange={handleSearchChange}
         searchPlaceholder="Cari..."
         emptyMessage="Data tidak ditemukan"
-        headerExtra={<AddButton id="btn-add-kaji-ulang" onClick={openAdd} />}
+        headerExtra={<>
+          <div className="flex flex-wrap items-end gap-3">
+            <Select
+              className="z-50"
+              isMulti
+              options={columnOptions}
+              value={selectedColumns}
+              onChange={(value) => setSelectedColumns(value || [])}
+              placeholder="Pilih kolom..."
+            />
+            <AddButton id="btn-add-kaji-ulang" onClick={openAdd} />
+          </div>
+        </>}
         actions={(row) => (
           <>
             <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>
@@ -118,18 +128,16 @@ export default function KajiUlangRisikoPage() {
         )}
       />
       <Modal open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Kaji Ulang Risiko' : 'Tambah Kaji Ulang Risiko'}>
-        <KajiUlangRisikoFormComponent 
-          penilaianRisiko={penilaianRisikoState} 
-          usedPenilaianRisikoIds={items.map(k => k.penilaianRisikoId)}
-          form={modal.form} 
-          onChange={setForm} 
-          mode={modal.mode} 
-          onSubmit={handleSave} 
-          onCancel={closeModal} 
-          loading={saveLoading} 
+        <KajiUlangRisikoFormComponent
+          form={modal.form}
+          onChange={setForm}
+          mode={modal.mode}
+          onSubmit={handleSave}
+          onCancel={closeModal}
+          loading={saveLoading}
         />
       </Modal>
-      <ConfirmDialog open={confirm.open}  title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
+      <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
     </>
   );
 }

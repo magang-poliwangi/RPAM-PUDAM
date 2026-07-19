@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import AddButton from "../components/common/AddButton";
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import DataTable from "../components/common/DataTable";
 import IconButton from "../components/common/IconButton";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
 import Modal from "../components/common/Modal";
-import PemantauanOperasionalFormComponent from "../components/pemantauanRisiko/PemantauanRisikoFormComponent";
 import { asyncAddPemantauanOperasional, asyncDeletePemantauanOperasional, asyncReceivePemantauanOperasional } from "../states/pemantauanOperasional/action";
 import { omitFields } from "../utils/omit-fields";
 import { useEffect } from "react";
@@ -14,7 +13,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import useConfirmDialog from "../hooks/useConfirmDialog";
 import useModalForm from "../hooks/useModalForm";
-import { asyncReceiveKajiUlangRisiko } from "../states/kajiUlangRisiko/action";
+import PemantauanOperasionalFormComponent from "../components/pemantauanOperasional/PemantauanOperasionalFormComponent";
+import { RELATION_COLUMN_GROUPS, RELATION_ORDER } from "../components/pemantauanOperasional/pemantauanOperasional.relationColumns";
+import { pemantauanOperasionalColumns } from "../components/pemantauanOperasional/pemantauanOperasional.columns";
+import Select from "react-select";
 
 const EMPTY_FORM = {
     kajiUlangRisikoId: "",
@@ -39,15 +41,13 @@ export default function PemantauanOperasionalPage() {
     const { items, pagination } = useSelector(
         (state) => state.pemantauanOperasional || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
     );
-    const kajiUlangRisikoState = useSelector(
-        (state) => state.kajiUlangRisiko
-    );
+
 
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [saveLoading, setSaveLoading] = useState(false);
-
+    const [selectedColumns, setSelectedColumns] = useState([])
     const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
         delete: (row) => dispatch(asyncDeletePemantauanOperasional(row.id)),
@@ -56,9 +56,6 @@ export default function PemantauanOperasionalPage() {
     useEffect(() => {
         setLoading(true);
         dispatch(asyncReceivePemantauanOperasional({ page, limit: 10, search }))
-            .catch(() => { })
-            .finally(() => setLoading(false));
-        dispatch(asyncReceiveKajiUlangRisiko())
             .catch(() => { })
             .finally(() => setLoading(false));
     }, [dispatch, page, search]);
@@ -89,21 +86,19 @@ export default function PemantauanOperasionalPage() {
         },
         [dispatch, modal, closeModal]
     );
-
-    const columns = [
-        { key: 'apaYangDimonitor', label: 'Apa Yang Dimonitor', render: (v) => <span className="line-clamp-2 max-w-xs">{v}</span> },
-        { key: 'dimana', label: 'Dimana' },
-        { key: 'kapan', label: 'Kapan' },
-        { key: 'bagaimana', label: 'Bagaimana' },
-        { key: 'siapaYangMelakukan', label: 'Siapa Yang Melakukanan' },
-        { key: 'siapaYangAkanMenganalisisHasilnya', label: 'Siapa Yang Akan Menganalisis Hasilnya' },
-        { key: 'siapaYangMenerimaHasilAnalisisDanMengambilTindakan', label: 'Siapa Yang Menerima Hasil Analisis Dan Mengambil Tindakan' },
-        { key: 'apaTindakanKoreksinya', label: 'Apa Tindakan Koreksinya' },
-        { key: 'siapaYangMelakukanTindakanKoreksi', label: 'Siapa Yang Melakukan Tindakan Koreksi' },
-        { key: 'seberapaCepat', label: 'Seberapa Cepat' },
-        { key: 'siapaYangWajibMenerimaLaporanUntukTindakanKoreksiIni', label: 'Siapa Yang Wajib Menerima Laporan Untuk Tindakan Koreksi Ini' },
-    ];
-
+    const columnOptions = Object.entries(RELATION_COLUMN_GROUPS).map(([value, group]) => ({
+        value,
+        label: group.label,
+    }));
+    const columns = useMemo(() => {
+        const sorted = [...selectedColumns].sort(
+            (a, b) => RELATION_ORDER.indexOf(a.value) - RELATION_ORDER.indexOf(b.value)
+        );
+        return [
+            ...pemantauanOperasionalColumns,
+            ...sorted.flatMap(({ value }) => RELATION_COLUMN_GROUPS[value]?.columns ?? []),
+        ];
+    }, [selectedColumns]);
     return (
         <>
             <div className="mb-6">
@@ -126,7 +121,19 @@ export default function PemantauanOperasionalPage() {
                 onSearchChange={handleSearchChange}
                 searchPlaceholder="Cari..."
                 emptyMessage="Data tidak ditemukan"
-                headerExtra={<AddButton id="btn-add-kaji-ulang" onClick={openAdd} />}
+                headerExtra={<>
+                    <div className="flex flex-wrap items-end gap-3">
+                        <Select
+                            className="z-50"
+                            isMulti
+                            options={columnOptions}
+                            value={selectedColumns}
+                            onChange={(value) => setSelectedColumns(value || [])}
+                            placeholder="Pilih kolom..."
+                        />
+                        <AddButton id="btn-add-kaji-ulang" onClick={openAdd} />
+                    </div>
+                </>}
                 actions={(row) => (
                     <>
                         <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>
@@ -148,7 +155,6 @@ export default function PemantauanOperasionalPage() {
                     onCancel={closeModal}
                     loading={saveLoading}
                     mode={modal.mode}
-                    kajiUlangRisiko={kajiUlangRisikoState}
                 />
             </Modal>
             <ConfirmDialog

@@ -1,5 +1,10 @@
+import { useCallback, useState } from "react";
 import InputComponent from "../common/InputComponent";
 import SelectField from "../common/SelectField";
+import { getPayload } from "../../utils/response";
+import { kajiUlangRisikoApi } from "../../api/kaji-ulang-risiko";
+import AsyncSelectField from "../common/AsyncSelectField";
+import CheckboxField from "../common/CheckboxField";
 const STATUS_OPTIONS = [
   { value: 'BELUM_MULAI', label: 'Belum Mulai' },
   { value: 'SEDANG_BERJALAN', label: 'Sedang Berjalan' },
@@ -13,21 +18,24 @@ const PRIORITAS_OPTIONS = [
 ];
 
 
-export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit, onCancel, loading, mode, kajiUlangRisiko, usedKajiUlangRisikoIds = [] }) {
-  console.log(kajiUlangRisiko);
+export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit, onCancel, loading, mode }) {
+  const [selectedOption, setSelectedOption] = useState(null);
 
-  const kajiUlangRisikoOptions = (kajiUlangRisiko?.items || [])
-    .filter(item => mode === 'edit' || !usedKajiUlangRisikoIds.includes(item.id))
-    .map((item) => {
-      const identifikasi = item.penilaianRisiko?.identifikasiDanKejadianBahaya;
-      const labelText = identifikasi
-        ? `${identifikasi.kodeRisiko} — ${identifikasi.kejadianBahayaXYZ} (Tindakan: ${item.tindakanPengendalian})`
-        : `Tindakan: ${item.tindakanPengendalian}`;
-      return {
-        value: item.id,
-        label: labelText,
-      };
-    });
+  const loadKajiUlangOptions = useCallback(async (inputValue) => {
+    const result = getPayload(
+      await kajiUlangRisikoApi.getAll({ search: inputValue, limit: 20, tanpaPemantauanOperasional: 'true' })
+    );
+    return (result.items || []).map((item) => ({
+      value: item.id,
+      label: `${item.penilaianRisiko.identifikasiDanKejadianBahaya.kodeRisiko} - ${item.penilaianRisiko.identifikasiDanKejadianBahaya.kejadianBahayaXYZ} - ${item.tindakanPengendalian}`,
+    }));
+  }, []);
+
+
+  const handleKajiUlangChange = (e) => {
+    setSelectedOption(e.target.selectedOption || null);
+    onChange({ ...form, kajiUlangRisikoId: e.target.value });
+  };
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
@@ -41,11 +49,14 @@ export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit
           </span>
         </div>
       ) : (
-        <SelectField
-          name="kajiUlangRisikoId" label="Data Kaji Ulang Risiko" required
-          value={form.kajiUlangRisikoId || ''}
-          onChange={(e) => onChange({ ...form, kajiUlangRisikoId: e.target.value })}
-          options={kajiUlangRisikoOptions}
+        <AsyncSelectField
+          name="kajiUlangRisikoid"
+          label="Data Penilaian Risiko"
+          required
+          value={selectedOption}
+          loadOptions={loadKajiUlangOptions}
+          onChange={handleKajiUlangChange}
+          placeholder="Ketik kode risiko,kejadian Bahaya(XYZ) atau Tindakan Pengendalian  untuk mencari..."
         />
       )}
       <InputComponent
@@ -59,9 +70,9 @@ export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit
         onChangeValue={(e) => onChange({ ...form, penanggungJawab: e.target.value })}
       />
       <InputComponent
-        name="jadwal" label="Jadwal Pelaksanaan" required
-        value={form.jadwal || ''}
-        onChangeValue={(e) => onChange({ ...form, jadwal: e.target.value })}
+        name="jadwalPelaksanaan" label="Jadwal Pelaksanaan" required
+        value={form.jadwalPelaksanaan || ''}
+        onChangeValue={(e) => onChange({ ...form, jadwalPelaksanaan: e.target.value })}
       />
       <InputComponent
         name="sumberPembiayaan" label="Sumber Pembiayaan"
@@ -87,11 +98,23 @@ export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit
           options={PRIORITAS_OPTIONS}
         />
       </div>
-      <InputComponent
-        name="kendala" label="Kendala (opsional)" placeholder="Contoh: Keuangan, Tenaga Kerja..."
-        value={form.kendala || ''}
-        onChangeValue={(e) => onChange({ ...form, kendala: e.target.value })}
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">Kendala Sumber Daya</label>
+        <div className="grid grid-cols-2 gap-3">
+          <CheckboxField
+            name="kendalaKeuangan"
+            label="Kendala Keuangan"
+            checked={form.kendalaKeuangan}
+            onChange={(e) => onChange({ ...form, kendalaKeuangan: e.target.checked })}
+          />
+          <CheckboxField
+            name="kendalaTenagaKerja"
+            label="Kendala Tenaga Kerja"
+            checked={form.kendalaTenagaKerja}
+            onChange={(e) => onChange({ ...form, kendalaTenagaKerja: e.target.checked })}
+          />
+        </div>
+      </div>
       <div className="flex justify-end gap-3 pt-2">
         <button type="button" onClick={onCancel} className="app-button-secondary">Batal</button>
         <button type="submit" disabled={loading} className="app-button-primary">

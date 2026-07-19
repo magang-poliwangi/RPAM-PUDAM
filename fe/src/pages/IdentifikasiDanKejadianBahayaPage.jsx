@@ -5,13 +5,15 @@ import DataTable from "../components/common/DataTable";
 import IconButton from "../components/common/IconButton";
 import Modal from "../components/common/Modal";
 import IdentifikasiDanKejadianBahayaFormComponent from "../components/identifikasiDanKejadianBahaya/IdentifikasiDanKejadianBahayaFormComponent";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useModalForm from "../hooks/useModalForm";
 import useConfirmDialog from "../hooks/useConfirmDialog";
 import { asyncAddIdentifikasiDanKejadianBahaya, asyncDeleteIdentifikasiDanKejadianBahaya, asyncReceiveIdentifikasiDanKejadianBahaya, asyncUpdateIdentifikasiDanKejadianBahaya } from "../states/indentifikasiDanKejadianBahaya/action";
 import { omitFields } from "../utils/omit-fields";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
-import { asyncReceiveLokasiSpam } from "../states/lokasiSpam/action";
+import Select from "react-select";
+import { identifikasiDanKejadianBahayaColumns } from "../components/identifikasiDanKejadianBahaya/identifikasiDanKejadianBahaya.columns";
+import { RELATION_COLUMN_GROUPS, RELATION_ORDER } from "../components/identifikasiDanKejadianBahaya/identifikasiDanKejadianBahaya.relationColumns";
 
 const EMPTY_FORM = {
     lokasiSpamId: "",
@@ -31,14 +33,14 @@ export default function IdentifikasiDanKejadianBahayaPage() {
     const { items, pagination } = useSelector(
         (state) => state.identifikasiDanKejadianBahaya || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
     );
-    const lokasiSpamState = useSelector(
-        (state) => state.lokasiSpam
-    );
-    
+
+
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [saveLoading, setSaveLoading] = useState(false);
+    const [selectedColumns, setSelectedColumns] = useState([]);
+
 
     const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
@@ -49,9 +51,6 @@ export default function IdentifikasiDanKejadianBahayaPage() {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
         dispatch(asyncReceiveIdentifikasiDanKejadianBahaya({ page, limit: 10, search }))
-            .catch(() => { })
-            .finally(() => setLoading(false));
-        dispatch(asyncReceiveLokasiSpam())
             .catch(() => { })
             .finally(() => setLoading(false));
     }, [dispatch, page, search]);
@@ -82,21 +81,20 @@ export default function IdentifikasiDanKejadianBahayaPage() {
         },
         [dispatch, modal, closeModal]
     );
-
-    const columns = [
-    {
-        key: 'lokasiSpam',
-        label: 'Kode Lokasi',
-        render: (v) => v?.kodeLokasi ?? '-',
-    },
-        { key: 'kodeRisiko', label: 'Kode Risiko' },
-        { key: 'komponenSpam', label: 'Komponen SPAM' },
-        { key: 'kontaminasiX', label: 'Kontaminasi atau Sesuatu yang Berpotensi Buruk Terhadap Kualitas Air (X)' },
-        { key: 'penyebabZ', label: 'Penyebab  (Z)' },
-        { key: 'komponenSpamY', label: 'Penyebab  (Z)' },
-        { key: 'kejadianBahayaXYZ', label: 'Kejadian Bahaya  (XYZ)' },
-        { key: 'tipeBahaya', label: 'Tipe Bahaya' },
-    ];
+   const columnOptions = Object.entries(RELATION_COLUMN_GROUPS).map(([value, group]) => ({
+  value,
+  label: group.label,
+}));
+   const columns = useMemo(() => {
+  // urutkan berdasar hierarki relasi, bukan urutan klik user
+  const sorted = [...selectedColumns].sort(
+    (a, b) => RELATION_ORDER.indexOf(a.value) - RELATION_ORDER.indexOf(b.value)
+  );
+  return [
+    ...identifikasiDanKejadianBahayaColumns, 
+    ...sorted.flatMap(({ value }) => RELATION_COLUMN_GROUPS[value]?.columns ?? []),
+  ];
+}, [selectedColumns]);
 
     return (
         <>
@@ -112,9 +110,24 @@ export default function IdentifikasiDanKejadianBahayaPage() {
                 onPageChange={setPage}
                 search={search}
                 onSearchChange={handleSearchChange}
-                searchPlaceholder="Cari tindakan pengendalian..."
+                searchPlaceholder="Cari..."
                 emptyMessage="Data tidak ditemukan"
-                headerExtra={<AddButton id="btn-add-kaji-ulang" onClick={openAdd} />}
+                headerExtra={(
+                    <>
+                        <div className="flex flex-wrap items-end gap-3">
+                            <Select
+                                className="z-50"
+                                isMulti
+                                options={columnOptions}
+                                value={selectedColumns}
+                                onChange={(value) => setSelectedColumns(value || [])}
+                                placeholder="Pilih kolom..."
+                            />
+                            <AddButton id="btn-add-kaji-ulang" onClick={openAdd} />
+                        </div>
+                    </>
+                )
+                }
                 actions={(row) => (
                     <>
                         <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>
@@ -122,9 +135,9 @@ export default function IdentifikasiDanKejadianBahayaPage() {
                     </>
                 )}
             />
-            <Modal 
+            <Modal
                 open={modal.open} onClose={closeModal} title={modal.mode === 'edit' ? 'Edit Kaji Ulang Risiko' : 'Tambah Kaji Ulang Risiko'}>
-                <IdentifikasiDanKejadianBahayaFormComponent lokasiSpam={lokasiSpamState} form={modal.form} onChange={setForm} mode={modal.mode} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} prOptions={[]} />
+                <IdentifikasiDanKejadianBahayaFormComponent form={modal.form} onChange={setForm} mode={modal.mode} onSubmit={handleSave} onCancel={closeModal} loading={saveLoading} prOptions={[]} />
             </Modal>
             <ConfirmDialog open={confirm.open} title="Hapus Data?" message="Data kaji ulang risiko ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
         </>

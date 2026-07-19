@@ -16,7 +16,7 @@ import ConfirmDialog from '../components/common/ConfirmDialog';
 
 const EMPTY_FORM = {
     kodeLokasi: "",
-    simbolLokasi: "",
+    simbol: "",
     deskripsi: "",
     penanggungJawabNama: "",
     penanggungJawabPosisi: "",
@@ -42,6 +42,7 @@ export default function LokasiSpamPage() {
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
         delete: (row) => dispatch(asyncDeleteLokasiSpam(row.id)),
     });
+    console.log(items);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect

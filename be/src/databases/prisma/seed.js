@@ -1,3 +1,4 @@
+import { hitungTingkatRisiko } from '../../utils/score-calculator.js';
 import { prisma } from '../client.js';
 import bcrypt from 'bcrypt'
 
@@ -97,6 +98,7 @@ console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
         peluangKejadianBahaya: p.peluang,
         dampakKeparahan: p.dampak,
         skorRisiko: hitungSkor(p.peluang, p.dampak),
+        tingkatRisiko:hitungTingkatRisiko(hitungSkor(p.peluang, p.dampak))
       },
     });
     penilaianList.push(penilaian);
@@ -147,6 +149,7 @@ console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
         peluangKejadianBahaya: k.peluang,
         dampakKeparahan: k.dampak,
         skorRisiko: hitungSkor(k.peluang, k.dampak),
+        tingkatRisiko:hitungTingkatRisiko(hitungSkor(k.peluang, k.dampak))
       },
     });
     kajiUlangList.push(kaji);
