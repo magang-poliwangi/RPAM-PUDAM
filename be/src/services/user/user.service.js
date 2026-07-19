@@ -80,7 +80,7 @@ export default class UserService {
         }
 
 
-        const result = this.userRepository.updateUser({
+        const result = await this.userRepository.updateUser({
             id,
             username: data.username,
             password: data.password,

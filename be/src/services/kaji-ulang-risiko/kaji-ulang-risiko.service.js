@@ -187,6 +187,6 @@ export default class KajiUlangRisikoService {
             keterangan: `Menghapus data kaji ulang risiko `,
         });
 
-        await this.kajiUlangRisikoRepository.softDelete({ id });
+        await this.kajiUlangRisikoRepository.cascadeSoftDelete({ id });
     }
 }

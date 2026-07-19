@@ -10,5 +10,5 @@ export const identifikasiDanKejadianBahayaColumns = [
     textColumn('komponenSpamY', 'Komponen SPAM (Y)'),
     textColumn('kejadianBahayaXYZ', 'Kejadian Bahaya (XYZ)'),
   ]),
-  textColumn('tipeBahaya', 'Tipe Bahaya'),
+  relationColumn('bahayaKontaminasi.tipeBahaya', 'Tipe Bahaya'),
 ];

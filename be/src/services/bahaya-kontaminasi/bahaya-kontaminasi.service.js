@@ -12,7 +12,7 @@ export default class BahayaKontaminasiService {
 
     async create({ data, userId }) {
         data.id = `bahaya-kontaminasi-${nanoid()}`;
-        const result = this.bahayaKontaminasiRepository.create({ data });
+        const result = await this.bahayaKontaminasiRepository.create({ data });
         await catatAuditLog(this.auditLogRepository, {
             userId,
             aksi: 'CREATE',
@@ -65,7 +65,7 @@ export default class BahayaKontaminasiService {
 
         await catatAuditLog(this.auditLogRepository, {
             userId,
-            aksi: 'CREATE',
+            aksi: 'UPDATE',
             namaTabel: NAMA_TABEL,
             recordId: result.id,
             keterangan: `Mengubah data bahaya kontaminasi`,
@@ -75,10 +75,10 @@ export default class BahayaKontaminasiService {
 
     async remove({ id, userId }) {
         const existing = await this.findById({ id });
-        await this.bahayaKontaminasiRepository.softDelete({ id });
+        await this.bahayaKontaminasiRepository.cascadeSoftDelete({ id });
         await catatAuditLog(this.auditLogRepository, {
             userId,
-            aksi: 'CREATE',
+            aksi: 'DELETE',
             namaTabel: NAMA_TABEL,
             recordId: id,
             keterangan: `Menghapus data bahaya kontaminasi`,

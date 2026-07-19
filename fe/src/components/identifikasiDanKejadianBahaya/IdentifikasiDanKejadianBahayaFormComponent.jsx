@@ -25,7 +25,7 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form, onCha
     const result = getPayload(await bahayakontaminasiApi.getAll({ search: inputValue, limit: 20 }));
     return (result.items || []).map((item) => ({
       value: item.id,
-      label: `${item.kodeRisiko} - ${item.tipeBahaya}`,
+      label: `${item.kodeRisiko} - ${item.tipeBahaya} - ${item.kontaminasiX}`,
       raw: item,
     }));
   }, []);

@@ -13,7 +13,7 @@ export default class LokasiSpamService {
 
     async create({ data, userId }) {
         data.id = `lokasi-spam-${nanoid()}`;
-        const result = this.lokasiSpamRepository.create({ data });
+        const result = await this.lokasiSpamRepository.create({ data });
         await catatAuditLog(this.auditLogRepository, {
             userId,
             aksi: 'CREATE',
@@ -66,7 +66,7 @@ export default class LokasiSpamService {
 
         await catatAuditLog(this.auditLogRepository, {
             userId,
-            aksi: 'CREATE',
+            aksi: 'UPDATE',
             namaTabel: NAMA_TABEL,
             recordId: result.id,
             keterangan: `Mengubah data lokasi spam`,
@@ -76,10 +76,10 @@ export default class LokasiSpamService {
 
     async remove({ id, userId }) {
         const existing = await this.findById({ id });
-        await this.lokasiSpamRepository.softDelete({ id });
+        await this.lokasiSpamRepository.cascadeSoftDelete({ id });
         await catatAuditLog(this.auditLogRepository, {
             userId,
-            aksi: 'CREATE',
+            aksi: 'DELETE',
             namaTabel: NAMA_TABEL,
             recordId: id,
             keterangan: `Menghapus data lokasi spam`,
