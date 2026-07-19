@@ -2,6 +2,7 @@ import { prisma } from '../../databases/client.js';
 
 const includeRelasi = {
     lokasiSpam: true,
+    bahayaKontaminasi: true,
     penilaianRisiko: {
         include: {
             kajiUlangRisiko: {

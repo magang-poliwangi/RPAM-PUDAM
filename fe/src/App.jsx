@@ -12,6 +12,7 @@ import PenilaianRisikoPage from "./pages/PenilaianRisikoPage";
 import LokasiSpamPage from "./pages/LokasiSpamPage";
 import AuditLogPage from "./pages/AuditLogPage";
 import AppLayout from "./components/common/AppLayout";
+import BahayaKontaminasiPage from "./pages/BahayaKontaminasiPage";
 
 function App() {
   const authUser = useSelector((state) => state.authUser);
@@ -38,6 +39,7 @@ function App() {
   return (
     <AppLayout>
       <Routes>
+        <Route path="/bahaya-kontaminasi" element={<BahayaKontaminasiPage />} />
         <Route path="/lokasi-spam" element={<LokasiSpamPage />} />
         <Route path="/identifikasi-dan-kejadian-bahaya" element={<IdentifikasiDanKejadianBahayaPage />} />
         <Route path="/penilaian-risiko" element={<PenilaianRisikoPage />} />

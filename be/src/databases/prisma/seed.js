@@ -1,15 +1,16 @@
 import { hitungTingkatRisiko } from '../../utils/score-calculator.js';
+import { generateKode, parseKodeNumber, generateKodeRisiko, parseKodeRisikoNumber } from '../../utils/generate-kode.js';
 import { prisma } from '../client.js';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
 function hitungSkor(peluang, dampak) {
   return peluang * dampak;
 }
 
 async function main() {
-  
+
   // 1. USERS
-  
+
   const passwordHash = await bcrypt.hash('password123', 10);
 
   await prisma.user.createMany({
@@ -21,71 +22,137 @@ async function main() {
   });
   console.log('✅ Users seeded');
 
-  
+
   // 2. LOKASI SPAM (Modul 2 - master lokasi)
-  
-  const lokasiData = [
-    { kodeLokasi: 'C1', simbol: '〇', namaLokasi: 'Klorinasi di Reservoir Kalipuro' },
-    { kodeLokasi: 'A1', simbol: '〇', namaLokasi: 'Mata Air Gedor II' },
-    { kodeLokasi: 'A2', simbol: '〇', namaLokasi: 'Sumur Pompa Ketapang' },
-    { kodeLokasi: 'A3', simbol: '〇', namaLokasi: 'Sumber Gedor I' },
-    { kodeLokasi: 'R1', simbol: '▽', namaLokasi: 'Reservoir Kalipuro' },
-    { kodeLokasi: 'R2', simbol: '▽', namaLokasi: 'Reservoir Banjarsari' },
-    { kodeLokasi: 'D1', simbol: '→', namaLokasi: 'Distribusi Kalongan' },
-    { kodeLokasi: 'UP1', simbol: '→', namaLokasi: 'Unit Pelayanan Kel. Kalipuro' },
+  // kodeLokasi TIDAK ditulis manual lagi — di-generate dari prefix + counter,
+  // meniru persis apa yang bakal terjadi di LokasiSpamService.create()
+
+  const lokasiSeedData = [
+    { prefix: 'C', simbol: '〇', namaLokasi: 'Klorinasi di Reservoir Kalipuro' },
+    { prefix: 'A', simbol: '〇', namaLokasi: 'Mata Air Gedor II' },
+    { prefix: 'A', simbol: '〇', namaLokasi: 'Sumur Pompa Ketapang' },
+    { prefix: 'A', simbol: '〇', namaLokasi: 'Sumber Gedor I' },
+    { prefix: 'R', simbol: '▽', namaLokasi: 'Reservoir Kalipuro' },
+    { prefix: 'R', simbol: '▽', namaLokasi: 'Reservoir Banjarsari' },
+    { prefix: 'D', simbol: '→', namaLokasi: 'Distribusi Kalongan' },
+    { prefix: 'UP', simbol: '→', namaLokasi: 'Unit Pelayanan Kel. Kalipuro' },
   ];
 
   const lokasiList = [];
-  for (const l of lokasiData) {
-    const lokasi = await prisma.lokasiSpam.upsert({
-      where: { kodeLokasi: l.kodeLokasi },
-      update: {},
-      create: l,
+  const lokasiCounter = {}; // cache nomor terakhir per prefix, biar seed idempotent kalau dijalankan ulang
+
+  for (const item of lokasiSeedData) {
+    const { prefix, ...rest } = item;
+
+    // dedup key pakai namaLokasi (bukan kodeLokasi, karena itu belum ada sebelum di-generate)
+    let lokasi = await prisma.lokasiSpam.findFirst({
+      where: { namaLokasi: rest.namaLokasi, kodeLokasi: { startsWith: prefix } },
     });
+
+    if (!lokasi) {
+      if (!(prefix in lokasiCounter)) {
+        const existing = await prisma.lokasiSpam.findMany({
+          where: { kodeLokasi: { startsWith: prefix } },
+          select: { kodeLokasi: true },
+        });
+        lokasiCounter[prefix] = existing.reduce(
+          (max, row) => Math.max(max, parseKodeNumber(row.kodeLokasi, prefix)),
+          0
+        );
+      }
+
+      const kodeLokasi = generateKode(prefix, lokasiCounter[prefix] + 1);
+      lokasi = await prisma.lokasiSpam.create({ data: { kodeLokasi, ...rest } });
+      lokasiCounter[prefix] += 1;
+    }
+
     lokasiList.push(lokasi);
   }
   console.log('✅ Lokasi SPAM seeded:', lokasiList.length);
 
-  
- // 3. IDENTIFIKASI BAHAYA (Tabel 3.1)
-// Catatan: kodeRisiko TIDAK unik (F0010 bisa dipakai berkali-kali di data asli),
-// jadi pakai findFirst + create manual, bukan upsert.
 
-const bahayaData = [
-  { lokasi: lokasiList[0], kodeRisiko: 'K0001', komponenSpam: 'Chlorinator', kontaminasiX: 'Kontaminasi Kimia', komponenSpamY: 'Chlorinator', penyebabZ: 'Under Dosing', kejadianBahayaXYZ: 'Kontaminasi Kimia terjadi pada Chlorinator dikarenakan Under Dosing', tipeBahaya: 'Kimia' },
-  { lokasi: lokasiList[1], kodeRisiko: 'F0001', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Kondisi rumah panel rusak', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kondisi rumah panel rusak', tipeBahaya: 'Fisik' },
-  { lokasi: lokasiList[2], kodeRisiko: 'F0002', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Pohon tumbang', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Pohon tumbang', tipeBahaya: 'Fisik' },
-  { lokasi: lokasiList[3], kodeRisiko: 'F0003', komponenSpam: 'Air Baku', kontaminasiX: 'Kontaminasi Fisika', komponenSpamY: 'Air Baku', penyebabZ: 'Kabel power panel putus', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kabel power panel putus', tipeBahaya: 'Fisik' },
-  { lokasi: lokasiList[4], kodeRisiko: 'M0004', komponenSpam: 'Reservoir', kontaminasiX: 'Kontaminasi Mikrobiologi', komponenSpamY: 'Reservoir', penyebabZ: 'Overflow Reservoir', kejadianBahayaXYZ: 'Kontaminasi Mikrobiologi terjadi pada Reservoir dikarenakan Overflow Reservoir', tipeBahaya: 'Mikrobiologi' },
-];
+  // 3. BAHAYA KONTAMINASI (master lookup tipe bahaya)
+  // kodeRisiko di sini adalah PREFIX ("K", "F", "M"), bukan kode lengkap per kejadian
 
-const bahayaList = [];
-for (const b of bahayaData) {
-  const { lokasi, ...rest } = b;
+  const bahayaMasterData = [
+    { kodeRisiko: 'K', tipeBahaya: 'Kimia', kontaminasiX: 'Kontaminasi Kimia' },
+    { kodeRisiko: 'F', tipeBahaya: 'Fisik', kontaminasiX: 'Kontaminasi Fisika' },
+    { kodeRisiko: 'M', tipeBahaya: 'Mikrobiologi', kontaminasiX: 'Kontaminasi Mikrobiologi' },
+  ];
 
-  let bahaya = await prisma.identifikasiDanKejadianBahaya.findFirst({
-    where: { kodeRisiko: rest.kodeRisiko, lokasiSpamId: lokasi.id },
-  });
-
-  if (!bahaya) {
-    bahaya = await prisma.identifikasiDanKejadianBahaya.create({
-      data: { ...rest, lokasiSpamId: lokasi.id },
+  const bahayaMasterList = [];
+  for (const b of bahayaMasterData) {
+    const master = await prisma.bahayaKontaminasi.upsert({
+      where: { kodeRisiko: b.kodeRisiko },
+      update: {},
+      create: b,
     });
+    bahayaMasterList.push(master);
   }
+  console.log('✅ Master Bahaya Kontaminasi seeded:', bahayaMasterList.length);
 
-  bahayaList.push(bahaya);
-}
-console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
 
-  
-  // 4. PENILAIAN RISIKO (Tabel 3.5)
-  // Sengaja cuma 4 dari 5 bahaya yang dinilai (cabang berhenti di sini)
-  
+  // 4. IDENTIFIKASI BAHAYA (Tabel 3.1)
+  // kodeRisiko per-kejadian ("K0001", "F0002", dst) di-generate dari prefix master,
+  // kodeLokasi dicopy (denormalized) dari lokasi terkait
+
+  const identifikasiSeedData = [
+    { lokasi: lokasiList[0], master: bahayaMasterList[0], komponenSpam: 'Chlorinator', komponenSpamY: 'Chlorinator', penyebabZ: 'Under Dosing', kejadianBahayaXYZ: 'Kontaminasi Kimia terjadi pada Chlorinator dikarenakan Under Dosing' },
+    { lokasi: lokasiList[1], master: bahayaMasterList[1], komponenSpam: 'Air Baku', komponenSpamY: 'Air Baku', penyebabZ: 'Kondisi rumah panel rusak', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kondisi rumah panel rusak' },
+    { lokasi: lokasiList[2], master: bahayaMasterList[1], komponenSpam: 'Air Baku', komponenSpamY: 'Air Baku', penyebabZ: 'Pohon tumbang', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Pohon tumbang' },
+    { lokasi: lokasiList[3], master: bahayaMasterList[1], komponenSpam: 'Air Baku', komponenSpamY: 'Air Baku', penyebabZ: 'Kabel power panel putus', kejadianBahayaXYZ: 'Kontaminasi Fisika terjadi pada Air Baku dikarenakan Kabel power panel putus' },
+    { lokasi: lokasiList[4], master: bahayaMasterList[2], komponenSpam: 'Reservoir', komponenSpamY: 'Reservoir', penyebabZ: 'Overflow Reservoir', kejadianBahayaXYZ: 'Kontaminasi Mikrobiologi terjadi pada Reservoir dikarenakan Overflow Reservoir' },
+  ];
+
+  const bahayaList = [];
+  const risikoCounter = {};
+
+  for (const item of identifikasiSeedData) {
+    const { lokasi, master, ...rest } = item;
+    const prefix = master.kodeRisiko;
+
+    // dedup key pakai kombinasi lokasi + penyebab (bukan kodeRisiko, karena itu belum ada sebelum di-generate)
+    let bahaya = await prisma.identifikasiDanKejadianBahaya.findFirst({
+      where: { lokasiSpamId: lokasi.id, penyebabZ: rest.penyebabZ },
+    });
+
+    if (!bahaya) {
+      if (!(prefix in risikoCounter)) {
+        const existing = await prisma.identifikasiDanKejadianBahaya.findMany({
+          where: { kodeRisiko: { startsWith: prefix } },
+          select: { kodeRisiko: true },
+        });
+        risikoCounter[prefix] = existing.reduce(
+          (max, row) => Math.max(max, parseKodeRisikoNumber(row.kodeRisiko, prefix)),
+          0
+        );
+      }
+
+      const kodeRisiko = generateKodeRisiko(prefix, risikoCounter[prefix] + 1);
+      bahaya = await prisma.identifikasiDanKejadianBahaya.create({
+        data: {
+          ...rest,
+          lokasiSpamId: lokasi.id,
+          bahayaKontaminasiId: master.id,
+          kodeRisiko,
+          kodeLokasi: lokasi.kodeLokasi,
+        },
+      });
+      risikoCounter[prefix] += 1;
+    }
+
+    bahayaList.push(bahaya);
+  }
+  console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
+
+
+  // 5. PENILAIAN RISIKO (Tabel 3.5) — tidak berubah, tetap 4 dari 5 bahaya yang dinilai
+
   const penilaianData = [
-    { bahaya: bahayaList[0], peluang: 5, dampak: 4 }, // C1 - skor 20
-    { bahaya: bahayaList[1], peluang: 5, dampak: 3 }, // A1 - skor 15
-    { bahaya: bahayaList[2], peluang: 2, dampak: 2 }, // A2 - skor 4 (rendah, berhenti di sini)
-    { bahaya: bahayaList[3], peluang: 4, dampak: 5 }, // A3 - skor 20
+    { bahaya: bahayaList[0], peluang: 5, dampak: 4 }, // K0001
+    { bahaya: bahayaList[1], peluang: 5, dampak: 3 }, // F0001
+    { bahaya: bahayaList[2], peluang: 2, dampak: 2 }, // F0002 (rendah, berhenti di sini)
+    { bahaya: bahayaList[3], peluang: 4, dampak: 5 }, // F0003
   ];
 
   const penilaianList = [];
@@ -98,42 +165,20 @@ console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
         peluangKejadianBahaya: p.peluang,
         dampakKeparahan: p.dampak,
         skorRisiko: hitungSkor(p.peluang, p.dampak),
-        tingkatRisiko:hitungTingkatRisiko(hitungSkor(p.peluang, p.dampak))
+        tingkatRisiko: hitungTingkatRisiko(hitungSkor(p.peluang, p.dampak)),
       },
     });
     penilaianList.push(penilaian);
   }
   console.log('✅ Penilaian Risiko seeded:', penilaianList.length);
 
-  
-  // 5. KAJI ULANG RISIKO (Tabel 4.1)
-  // Cuma 3 dari 4 penilaian yang lanjut ke kaji ulang
-  
+
+  // 6. KAJI ULANG RISIKO (Tabel 4.1) — tidak berubah
+
   const kajiUlangData = [
-    {
-      penilaian: penilaianList[0], // dari C1
-      tindakanPengendalian: 'Pembelian cadangan alat injektor chlorinasi',
-      referensi: 'Laporan Monev',
-      validasi: 'TIDAK_EFEKTIF',
-      peluang: 5,
-      dampak: 4,
-    },
-    {
-      penilaian: penilaianList[1], // dari A1
-      tindakanPengendalian: 'Pemeliharaan Rumah Panel Sumur Pompa Ketapang',
-      referensi: 'Observasi Kondisi Sumur Pompa',
-      validasi: 'EFEKTIF',
-      peluang: 2,
-      dampak: 2,
-    },
-    {
-      penilaian: penilaianList[3], // dari A3
-      tindakanPengendalian: 'Penggantian Kabel Power Untuk Panel Sumur Pompa Kantor',
-      referensi: 'Laporan Monev',
-      validasi: 'EFEKTIF',
-      peluang: 1,
-      dampak: 2,
-    },
+    { penilaian: penilaianList[0], tindakanPengendalian: 'Pembelian cadangan alat injektor chlorinasi', referensi: 'Laporan Monev', validasi: 'TIDAK_EFEKTIF', peluang: 5, dampak: 4 },
+    { penilaian: penilaianList[1], tindakanPengendalian: 'Pemeliharaan Rumah Panel Sumur Pompa Ketapang', referensi: 'Observasi Kondisi Sumur Pompa', validasi: 'EFEKTIF', peluang: 2, dampak: 2 },
+    { penilaian: penilaianList[3], tindakanPengendalian: 'Penggantian Kabel Power Untuk Panel Sumur Pompa Kantor', referensi: 'Laporan Monev', validasi: 'EFEKTIF', peluang: 1, dampak: 2 },
   ];
 
   const kajiUlangList = [];
@@ -149,17 +194,16 @@ console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
         peluangKejadianBahaya: k.peluang,
         dampakKeparahan: k.dampak,
         skorRisiko: hitungSkor(k.peluang, k.dampak),
-        tingkatRisiko:hitungTingkatRisiko(hitungSkor(k.peluang, k.dampak))
+        tingkatRisiko: hitungTingkatRisiko(hitungSkor(k.peluang, k.dampak)),
       },
     });
     kajiUlangList.push(kaji);
   }
   console.log('✅ Kaji Ulang Risiko seeded:', kajiUlangList.length);
 
-  
-  // 6. RENCANA PERBAIKAN (Tabel 5.1)
-  // Cuma diisi untuk kaji ulang yang TIDAK_EFEKTIF (kajiUlangList[0])
-  
+
+  // 7. RENCANA PERBAIKAN (Tabel 5.1) — tidak berubah
+
   await prisma.rencanaPerbaikan.upsert({
     where: { kajiUlangRisikoId: kajiUlangList[0].id },
     update: {},
@@ -178,14 +222,11 @@ console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
   });
   console.log('✅ Rencana Perbaikan seeded');
 
-  
-  // 7. PEMANTAUAN OPERASIONAL (Tabel 6.2)
-  // Diisi untuk kaji ulang C1 (bercabang paralel dengan Rencana Perbaikan)
-  // DAN untuk kaji ulang A1 (yang efektif, tidak perlu rencana perbaikan
-  // tapi tetap dipantau)
-  
+
+  // 8. PEMANTAUAN OPERASIONAL (Tabel 6.2) — tidak berubah
+
   await prisma.pemantauanOperasional.upsert({
-    where: { kajiUlangRisikoId: kajiUlangList[0].id }, // C1
+    where: { kajiUlangRisikoId: kajiUlangList[0].id },
     update: {},
     create: {
       kajiUlangRisikoId: kajiUlangList[0].id,
@@ -205,7 +246,7 @@ console.log('✅ Identifikasi Bahaya seeded:', bahayaList.length);
   });
 
   await prisma.pemantauanOperasional.upsert({
-    where: { kajiUlangRisikoId: kajiUlangList[1].id }, // A1
+    where: { kajiUlangRisikoId: kajiUlangList[1].id },
     update: {},
     create: {
       kajiUlangRisikoId: kajiUlangList[1].id,

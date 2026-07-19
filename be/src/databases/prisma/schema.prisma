@@ -63,6 +63,19 @@ model LokasiSpam {
   @@map("lokasi_spam")
 }
 
+model BahayaKontaminasi {
+  id                            String                          @id @default(cuid())
+  kodeRisiko                    String                          @unique
+  tipeBahaya                    String
+  kontaminasiX                  String
+  createdAt                     DateTime                        @default(now())
+  updatedAt                     DateTime                        @updatedAt
+  deletedAt                     DateTime?
+  identifikasiDanKejadianBahaya IdentifikasiDanKejadianBahaya[]
+
+  @@map("bahaya_kontaminasi")
+}
+
 model Authentikasi {
   token     String   @id
   userId    String
@@ -102,16 +115,19 @@ model AuditLog {
 
 //Tabel 3.1 Identifikasi Bahaya dan Kejadian Bahaya
 model IdentifikasiDanKejadianBahaya {
-  id                String           @id @default(cuid())
-  lokasiSpamId      String
-  lokasiSpam        LokasiSpam       @relation(fields: [lokasiSpamId], references: [id])
-  kodeRisiko        String
-  komponenSpam      String
-  kontaminasiX      String
+  id                  String            @id @default(cuid())
+  lokasiSpamId        String
+  bahayaKontaminasiId String
+  lokasiSpam          LokasiSpam        @relation(fields: [lokasiSpamId], references: [id])
+  bahayaKontaminasi   BahayaKontaminasi @relation(fields: [bahayaKontaminasiId], references: [id])
+  kodeRisiko          String
+  kodeLokasi          String
+  komponenSpam        String
+
   komponenSpamY     String
   penyebabZ         String
   kejadianBahayaXYZ String
-  tipeBahaya        String
+  
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   deletedAt         DateTime?

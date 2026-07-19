@@ -20,6 +20,14 @@ const navItems = [
     group: 'Modul RPAM',
     items: [
       {
+        to: '/bahaya-kontaminasi', label: 'Bahaya Kontaminasi', icon: (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        )
+      },
+      {
         to: '/lokasi-spam', label: 'Lokasi Spam', icon: (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
@@ -92,7 +100,7 @@ export default function Sidebar() {
   const dispatch = useDispatch();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const enabledRoutes = new Set(['/lokasi-spam', '/identifikasi-dan-kejadian-bahaya', '/penilaian-risiko', '/kaji-ulang', '/rencana-perbaikan', '/pemantauan-operasional', '/management-user', '/audit-log']);
+  const enabledRoutes = new Set(['/bahaya-kontaminasi','/lokasi-spam', '/identifikasi-dan-kejadian-bahaya', '/penilaian-risiko', '/kaji-ulang', '/rencana-perbaikan', '/pemantauan-operasional', '/management-user', '/audit-log']);
 
   const isActive = (to) => location.pathname === to || location.pathname.startsWith(to + '/');
 

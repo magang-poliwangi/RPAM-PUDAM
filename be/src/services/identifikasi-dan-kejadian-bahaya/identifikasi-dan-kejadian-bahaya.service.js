@@ -17,9 +17,7 @@ export default class IdentifikasiDanKejadianBahayaService {
         data.id = `identifikasi-bahaya-${nanoid()}`;
    
         
-        const m3_1 = await this.identifikasiDanKejadianBahayaRepository.create({ data });
-        console.log('tes :' + userId);
-        
+        const m3_1 = await this.identifikasiDanKejadianBahayaRepository.create({ data });        
         await catatAuditLog(this.auditLogRepository,{
             userId,
             aksi: 'CREATE',

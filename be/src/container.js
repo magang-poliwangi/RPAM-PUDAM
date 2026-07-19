@@ -28,6 +28,9 @@ import LokasiSpamController from './services/lokasi-spam/lokasi-spam.controller.
 import AuditLogRepository from './services/audit-log/audit-log.repository.js';
 import AuditLogService from './services/audit-log/audit-log.service.js';
 import AuditLogController from './services/audit-log/audit-log.controller.js';
+import BahayaKontaminasiController from './services/bahaya-kontaminasi/bahaya-kontaminasi.controller.js';
+import BahayaKontaminasiService from './services/bahaya-kontaminasi/bahaya-kontaminasi.service.js';
+import BahayaKontaminasiRepository from './services/bahaya-kontaminasi/bahaya-kontaminasi.repository.js';
 
 // Repositories
 const authRepository = new AuthRepository();
@@ -39,6 +42,7 @@ const identifikasiDanKejadianBahayaRepository = new IdentifikasiDanKejadianBahay
 const penilaianRisikoRepository = new PenilaianRisikoRepository();
 const lokasiSpamRepository = new LokasiSpamRepository();
 const auditLogRepository = new AuditLogRepository();
+const bahayaKontaminasiRepository =new BahayaKontaminasiRepository(); 
 
 // Auth
 const authService = new AuthService({ authRepository, userRepository,auditLogRepository });
@@ -47,6 +51,10 @@ export const authController = new AuthController({ authService });
 // User
 export const userService = new UserService({ userRepository,auditLogRepository });
 export const userController = new UserController({ userService });
+
+//bahaya kontaminasi
+const bahayaKontaminasiService = new BahayaKontaminasiService({auditLogRepository,bahayaKontaminasiRepository});
+export const bahayaKontaminasiController = new BahayaKontaminasiController({bahayaKontaminasiService});  
 
 //lokasi spam
 const lokasiSpamService = new LokasiSpamService({ lokasiSpamRepository,auditLogRepository });

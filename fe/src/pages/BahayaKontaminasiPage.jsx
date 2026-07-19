@@ -8,29 +8,23 @@ import { EditIcon, DeleteIcon } from '../components/common/icons';
 import useModalForm from '../hooks/useModalForm';
 import useConfirmDialog from '../hooks/useConfirmDialog';
 
-import { asyncAddLokasiSpam, asyncDeleteLokasiSpam, asyncReceiveLokasiSpam, asyncUpdateLokasiSpam } from '../states/lokasiSpam/action';
-import LokasiSpamFormComponent from '../components/lokasiSpam/LokasiSpamFormComponent';
 import { omitFields } from '../utils/omit-fields';
 import ConfirmDialog from '../components/common/ConfirmDialog';
-
+import BahayaKontaminasiFormComponent from '../components/bahayaKontaminasi/BahayakontaminasiFormComponent';
+import { asyncAddBahayaKontaminasi, asyncDeleteBahayaKontaminasi, asyncReceiveBahayaKontaminasi, asyncUpdateBahayaKontaminasi } from '../states/BahayaKontaminasi/action';
 
 const EMPTY_FORM = {
-    kodeLokasi: "",
-    simbol: "",
-    deskripsi: "",
-    penanggungJawabNama: "",
-    penanggungJawabPosisi: "",
-    penanggungJawabTelepon: "",
-    penanggungJawabEmail: "",
-    referensi: "",
+    kodeRisiko: "",
+    kontaminasiX: "",
+    tipeBahaya:""
 };
 
 const READONLY_FIELDS = ['id'];
-export default function LokasiSpamPage() {
+export default function BahayaKontaminasiPage() {
     const dispatch = useDispatch();
 
     const { items, pagination } = useSelector(
-        (state) => state.lokasiSpam || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
+        (state) => state.bahayaKontaminasi || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
     );
 
     const [search, setSearch] = useState('');
@@ -40,14 +34,14 @@ export default function LokasiSpamPage() {
 
     const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
-        delete: (row) => dispatch(asyncDeleteLokasiSpam(row.id)),
+        delete: (row) => dispatch(asyncDeleteBahayaKontaminasi(row.id)),
     });
     console.log(items);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
-        dispatch(asyncReceiveLokasiSpam({ page, limit: 10, search }))
+        dispatch(asyncReceiveBahayaKontaminasi({ page, limit: 10, search }))
             .catch(() => { })
             .finally(() => setLoading(false));
     }, [dispatch, page, search]);
@@ -63,10 +57,12 @@ export default function LokasiSpamPage() {
             setSaveLoading(true);
             try {
                 const payload = omitFields(modal.form, READONLY_FIELDS);
+                console.log(modal.form);
+                
                 if (modal.mode === 'edit') {
-                    await dispatch(asyncUpdateLokasiSpam({ id: modal.form.id, payload }));
+                    await dispatch(asyncUpdateBahayaKontaminasi({ id: modal.form.id, payload }));
                 } else {
-                    await dispatch(asyncAddLokasiSpam(payload));
+                    await dispatch(asyncAddBahayaKontaminasi(payload));
                 }
                 closeModal();
             } catch (err) {
@@ -79,53 +75,24 @@ export default function LokasiSpamPage() {
     );
     const columns = [
         {
-            key: "kodeLokasi",
-            label: "Kode Lokasi",
+            key: "kodeRisiko",
+            label: "Kode Risiko",
         },
         {
-            key: "simbol",
-            label: "Simbol",
+            key: "kontaminasiX",
+            label: "Kontaminasi atau Sesuatu yang Berpotensi Buruk Terhadap Kualitas Air (X)",
         },
         {
-            key: "namaLokasi",
-            label: "Nama Lokasi",
-        },
-        {
-            key: "deskripsi",
-            label: "Deskripsi",
-        },
-        {
-            label: "Penanggung Jawab",
-            children: [
-                {
-                    key: "penanggungJawabNama",
-                    label: "Nama",
-                },
-                {
-                    key: "penanggungJawabPosisi",
-                    label: "Posisi",
-                },
-                {
-                    key: "penanggungJawabTelepon",
-                    label: "Telepon",
-                },
-                {
-                    key: "penanggungJawabEmail",
-                    label: "Email",
-                },
-            ]
-        },
-        {
-            key: "referensi",
-            label: "Referensi",
+            key: "tipeBahaya",
+            label: "Tipe Bahaya",
         },
     ];
 
     return (
         <>
             <div className="mb-6">
-                <h1 className="text-xl font-bold text-gray-900">Lokasi Spam</h1>
-                <p className="text-sm text-gray-500 mt-0.5">Kelola Lokasi Spam sistem RPAM</p>
+                <h1 className="text-xl font-bold text-gray-900">Kontaminasi Bahaya</h1>
+                <p className="text-sm text-gray-500 mt-0.5">Kelola Kontaminasi Bahaya sistem RPAM</p>
             </div>
             <DataTable
                 columns={columns}
@@ -148,9 +115,9 @@ export default function LokasiSpamPage() {
             <Modal
                 open={modal.open}
                 onClose={closeModal}
-                title={modal.mode === "edit" ? "Edit Lokasi Spam" : "Tambah Lokasi Spam"}
+                title={modal.mode === "edit" ? "Edit Kontaminasi Bahaya" : "Tambah Kontaminasi Bahaya"}
             >
-                <LokasiSpamFormComponent
+                <BahayaKontaminasiFormComponent
                     form={modal.form}
                     onChange={setForm}
                     onSubmit={handleSave}
@@ -160,7 +127,7 @@ export default function LokasiSpamPage() {
                 />
             </Modal>
             <ConfirmDialog
-                open={confirm.open} title="Hapus Data?" message="Data Lokasi Spam ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
+                open={confirm.open} title="Hapus Data?" message="Data Kontaminasi Bahaya ini akan dihapus." onConfirm={confirmAction} onCancel={closeConfirm} />
         </>
     );
 }
