@@ -129,6 +129,6 @@ export default class PenilaianRisikoService {
             keterangan: `Menghapus data penilaian risiko`,
         });
 
-        await this.penilaianRisikoRepository.softDelete({ id });
+        await this.penilaianRisikoRepository.cascadeSoftDelete({ id });
     }
 }

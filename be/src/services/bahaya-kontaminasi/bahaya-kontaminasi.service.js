@@ -1,25 +1,24 @@
-// lokasiSpam.service.js
 import { nanoid } from 'nanoid';
 import { NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
 import { catatAuditLog } from '../../utils/audit-log.helper.js';
 
-const NAMA_TABEL = 'lokasi_spam'
-export default class LokasiSpamService {
-    constructor({ lokasiSpamRepository, auditLogRepository }) {
-        this.lokasiSpamRepository = lokasiSpamRepository;
+const NAMA_TABEL = 'bahaya_kontaminasi'
+export default class BahayaKontaminasiService {
+    constructor({ bahayaKontaminasiRepository, auditLogRepository }) {
+        this.bahayaKontaminasiRepository = bahayaKontaminasiRepository;
         this.auditLogRepository = auditLogRepository;
     }
 
     async create({ data, userId }) {
-        data.id = `lokasi-spam-${nanoid()}`;
-        const result = await this.lokasiSpamRepository.create({ data });
+        data.id = `bahaya-kontaminasi-${nanoid()}`;
+        const result = await this.bahayaKontaminasiRepository.create({ data });
         await catatAuditLog(this.auditLogRepository, {
             userId,
             aksi: 'CREATE',
             namaTabel: NAMA_TABEL,
             recordId: result.id,
-            keterangan: `Menambah data lokasi spam`,
+            keterangan: `Menambah data bahaya kontaminasi`,
         });
         return result;
     }
@@ -30,20 +29,20 @@ export default class LokasiSpamService {
         const where = { deletedAt: null };
         if (req.query.search) {
             where.OR = [
-                { kodeLokasi: { contains: req.query.search, mode: 'insensitive' } },
-                { namaLokasi: { contains: req.query.search, mode: 'insensitive' } },
-                { alamat: { contains: req.query.search, mode: 'insensitive' } },
+                { kodeRisiko: { contains: req.query.search, mode: 'insensitive' } },
+                { tipeBahaya: { contains: req.query.search, mode: 'insensitive' } },
+                { kontaminasiX: { contains: req.query.search, mode: 'insensitive' } },
             ];
         }
 
         const [items, total] = await Promise.all([
-            this.lokasiSpamRepository.findAll({
+            this.bahayaKontaminasiRepository.findAll({
                 where,
                 skip,
                 take: limit,
                 orderBy: { [sortBy]: sortOrder },
             }),
-            this.lokasiSpamRepository.count({ where }),
+            this.bahayaKontaminasiRepository.count({ where }),
         ]);
 
         return {
@@ -53,8 +52,8 @@ export default class LokasiSpamService {
     }
 
     async findById({ id }) {
-        const data = await this.lokasiSpamRepository.findById({ id });
-        if (!data) throw new NotFoundError('Data lokasi SPAM tidak ditemukan');
+        const data = await this.bahayaKontaminasiRepository.findById({ id });
+        if (!data) throw new NotFoundError('Bahaya kontaminasi SPAM tidak ditemukan');
         return data;
     }
 
@@ -62,27 +61,27 @@ export default class LokasiSpamService {
         await this.findById({ id });
         console.log(data);
 
-        const result = await this.lokasiSpamRepository.update({ id, data });
+        const result = await this.bahayaKontaminasiRepository.update({ id, data });
 
         await catatAuditLog(this.auditLogRepository, {
             userId,
             aksi: 'UPDATE',
             namaTabel: NAMA_TABEL,
             recordId: result.id,
-            keterangan: `Mengubah data lokasi spam`,
+            keterangan: `Mengubah data bahaya kontaminasi`,
         });
         return result;
     }
 
     async remove({ id, userId }) {
         const existing = await this.findById({ id });
-        await this.lokasiSpamRepository.cascadeSoftDelete({ id });
+        await this.bahayaKontaminasiRepository.cascadeSoftDelete({ id });
         await catatAuditLog(this.auditLogRepository, {
             userId,
             aksi: 'DELETE',
             namaTabel: NAMA_TABEL,
             recordId: id,
-            keterangan: `Menghapus data lokasi spam`,
+            keterangan: `Menghapus data bahaya kontaminasi`,
         });
         return existing;
     }

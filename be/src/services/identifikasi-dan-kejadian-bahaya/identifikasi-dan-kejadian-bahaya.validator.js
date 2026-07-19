@@ -5,17 +5,13 @@ export const identifikasiBahayaPayloadValidatorPost = Joi.object({
         'any.required': 'Lokasi SPAM wajib dipilih',
         'string.empty': 'Lokasi SPAM tidak boleh kosong',
     }),
-    kodeRisiko: Joi.string().required().messages({
-        'any.required': 'Kode risiko wajib diisi',
-        'string.empty': 'Kode risiko tidak boleh kosong',
+    bahayaKontaminasiId: Joi.string().required().messages({
+        'any.required': 'Bahaya Kontaminasi wajib diisi',
+        'string.empty': 'Bahaya Kontaminasi tidak boleh kosong',
     }),
     komponenSpam: Joi.string().required().messages({
         'any.required': 'Komponen SPAM wajib diisi',
         'string.empty': 'Komponen SPAM tidak boleh kosong',
-    }),
-    kontaminasiX: Joi.string().required().messages({
-        'any.required': 'Kontaminasi (X) wajib diisi',
-        'string.empty': 'Kontaminasi (X) tidak boleh kosong',
     }),
     komponenSpamY: Joi.string().required().messages({
         'any.required': 'Komponen SPAM (Y) wajib diisi',
@@ -29,18 +25,14 @@ export const identifikasiBahayaPayloadValidatorPost = Joi.object({
         'any.required': 'Kejadian bahaya (XYZ) wajib diisi',
         'string.empty': 'Kejadian bahaya (XYZ) tidak boleh kosong',
     }),
-    tipeBahaya: Joi.string().required().messages({
-        'any.required': 'Tipe bahaya wajib diisi',
-        'string.empty': 'Tipe bahaya tidak boleh kosong',
-    }),
 });
 
 export const identifikasiBahayaPayloadValidatorPut = Joi.object({
     lokasiSpamId: Joi.string().optional().messages({
         'string.empty': 'Lokasi SPAM tidak boleh kosong',
     }),
-    kodeRisiko: Joi.string().optional().messages({
-        'string.empty': 'Kode risiko tidak boleh kosong',
+    bahayaKontaminasiId: Joi.string().optional().messages({
+        'string.empty': 'Bahaya Kontaminasi tidak boleh kosong',
     }),
     komponenSpam: Joi.string().optional().messages({
         'string.empty': 'Komponen SPAM tidak boleh kosong',
@@ -56,9 +48,6 @@ export const identifikasiBahayaPayloadValidatorPut = Joi.object({
     }),
     kejadianBahayaXYZ: Joi.string().optional().messages({
         'string.empty': 'Kejadian bahaya (XYZ) tidak boleh kosong',
-    }),
-    tipeBahaya: Joi.string().optional().messages({
-        'string.empty': 'Tipe bahaya tidak boleh kosong',
     }),
 }).min(1);
 

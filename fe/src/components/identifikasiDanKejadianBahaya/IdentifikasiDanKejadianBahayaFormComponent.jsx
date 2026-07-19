@@ -3,32 +3,63 @@ import InputComponent from "../common/InputComponent";
 import { getPayload } from "../../utils/response";
 import AsyncSelectField from "../common/AsyncSelectField";
 import { lokasiSpamApi } from "../../api/lokasi-spam";
+import { bahayakontaminasiApi } from "../../api/bahaya-kontaminasi";
 
-export default function IdentifikasiDanKejadianBahayaFormComponent({ form,  onChange, onSubmit, onCancel, loading, mode }) {
+export default function IdentifikasiDanKejadianBahayaFormComponent({ form, onChange, onSubmit, onCancel, loading, mode }) {
+  const [selected, setSelected] = useState({
+    lokasi: null,
+    bahaya: null
+  });
 
 
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  const lokasiSpamOptions = useCallback(async (inputValue) => {
-    const result = getPayload(
-      await lokasiSpamApi.getAll({ search: inputValue, limit: 20 })
-    );
+  const loadLokasiSpamOptions = useCallback(async (inputValue) => {
+    const result = getPayload(await lokasiSpamApi.getAll({ search: inputValue, limit: 20 }));
     return (result.items || []).map((item) => ({
       value: item.id,
-      label: `${item.kodeLokasi} - ${item.namaLokasi}  `
+      label: `${item.kodeLokasi} - ${item.namaLokasi ?? '-'}`,
+      raw: item,
+    }));
+  }, []);
+
+  const loadBahayaKontaminasiOptions = useCallback(async (inputValue) => {
+    const result = getPayload(await bahayakontaminasiApi.getAll({ search: inputValue, limit: 20 }));
+    return (result.items || []).map((item) => ({
+      value: item.id,
+      label: `${item.kodeRisiko} - ${item.tipeBahaya} - ${item.kontaminasiX}`,
+      raw: item,
     }));
   }, []);
 
   const handleChange = (e) => {
-    onChange({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    onChange({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleLokasiSpamChange = (e) => {
-    setSelectedOption(e.target.selectedOption || null);
-    onChange({ ...form, lokasiSpamId: e.target.value });
+    const option = e.target.selectedOption || null;
+
+    setSelected((prev) => ({
+      ...prev,
+      lokasi: option,
+    }));
+
+    onChange({
+      ...form,
+      lokasiSpamId: e.target.value,
+    });
+  };
+
+  const handleBahayaKontaminasiChange = (e) => {
+    const option = e.target.selectedOption || null;
+
+    setSelected((prev) => ({
+      ...prev,
+      bahaya: option,
+    }));
+
+    onChange({
+      ...form,
+      bahayaKontaminasiId: e.target.value,
+    });
   };
 
   return (
@@ -44,24 +75,41 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form,  onCh
           </span>
         </div>
       ) : (
-        <AsyncSelectField
-          name="lokasiSpamId"
-          label="Data Lokasi Spam"
-          required
-          value={selectedOption}
-          loadOptions={lokasiSpamOptions}
-          onChange={handleLokasiSpamChange}
-          placeholder="Ketik Kode Lokasi Spam atau Nama Lokasi untuk mencari..."
-        />)}
+        <>
+          <AsyncSelectField
+            name="lokasiSpamId"
+            label="Data Lokasi SPAM"
+            required
+            value={selected.lokasi}
+            loadOptions={loadLokasiSpamOptions}
+            onChange={handleLokasiSpamChange}
+            placeholder="Ketik kode lokasi atau nama lokasi untuk mencari..."
+          />
+          <AsyncSelectField
+            name="bahayaKontaminasiId"
+            label="Data Bahaya Kontaminasi"
+            required
+            value={selected.bahaya}
+            loadOptions={loadBahayaKontaminasiOptions}
+            onChange={handleBahayaKontaminasiChange}
+            placeholder="Ketik kode risiko atau tipe bahaya untuk mencari..."
+          />
 
-      <InputComponent
-        label="Kode Risiko"
-        name="kodeRisiko"
-        placeholder="Masukkan kode risiko"
-        required
-        value={form.kodeRisiko || ""}
-        onChangeValue={handleChange}
-      />
+          {selected.bahaya?.raw && (
+            <div className="px-3 py-2 bg-gray-50 rounded-lg text-sm flex flex-col gap-0.5">
+              <span><span className="text-gray-500">Tipe Bahaya: </span><span className="font-medium text-gray-900">{selected.bahaya.raw.tipeBahaya}</span></span>
+              <span><span className="text-gray-500">Kontaminasi (X): </span><span className="font-medium text-gray-900">{selected.bahaya.raw.kontaminasiX}</span></span>
+            </div>
+          )}
+        </>
+      )}
+
+      {mode === 'edit' && (
+        <div className="px-3 py-2 bg-gray-50 rounded-lg text-sm flex flex-col gap-0.5">
+          <span><span className="text-gray-500">Kode Risiko: </span><span className="font-medium text-gray-900">{form.kodeRisiko}</span></span>
+          <span><span className="text-gray-500">Kode Lokasi: </span><span className="font-medium text-gray-900">{form.kodeLokasi}</span></span>
+        </div>
+      )}
 
       <InputComponent
         label="Komponen SPAM"
@@ -69,15 +117,6 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form,  onCh
         placeholder="Masukkan komponen SPAM"
         required
         value={form.komponenSpam || ""}
-        onChangeValue={handleChange}
-      />
-
-      <InputComponent
-        label="Kontaminasi (X)"
-        name="kontaminasiX"
-        placeholder="Masukkan kontaminasi (X)"
-        required
-        value={form.kontaminasiX || ""}
         onChangeValue={handleChange}
       />
 
@@ -108,34 +147,12 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form,  onCh
         onChangeValue={handleChange}
       />
 
-      <InputComponent
-        label="Tipe Bahaya"
-        name="tipeBahaya"
-        placeholder="Masukkan tipe bahaya"
-        required
-        value={form.tipeBahaya || ""}
-        onChangeValue={handleChange}
-      />
-
       <div className="flex justify-end gap-3 pt-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="app-button-secondary cursor-pointer"
-        >
+        <button type="button" onClick={onCancel} className="app-button-secondary cursor-pointer">
           Batal
         </button>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="app-button-primary cursor-pointer"
-        >
-          {loading
-            ? "Menyimpan..."
-            : mode === "edit"
-              ? "Simpan Perubahan"
-              : "Tambah Data"}
+        <button type="submit" disabled={loading} className="app-button-primary cursor-pointer">
+          {loading ? "Menyimpan..." : mode === "edit" ? "Simpan Perubahan" : "Tambah Data"}
         </button>
       </div>
 

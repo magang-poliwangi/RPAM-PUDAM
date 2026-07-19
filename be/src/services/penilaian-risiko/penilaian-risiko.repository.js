@@ -47,10 +47,31 @@ export default class PenilaianRisikoRepository {
         return prisma.penilaianRisiko.update({ where: { id }, data });
     }
 
-    async softDelete({ id }) {
-        return prisma.penilaianRisiko.update({
-            where: { id },
-            data: { deletedAt: new Date() },
+    async cascadeSoftDelete({ id }) {
+        const now = new Date();
+        return prisma.$transaction(async (tx) => {
+            const kaji = await tx.kajiUlangRisiko.findFirst({
+                where: { penilaianRisikoId: id },
+                select: { id: true },
+            });
+            if (kaji) {
+                await tx.rencanaPerbaikan.updateMany({
+                    where: { kajiUlangRisikoId: kaji.id, deletedAt: null },
+                    data: { deletedAt: now },
+                });
+                await tx.pemantauanOperasional.updateMany({
+                    where: { kajiUlangRisikoId: kaji.id, deletedAt: null },
+                    data: { deletedAt: now },
+                });
+                await tx.kajiUlangRisiko.update({
+                    where: { id: kaji.id },
+                    data: { deletedAt: now },
+                });
+            }
+            return tx.penilaianRisiko.update({
+                where: { id },
+                data: { deletedAt: now },
+            });
         });
     }
 }

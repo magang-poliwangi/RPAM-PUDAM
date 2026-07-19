@@ -17,13 +17,11 @@ import { RELATION_COLUMN_GROUPS, RELATION_ORDER } from "../components/identifika
 
 const EMPTY_FORM = {
     lokasiSpamId: "",
-    kodeRisiko: "",
+    bahayaKontaminasiId: "",
     komponenSpam: "",
-    kontaminasiX: "",
     komponenSpamY: "",
     penyebabZ: "",
     kejadianBahayaXYZ: "",
-    tipeBahaya: "",
 };
 
 const READONLY_FIELDS = ['id', 'penilaianRisiko'];

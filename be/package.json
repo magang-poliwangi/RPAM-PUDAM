@@ -31,9 +31,11 @@
     "morgan": "^1.11.0",
     "multer": "^2.2.0",
     "nanoid": "^5.1.16",
+    "node-cron": "^4.6.0",
     "nodemon": "^3.1.14",
     "swagger-jsdoc": "^6.3.0",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

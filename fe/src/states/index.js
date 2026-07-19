@@ -10,6 +10,7 @@ import identifikasiDanKejadianBahayaReducer from './indentifikasiDanKejadianBaha
 import penilaianRisikoReducer from './penilaianRisiko/reducer';
 import lokasiSpamReducer from './lokasiSpam/reducer';
 import auditLogReducer from './auditLog/reducer';
+import bahayaKontaminasiReducer from './BahayaKontaminasi/reducer';
 
 const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
     rencanaPerbaikan: rencanaPerbaikansReducer,
     pemantauanOperasional:pemantauanOperasionalReducer,
     auditLog: auditLogReducer,
+    bahayaKontaminasi: bahayaKontaminasiReducer,
   }
 });
 

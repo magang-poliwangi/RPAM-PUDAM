@@ -21,19 +21,19 @@ export default class LokasiSpamController {
     createController = async (req, res, next) => {
         const data = req.validated;
         const result = await this.lokasiSpamService.create({ data, userId: req.user.id });
-        return response(res, 201, 'Pemantauan operasional berhasil dibuat', result);
+        return response(res, 201, 'Lokasi Spam berhasil dibuat', result);
     };
 
     updateController = async (req, res, next) => {
         const { id } = req.params;
         const data = req.validated;
         const result = await this.lokasiSpamService.update({ id, data, userId: req.user.id });
-        return response(res, 200, 'Pemantauan operasional berhasil diperbarui', result);
+        return response(res, 200, 'Lokasi Spam berhasil diperbarui', result);
     };
 
     removeController = async (req, res, next) => {
         const { id } = req.params;
         await this.lokasiSpamService.remove({ id, userId: req.user.id });
-        return response(res, 200, 'Pemantauan operasional berhasil dihapus', null);
+        return response(res, 200, 'Lokasi Spam berhasil dihapus', null);
     };
 }

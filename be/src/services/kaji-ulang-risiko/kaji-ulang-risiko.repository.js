@@ -48,10 +48,21 @@ export default class KajiUlangRisikoRepository {
         return prisma.kajiUlangRisiko.update({ where: { id }, data });
     }
 
-    async softDelete({ id }) {
-        return prisma.kajiUlangRisiko.update({
-            where: { id },
-            data: { deletedAt: new Date() },
+    async cascadeSoftDelete({ id }) {
+        const now = new Date();
+        return prisma.$transaction(async (tx) => {
+            await tx.rencanaPerbaikan.updateMany({
+                where: { kajiUlangRisikoId: id, deletedAt: null },
+                data: { deletedAt: now },
+            });
+            await tx.pemantauanOperasional.updateMany({
+                where: { kajiUlangRisikoId: id, deletedAt: null },
+                data: { deletedAt: now },
+            });
+            return tx.kajiUlangRisiko.update({
+                where: { id },
+                data: { deletedAt: now },
+            });
         });
     }
 }
