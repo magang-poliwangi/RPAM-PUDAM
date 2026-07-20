@@ -79,7 +79,7 @@ export default class KajiUlangRisikoService {
 
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
-        const { search, validasi, tanpaRencanaPerbaikan, tanpaPemantauanOperasional, tingkatRisiko } = req.query;
+        const { search, validasi, tanpaRencanaPerbaikan, tanpaPemantauanOperasional, tingkatRisiko, kodeLokasi, kodeRisiko, startDate, endDate } = req.query;
 
 
         const where = {
@@ -88,6 +88,20 @@ export default class KajiUlangRisikoService {
             ...(tanpaPemantauanOperasional === 'true' && { pemantauanOperasional: null }),
             ...(tingkatRisiko && { tingkatRisiko }),
             ...(validasi && { validasi }),
+            ...((kodeLokasi || kodeRisiko) && {
+                penilaianRisiko: {
+                    identifikasiDanKejadianBahaya: {
+                        ...(kodeLokasi && { kodeLokasi: { equals: kodeLokasi } }),
+                        ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
+                    }
+                }
+            }),
+            ...((startDate || endDate) && {
+                createdAt: {
+                    ...(startDate && { gte: new Date(startDate) }),
+                    ...(endDate && { lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }),
+                }
+            }),
             ...(search && {
                 OR: [
                     { tindakanPengendalian: { contains: search, mode: 'insensitive' } },
@@ -99,13 +113,25 @@ export default class KajiUlangRisikoService {
             }),
         };
 
+        let orderBy;
+        if (sortBy === 'kodeRisiko') {
+            orderBy = {
+                penilaianRisiko: {
+                    identifikasiDanKejadianBahaya: {
+                        kodeRisiko: sortOrder
+                    }
+                }
+            };
+        } else {
+            orderBy = { [sortBy]: sortOrder };
+        }
 
         const [data, total] = await Promise.all([
             this.kajiUlangRisikoRepository.findAll({
                 where,
                 skip,
                 take: limit,
-                orderBy: { [sortBy]: sortOrder },
+                orderBy,
             }),
             this.kajiUlangRisikoRepository.count({ where }),
         ]);
