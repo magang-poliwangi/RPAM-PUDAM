@@ -31,6 +31,9 @@ import AuditLogController from './services/audit-log/audit-log.controller.js';
 import BahayaKontaminasiController from './services/bahaya-kontaminasi/bahaya-kontaminasi.controller.js';
 import BahayaKontaminasiService from './services/bahaya-kontaminasi/bahaya-kontaminasi.service.js';
 import BahayaKontaminasiRepository from './services/bahaya-kontaminasi/bahaya-kontaminasi.repository.js';
+import ExcelRepository from './services/excel/excel.repository.js';
+import ExcelService from './services/excel/excel.service.js';
+import ExcelController from './services/excel/excel.controller.js';
 
 // Repositories
 const authRepository = new AuthRepository();
@@ -42,47 +45,51 @@ const identifikasiDanKejadianBahayaRepository = new IdentifikasiDanKejadianBahay
 const penilaianRisikoRepository = new PenilaianRisikoRepository();
 const lokasiSpamRepository = new LokasiSpamRepository();
 const auditLogRepository = new AuditLogRepository();
-const bahayaKontaminasiRepository =new BahayaKontaminasiRepository(); 
+const bahayaKontaminasiRepository = new BahayaKontaminasiRepository();
+const excelRepository = new ExcelRepository();
 
 // Auth
-const authService = new AuthService({ authRepository, userRepository,auditLogRepository });
+const authService = new AuthService({ authRepository, userRepository, auditLogRepository });
 export const authController = new AuthController({ authService });
 
 // User
-export const userService = new UserService({ userRepository,auditLogRepository });
+export const userService = new UserService({ userRepository, auditLogRepository });
 export const userController = new UserController({ userService });
 
 //bahaya kontaminasi
-const bahayaKontaminasiService = new BahayaKontaminasiService({auditLogRepository,bahayaKontaminasiRepository});
-export const bahayaKontaminasiController = new BahayaKontaminasiController({bahayaKontaminasiService});  
+const bahayaKontaminasiService = new BahayaKontaminasiService({ auditLogRepository, bahayaKontaminasiRepository });
+export const bahayaKontaminasiController = new BahayaKontaminasiController({ bahayaKontaminasiService });
 
 //lokasi spam
-const lokasiSpamService = new LokasiSpamService({ lokasiSpamRepository,auditLogRepository });
+const lokasiSpamService = new LokasiSpamService({ lokasiSpamRepository, auditLogRepository });
 export const lokasiSpamController = new LokasiSpamController({ lokasiSpamService });
 
 //identifikasi bahaya
-const identifikasiDanKejadianBahayaService = new IdentifikasiDanKejadianBahayaService({ identifikasiDanKejadianBahayaRepository,auditLogRepository });
+const identifikasiDanKejadianBahayaService = new IdentifikasiDanKejadianBahayaService({ identifikasiDanKejadianBahayaRepository, auditLogRepository });
 export const identifikasiDanKejadianBahayaController = new IdentifikasiDanKejadianBahayaController({ identifikasiDanKejadianBahayaService });
 
 // Kaji Ulang Risiko
-const kajiUlangRisikoService = new KajiUlangRisikoService({ kajiUlangRisikoRepository,auditLogRepository });
+const kajiUlangRisikoService = new KajiUlangRisikoService({ kajiUlangRisikoRepository, auditLogRepository });
 export const kajiUlangRisikoController = new KajiUlangRisikoController({ kajiUlangRisikoService });
 
 //penilaian risiko
-const penilaianRisikoService = new PenilaianRisikoService({ penilaianRisikoRepository,auditLogRepository });
+const penilaianRisikoService = new PenilaianRisikoService({ penilaianRisikoRepository, auditLogRepository });
 export const penilaianRisikoController = new PenilaianRisikoController({ penilaianRisikoService });
 
 // Rencana Perbaikan
-const rencanaPerbaikanService = new RencanaPerbaikanService({ rencanaPerbaikanRepository,auditLogRepository });
+const rencanaPerbaikanService = new RencanaPerbaikanService({ rencanaPerbaikanRepository, auditLogRepository });
 export const rencanaPerbaikanController = new RencanaPerbaikanController({ rencanaPerbaikanService });
 
 // Pemantuan Operasional
-const pemantauanOperasionalService = new PemantauanOperasionalService({ kajiUlangRisikoRepository, pemantauanOperasionalRepository,auditLogRepository });
+const pemantauanOperasionalService = new PemantauanOperasionalService({ kajiUlangRisikoRepository, pemantauanOperasionalRepository, auditLogRepository });
 export const pemantauanOperasionalController = new PemantauanOperasionalController({ pemantauanOperasionalService });
 
 
 
 //log 
-
 const auditLogService = new AuditLogService({ auditLogRepository });
 export const auditLogController = new AuditLogController({ auditLogService });
+
+//excel 
+const excelService = new ExcelService({auditLogRepository,excelRepository});
+export const excelController = new ExcelController({excelService});
