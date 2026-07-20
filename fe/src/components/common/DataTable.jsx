@@ -56,7 +56,7 @@ export default function DataTable({
             className="app-input w-64 pl-9 pr-4"
           />
         </div>
-        {headerExtra && <div className="flex items-center gap-2">{headerExtra}</div>}
+        {headerExtra && <div className="flex items-center justify-end gap-2 flex-wrap flex-1">{headerExtra}</div>}
       </div>
 
       {/* Table */}

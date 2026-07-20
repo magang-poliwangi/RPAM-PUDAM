@@ -70,10 +70,44 @@ export default class RencanaPerbaikanService {
 
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
+        const { search, kodeLokasi, kodeRisiko, startDate, endDate } = req.query;
 
-        const where = { deletedAt: null };
-        if (req.query.search) {
-            where.rencanaPerbaikan = { contains: req.query.search, mode: 'insensitive' };
+        const where = {
+            deletedAt: null,
+            ...((kodeLokasi || kodeRisiko) && {
+                kajiUlangRisiko: {
+                    penilaianRisiko: {
+                        identifikasiDanKejadianBahaya: {
+                            ...(kodeLokasi && { kodeLokasi: { equals: kodeLokasi } }),
+                            ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
+                        }
+                    }
+                }
+            }),
+            ...((startDate || endDate) && {
+                createdAt: {
+                    ...(startDate && { gte: new Date(startDate) }),
+                    ...(endDate && { lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }),
+                }
+            })
+        };
+        if (search) {
+            where.rencanaPerbaikan = { contains: search, mode: 'insensitive' };
+        }
+
+        let orderBy;
+        if (sortBy === 'kodeRisiko') {
+            orderBy = {
+                kajiUlangRisiko: {
+                    penilaianRisiko: {
+                        identifikasiDanKejadianBahaya: {
+                            kodeRisiko: sortOrder
+                        }
+                    }
+                }
+            };
+        } else {
+            orderBy = { [sortBy]: sortOrder };
         }
 
         const [data, total] = await Promise.all([
@@ -81,7 +115,7 @@ export default class RencanaPerbaikanService {
                 where,
                 skip,
                 take: limit,
-                orderBy: { [sortBy]: sortOrder },
+                orderBy,
             }),
             this.rencanaPerbaikanRepository.count({ where }),
         ]);
