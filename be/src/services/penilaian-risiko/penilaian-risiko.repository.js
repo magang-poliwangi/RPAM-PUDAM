@@ -19,10 +19,7 @@ export default class PenilaianRisikoRepository {
     }
 
     async create({ data }) {
-        return prisma.penilaianRisiko.create({
-            data,
-            include: includeRelasi,
-        });
+        return prisma.penilaianRisiko.create({ data });
     }
 
     async findAll({ where, skip, take, orderBy }) {

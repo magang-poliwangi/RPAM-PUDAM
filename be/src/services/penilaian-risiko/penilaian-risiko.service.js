@@ -1,3 +1,4 @@
+
 import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
@@ -45,24 +46,11 @@ export default class PenilaianRisikoService {
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
 
-        const { search, tanpaKajiUlangRisiko, tingkatRisiko, kodeLokasi, kodeRisiko, startDate, endDate } = req.query;
-
-        const identifikasiFilter = {
-            ...(kodeLokasi && { kodeLokasi }),
-            ...(kodeRisiko && { kodeRisiko }),
-        };
-
+        const { search, tanpaKajiUlangRisiko, tingkatRisiko } = req.query;
         const where = {
             deletedAt: null,
             ...(tanpaKajiUlangRisiko === 'true' && { kajiUlangRisiko: null }),
             ...(tingkatRisiko && { tingkatRisiko }),
-            ...(Object.keys(identifikasiFilter).length > 0 && { identifikasiDanKejadianBahaya: identifikasiFilter }),
-            ...((startDate || endDate) && {
-                createdAt: {
-                    ...(startDate && { gte: new Date(startDate) }),
-                    ...(endDate && { lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }),
-                },
-            }),
             ...(search && {
                 OR: [
                     { identifikasiDanKejadianBahaya: { kodeRisiko: { contains: search, mode: 'insensitive' } } },
@@ -72,16 +60,13 @@ export default class PenilaianRisikoService {
             }),
         };
 
-        const orderBy = sortBy === 'kodeRisiko'
-            ? { identifikasiDanKejadianBahaya: { kodeRisiko: sortOrder } }
-            : { [sortBy]: sortOrder };
 
         const [data, total] = await Promise.all([
             this.penilaianRisikoRepository.findAll({
                 where,
                 skip,
                 take: limit,
-                orderBy,
+                orderBy: { [sortBy]: sortOrder },
             }),
             this.penilaianRisikoRepository.count({ where }),
         ]);

@@ -9,7 +9,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import useModalForm from "../hooks/useModalForm";
 import useConfirmDialog from "../hooks/useConfirmDialog";
 import { asyncAddIdentifikasiDanKejadianBahaya, asyncDeleteIdentifikasiDanKejadianBahaya, asyncReceiveIdentifikasiDanKejadianBahaya, asyncUpdateIdentifikasiDanKejadianBahaya } from "../states/indentifikasiDanKejadianBahaya/action";
-import { asyncReceiveLokasiSpam } from "../states/lokasiSpam/action";
 import { omitFields } from "../utils/omit-fields";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
 import Select from "react-select";
@@ -32,14 +31,14 @@ export default function IdentifikasiDanKejadianBahayaPage() {
     const { items, pagination } = useSelector(
         (state) => state.identifikasiDanKejadianBahaya || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
     );
-    const lokasiSpamState = useSelector((state) => state.lokasiSpam || { items: [] });
+
 
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [saveLoading, setSaveLoading] = useState(false);
     const [selectedColumns, setSelectedColumns] = useState([]);
-    const [filters, setFilters] = useState({ kodeLokasi: '', kodeRisiko: '', sortOrder: 'asc', startDate: '', endDate: '' });
+
 
     const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
@@ -47,41 +46,17 @@ export default function IdentifikasiDanKejadianBahayaPage() {
     });
 
     useEffect(() => {
-        dispatch(asyncReceiveLokasiSpam()).catch(() => { });
-    }, [dispatch]);
-
-    useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
-        dispatch(asyncReceiveIdentifikasiDanKejadianBahaya({
-            page,
-            limit: 10,
-            search,
-            kodeLokasi: filters.kodeLokasi || undefined,
-            kodeRisiko: filters.kodeRisiko || undefined,
-            sortBy: 'kodeRisiko',
-            sortOrder: filters.sortOrder,
-            startDate: filters.startDate || undefined,
-            endDate: filters.endDate || undefined,
-        }))
+        dispatch(asyncReceiveIdentifikasiDanKejadianBahaya({ page, limit: 10, search }))
             .catch(() => { })
             .finally(() => setLoading(false));
-    }, [dispatch, page, search, filters]);
+    }, [dispatch, page, search]);
 
     const handleSearchChange = useCallback((value) => {
         setSearch(value);
         setPage(1);
     }, []);
-
-    const handleFilterChange = useCallback((key, value) => {
-        setFilters((prev) => ({ ...prev, [key]: value }));
-        setPage(1);
-    }, []);
-
-    const kodeRisikoOptions = useMemo(() => {
-        const unique = [...new Set(items.map((item) => item.kodeRisiko).filter(Boolean))];
-        return unique.sort();
-    }, [items]);
 
     const handleSave = useCallback(
         async (e) => {
@@ -138,66 +113,6 @@ export default function IdentifikasiDanKejadianBahayaPage() {
                 headerExtra={(
                     <>
                         <div className="flex flex-wrap items-end gap-3">
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-medium text-gray-500">Kode Lokasi</label>
-                                <select
-                                    value={filters.kodeLokasi}
-                                    onChange={(e) => handleFilterChange('kodeLokasi', e.target.value)}
-                                    className="app-input text-sm min-w-[8rem]"
-                                >
-                                    <option value="">Semua</option>
-                                    {(lokasiSpamState.items || []).map((lok) => (
-                                        <option key={lok.id} value={lok.kodeLokasi}>{lok.kodeLokasi}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-medium text-gray-500">Kode Risiko</label>
-                                <select
-                                    value={filters.kodeRisiko}
-                                    onChange={(e) => handleFilterChange('kodeRisiko', e.target.value)}
-                                    className="app-input text-sm min-w-[8rem]"
-                                >
-                                    <option value="">Semua</option>
-                                    {kodeRisikoOptions.map((kode) => (
-                                        <option key={kode} value={kode}>{kode}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-medium text-gray-500">Urutan Risiko</label>
-                                <select
-                                    value={filters.sortOrder}
-                                    onChange={(e) => handleFilterChange('sortOrder', e.target.value)}
-                                    className="app-input text-sm"
-                                >
-                                    <option value="asc">ASC (A-Z)</option>
-                                    <option value="desc">DESC (Z-A)</option>
-                                </select>
-                            </div>
-
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-medium text-gray-500">Dari Tanggal</label>
-                                <input
-                                    type="date"
-                                    value={filters.startDate}
-                                    onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                                    className="app-input text-sm"
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-medium text-gray-500">Sampai Tanggal</label>
-                                <input
-                                    type="date"
-                                    value={filters.endDate}
-                                    onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                                    className="app-input text-sm"
-                                />
-                            </div>
-
                             <Select
                                 className="z-50"
                                 isMulti

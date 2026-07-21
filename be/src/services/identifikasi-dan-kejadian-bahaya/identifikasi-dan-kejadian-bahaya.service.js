@@ -48,21 +48,13 @@ export default class IdentifikasiDanKejadianBahayaService {
 
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
-        const { search, lokasiSpamId, kodeLokasi, kodeRisiko, tipeBahaya, tanpaPenilaianRisiko, startDate, endDate } = req.query;
+        const { search, lokasiSpamId, tipeBahaya, tanpaPenilaianRisiko } = req.query;
 
         const where = {
             deletedAt: null,
             ...(lokasiSpamId && { lokasiSpamId }),
-            ...(kodeLokasi && { kodeLokasi }),
-            ...(kodeRisiko && { kodeRisiko }),
             ...(tipeBahaya && { tipeBahaya }),
             ...(tanpaPenilaianRisiko === 'true' && { penilaianRisiko: null }),
-            ...((startDate || endDate) && {
-                createdAt: {
-                    ...(startDate && { gte: new Date(startDate) }),
-                    ...(endDate && { lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }),
-                },
-            }),
             ...(search && {
                 OR: [
                     { kodeRisiko: { contains: search, mode: 'insensitive' } },
