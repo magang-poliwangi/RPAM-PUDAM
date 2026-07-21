@@ -15,6 +15,11 @@ export default function pemantauanOperasionalRoute(pemantauanOperasionalControll
   router.get('/dropdown/kaji-ulang-risiko', pemantauanOperasionalController.getDropdownKajiUlangRisikoController);
 
   router.get(
+    '/options',
+    pemantauanOperasionalController.getFilterOptionsController
+  );
+
+  router.get(
     '/',
     pemantauanOperasionalController.findAllController,
   );

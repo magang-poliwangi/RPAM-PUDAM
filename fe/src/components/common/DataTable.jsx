@@ -11,6 +11,7 @@ export default function DataTable({
   actions,
   actionsWidth,
   headerExtra,
+  showSearch = true,
 }) {
   const { total, page, limit, totalPages } = pagination;
 
@@ -44,19 +45,23 @@ export default function DataTable({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="relative">
-          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => onSearchChange?.(e.target.value)}
-            placeholder={searchPlaceholder}
-            className="app-input w-64 pl-9 pr-4"
-          />
-        </div>
-        {headerExtra && <div className="flex items-center justify-end gap-2 flex-wrap flex-1">{headerExtra}</div>}
+        {showSearch && (
+          <div className="relative">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => onSearchChange?.(e.target.value)}
+              placeholder={searchPlaceholder}
+              className="app-input w-52 pl-9 pr-4"
+            />
+          </div>
+        )}
+
+        {headerExtra && <div className="flex items-end gap-3">{headerExtra}</div>}
       </div>
 
       {/* Table */}

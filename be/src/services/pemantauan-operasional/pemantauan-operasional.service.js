@@ -120,4 +120,46 @@ export default class PemantauanOperasionalService {
   async getDropdownKajiUlangRisiko() {
     return this.pemantauanOperasionalRepository.findDropdownKajiUlangRisiko();
   }
+
+  async getFilterOptions() {
+
+    const data = await this.pemantauanOperasionalRepository.getFilterOptions();
+
+    const kodeLokasi = [];
+    const kodeRisiko = [];
+
+
+    data.forEach(item => {
+
+        const identifikasi =
+            item.kajiUlangRisiko
+            ?.penilaianRisiko
+            ?.identifikasiDanKejadianBahaya;
+
+
+        if (identifikasi) {
+
+            if (identifikasi.lokasiSpam?.kodeLokasi) {
+                kodeLokasi.push(
+                    identifikasi.lokasiSpam.kodeLokasi
+                );
+            }
+
+
+            if (identifikasi.kodeRisiko) {
+                kodeRisiko.push(
+                    identifikasi.kodeRisiko
+                );
+            }
+
+        }
+
+    });
+
+
+    return {
+        kodeLokasi: [...new Set(kodeLokasi)],
+        kodeRisiko: [...new Set(kodeRisiko)],
+    };
+  }
 }

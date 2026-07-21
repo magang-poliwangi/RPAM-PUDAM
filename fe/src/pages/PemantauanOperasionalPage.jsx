@@ -6,7 +6,7 @@ import DataTable from "../components/common/DataTable";
 import IconButton from "../components/common/IconButton";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
 import Modal from "../components/common/Modal";
-import { asyncAddPemantauanOperasional, asyncDeletePemantauanOperasional, asyncReceivePemantauanOperasional } from "../states/pemantauanOperasional/action";
+import { asyncAddPemantauanOperasional, asyncDeletePemantauanOperasional, asyncReceivePemantauanOperasional, asyncGetPemantauanOperasionalOptions } from "../states/pemantauanOperasional/action";
 import { omitFields } from "../utils/omit-fields";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -52,6 +52,12 @@ export default function PemantauanOperasionalPage() {
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
         delete: (row) => dispatch(asyncDeletePemantauanOperasional(row.id)),
     });
+    const [kodeLokasi, setKodeLokasi] = useState("");
+    const [kodeRisiko, setKodeRisiko] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [kodeLokasiOptions, setKodeLokasiOptions] = useState([]);
+const [kodeRisikoOptions, setKodeRisikoOptions] = useState([]);
 
     useEffect(() => {
         setLoading(true);
@@ -59,6 +65,17 @@ export default function PemantauanOperasionalPage() {
             .catch(() => { })
             .finally(() => setLoading(false));
     }, [dispatch, page, search]);
+
+    useEffect(() => {
+        dispatch(asyncGetPemantauanOperasionalOptions())
+            .then((result) => {
+                setKodeLokasiOptions(result.kodeLokasi);
+                setKodeRisikoOptions(result.kodeRisiko);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, [dispatch]);
 
     const handleSearchChange = useCallback((value) => {
         setSearch(value);
@@ -99,6 +116,7 @@ export default function PemantauanOperasionalPage() {
             ...sorted.flatMap(({ value }) => RELATION_COLUMN_GROUPS[value]?.columns ?? []),
         ];
     }, [selectedColumns]);
+    
     return (
         <>
             <div className="mb-6">
@@ -121,19 +139,97 @@ export default function PemantauanOperasionalPage() {
                 onSearchChange={handleSearchChange}
                 searchPlaceholder="Cari..."
                 emptyMessage="Data tidak ditemukan"
-                headerExtra={<>
+                //showSearch={false}
+                headerExtra={
                     <div className="flex flex-wrap items-end gap-3">
-                        <Select
-                            className="z-50"
-                            isMulti
-                            options={columnOptions}
-                            value={selectedColumns}
-                            onChange={(value) => setSelectedColumns(value || [])}
-                            placeholder="Pilih kolom..."
+
+                        <div>
+                            <label className="block text-xs text-gray-500 mb-1">
+                                Kode Lokasi
+                            </label>
+
+                            <select
+                                value={kodeLokasi}
+                                onChange={(e) => setKodeLokasi(e.target.value)}
+                                className="border rounded-md h-10 w-36 px-3"
+                            >
+                                <option value="">Semua Lokasi</option>
+
+                                {kodeLokasiOptions.map((kode) => (
+                                    <option key={kode} value={kode}>
+                                        {kode}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs text-gray-500 mb-1">
+                                Kode Risiko
+                            </label>
+
+                            <select
+                                value={kodeRisiko}
+                                onChange={(e) => setKodeRisiko(e.target.value)}
+                                className="border rounded-md h-10 w-36 px-3"
+                            >
+                                <option value="">Semua Risiko</option>
+
+                                {kodeRisikoOptions.map((kode) => (
+                                    <option key={kode} value={kode}>
+                                        {kode}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs text-gray-500 mb-1">
+                                Dari Tanggal
+                            </label>
+
+                            <input
+                                type="date"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                className="border rounded-md h-10 w-36 px-3"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs text-gray-500 mb-1">
+                                Sampai Tanggal
+                            </label>
+
+                            <input
+                                type="date"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                className="border rounded-md h-10 w-36 px-3"
+                            />
+                        </div>
+
+                        <div className="w-44">
+                            <label className="block text-xs text-gray-500 mb-1">
+                                Pilih Kolom
+                            </label>
+
+                            <Select
+                                isMulti
+                                options={columnOptions}
+                                value={selectedColumns}
+                                onChange={(value) => setSelectedColumns(value || [])}
+                                placeholder="Pilih kolom..."
+                            />
+                        </div>
+
+                        <AddButton
+                            id="btn-add-kaji-ulang"
+                            onClick={openAdd}
                         />
-                        <AddButton id="btn-add-kaji-ulang" onClick={openAdd} />
+
                     </div>
-                </>}
+                }
                 actions={(row) => (
                     <>
                         <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>

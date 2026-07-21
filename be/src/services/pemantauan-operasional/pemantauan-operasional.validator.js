@@ -119,5 +119,3 @@ export const pemantauanOperasionalIdParamValidator = Joi.object({
         'string.empty': 'ID pemantauan operasional tidak boleh kosong',
     }),
 });
-
-

@@ -12,6 +12,17 @@ export default class PemantauanOperasionalController {
         return response(res, 200, 'Daftar kaji ulang risiko tersedia', data);
     };
 
+    getFilterOptionsController = async (req, res) => {
+    const data = await this.pemantauanOperasionalService.getFilterOptions();
+
+    return response(
+        res,
+        200,
+        "Filter berhasil diambil",
+        data
+    );
+};
+
     findAllController = async (req, res, next) => {
         const result = await this.pemantauanOperasionalService.findAll({ req });
         return response(res, 200, 'Data berhasil diambil', result);

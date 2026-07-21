@@ -71,3 +71,9 @@ export function asyncDeleteLokasiSpam(id) {
         dispatch(deleteLokasiSpamActionCreator(id));
     };
 }
+
+export const asyncGetLokasiSpamOptions = () => async () => {
+    const result = await lokasiSpamApi.getOptions();
+
+    return getPayload(result);
+};

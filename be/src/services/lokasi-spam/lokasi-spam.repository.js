@@ -2,7 +2,7 @@ import { prisma } from "../../databases/client.js";
 
 export default class LokasiSpamRepository {
     async create({ data }) {
-        return prisma.lokasiSpam.create({ data })
+        return prisma.lokasiSpam.create({ data });
     }
 
     async findAll({ where, skip, take, orderBy }) {
@@ -11,6 +11,21 @@ export default class LokasiSpamRepository {
             skip,
             take,
             orderBy,
+        });
+    }
+
+    async getFilterOptions() {
+        return prisma.lokasiSpam.findMany({
+            where: {
+                deletedAt: null,
+            },
+            select: {
+                kodeLokasi: true,
+                simbol: true,
+            },
+            orderBy: {
+                kodeLokasi: "asc",
+            },
         });
     }
 

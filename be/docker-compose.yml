@@ -4,8 +4,8 @@ services:
     container_name: rpam-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: nofa
-      POSTGRES_PASSWORD: nofafirdausananta
+      POSTGRES_USER: annisa
+      POSTGRES_PASSWORD: 12345
       POSTGRES_DB: rpam
     ports:
       - "5432:5432"

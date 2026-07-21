@@ -12,6 +12,17 @@ export default class LokasiSpamController {
         return response(res, 200, 'Data berhasil diambil', result);
     };
 
+    getFilterOptionsController = async (req, res) => {
+        const result = await this.lokasiSpamService.getFilterOptions();
+
+        return response(
+            res,
+            200,
+            "Filter berhasil diambil",
+            result
+        );
+    };
+
     findByIdController = async (req, res, next) => {
         const { id } = req.params;
         const data = await this.lokasiSpamService.findById({ id });

@@ -8,7 +8,7 @@ import { EditIcon, DeleteIcon } from '../components/common/icons';
 import useModalForm from '../hooks/useModalForm';
 import useConfirmDialog from '../hooks/useConfirmDialog';
 
-import { asyncAddLokasiSpam, asyncDeleteLokasiSpam, asyncReceiveLokasiSpam, asyncUpdateLokasiSpam } from '../states/lokasiSpam/action';
+import { asyncAddLokasiSpam, asyncDeleteLokasiSpam, asyncReceiveLokasiSpam, asyncUpdateLokasiSpam, asyncGetLokasiSpamOptions } from '../states/lokasiSpam/action';
 import LokasiSpamFormComponent from '../components/lokasiSpam/LokasiSpamFormComponent';
 import { omitFields } from '../utils/omit-fields';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -37,6 +37,13 @@ export default function LokasiSpamPage() {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [saveLoading, setSaveLoading] = useState(false);
+    const [kodeLokasi, setKodeLokasi] = useState("");
+    const [simbol, setSimbol] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+
+    const [kodeLokasiOptions, setKodeLokasiOptions] = useState([]);
+    const [simbolOptions, setSimbolOptions] = useState([]);
 
     const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
@@ -47,10 +54,21 @@ export default function LokasiSpamPage() {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
-        dispatch(asyncReceiveLokasiSpam({ page, limit: 10, search }))
+        dispatch(asyncReceiveLokasiSpam({ page, limit: 10, search, kodeLokasi, simbol, startDate, endDate }))
             .catch(() => { })
             .finally(() => setLoading(false));
-    }, [dispatch, page, search]);
+    }, [dispatch, page, search, kodeLokasi, simbol, startDate, endDate]); 
+
+    useEffect(() => {
+        dispatch(asyncGetLokasiSpamOptions())
+            .then((result) => {
+                setKodeLokasiOptions(result.kodeLokasi);
+                setSimbolOptions(result.simbol);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, [dispatch]);
 
     const handleSearchChange = useCallback((value) => {
         setSearch(value);
@@ -137,7 +155,78 @@ export default function LokasiSpamPage() {
                 onSearchChange={handleSearchChange}
                 searchPlaceholder="Cari..."
                 emptyMessage="Data tidak ditemukan"
-                headerExtra={<AddButton id="btn-add-kaji-ulang" onClick={openAdd} />}
+                
+                headerExtra={
+                    <div className="flex flex-wrap items-end gap-3">
+
+                        <div>
+                            <label className="block text-xs text-gray-500 mb-1">
+                                Kode Lokasi
+                            </label>
+                        <select
+                            value={kodeLokasi}
+                            onChange={(e) => setKodeLokasi(e.target.value)}
+                            className="border rounded-md h-10 px-3 w-44"
+                        >
+                            <option value="">Semua Lokasi</option>
+
+                            {kodeLokasiOptions.map((kode) => (
+                                <option key={kode} value={kode}>
+                                    {kode}
+                                </option>
+                            ))}
+                        </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs text-gray-500 mb-1">
+                                Simbol
+                            </label>    
+                        <select
+                            value={simbol}
+                            onChange={(e) => setSimbol(e.target.value)}
+                            className="border rounded-md h-10 px-3 w-44"
+                        >
+                            <option value="">Semua Simbol</option>
+
+                            {simbolOptions.map((item) => (
+                                <option key={item} value={item}>
+                                    {item}
+                                </option>
+                            ))}
+                        </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs mb-1">
+                                Dari Tanggal
+                            </label>
+
+                            <input
+                                type="date"
+                                value={startDate}
+                                onChange={(e)=>setStartDate(e.target.value)}
+                                className="border rounded-md h-10 px-3"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs mb-1">
+                                Sampai Tanggal
+                            </label>
+
+                            <input
+                                type="date"
+                                value={endDate}
+                                onChange={(e)=>setEndDate(e.target.value)}
+                                className="border rounded-md h-10 px-3"
+                            />
+                        </div>
+
+                        <AddButton id="btn-add-lokasi" onClick={openAdd}/>
+                        </div>
+                    }
+                        
                 actions={(row) => (
                     <>
                         <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>
