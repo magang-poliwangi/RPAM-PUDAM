@@ -54,7 +54,7 @@ export default class IdentifikasiDanKejadianBahayaService {
             deletedAt: null,
             ...(lokasiSpamId && { lokasiSpamId }),
             ...(kodeLokasi && { kodeLokasi }),
-            ...(kodeRisiko && { kodeRisiko }),
+            ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko } }),
             ...(tipeBahaya && { tipeBahaya }),
             ...(tanpaPenilaianRisiko === 'true' && { penilaianRisiko: null }),
             ...((startDate || endDate) && {

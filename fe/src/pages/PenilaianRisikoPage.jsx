@@ -72,7 +72,7 @@ export default function PenilaianRisikoPage() {
   }, []);
 
   const kodeRisikoOptions = useMemo(() => {
-    const unique = [...new Set(items.map((item) => item.identifikasiDanKejadianBahaya?.kodeRisiko).filter(Boolean))];
+    const unique = [...new Set(items.map((item) => item.identifikasiDanKejadianBahaya?.kodeRisiko?.charAt(0)).filter(Boolean))];
     return unique.sort();
   }, [items]);
 
