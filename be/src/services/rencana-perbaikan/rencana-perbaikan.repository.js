@@ -1,5 +1,5 @@
 import { prisma } from '../../databases/client.js';
-const includeRelasi = {
+export const includeRelasiRencanPerbaikan = {
     kajiUlangRisiko: {
         include: {
             pemantauanOperasional: true,
@@ -8,6 +8,7 @@ const includeRelasi = {
                     identifikasiDanKejadianBahaya: {
                         include: {
                             lokasiSpam: true,
+                            bahayaKontaminasi: true,
                         },
                     },
                 },
@@ -33,7 +34,7 @@ export default class RencanaPerbaikanRepository {
             skip,
             take,
             orderBy,
-            include: includeRelasi,
+            include: includeRelasiRencanPerbaikan,
         });
     }
 
@@ -44,7 +45,7 @@ export default class RencanaPerbaikanRepository {
     async findById({ id }) {
         return prisma.rencanaPerbaikan.findFirst({
             where: { id, deletedAt: null },
-            include: includeRelasi,
+            include: includeRelasiRencanPerbaikan,
         });
     }
 

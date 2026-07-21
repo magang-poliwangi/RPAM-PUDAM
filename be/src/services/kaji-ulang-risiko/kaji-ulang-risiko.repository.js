@@ -1,12 +1,13 @@
 import { prisma } from '../../databases/client.js';
-const includeRelasi = {
-    pemantauanOperasional:true,
-    rencanaPerbaikan:true,
+export const includeRelasiKajiUlangRisiko = {
+    pemantauanOperasional: true,
+    rencanaPerbaikan: true,
     penilaianRisiko: {
         include: {
             identifikasiDanKejadianBahaya: {
                 include: {
-                    lokasiSpam: true
+                    lokasiSpam: true,
+                    bahayaKontaminasi: true,
                 }
             }
         }
@@ -29,7 +30,7 @@ export default class KajiUlangRisikoRepository {
             skip,
             take,
             orderBy,
-            include: includeRelasi,
+            include: includeRelasiKajiUlangRisiko,
         });
     }
 
@@ -40,7 +41,7 @@ export default class KajiUlangRisikoRepository {
     async findById({ id }) {
         return prisma.kajiUlangRisiko.findFirst({
             where: { id, deletedAt: null },
-            include: includeRelasi,
+            include: includeRelasiKajiUlangRisiko,
         });
     }
 

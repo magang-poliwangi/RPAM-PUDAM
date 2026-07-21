@@ -1,5 +1,9 @@
 import { prisma } from '../../databases/client.js';
-
+import { includeRelasiKajiUlangRisiko } from '../kaji-ulang-risiko/kaji-ulang-risiko.repository.js'
+import { includeRelasiIdentifikasiDanKejadianBahaya } from '../identifikasi-dan-kejadian-bahaya/identifikasi-dan-kejadian-bahaya.repository.js'
+import { includeRelasiPenilaianRisiko } from '../penilaian-risiko/penilaian-risiko.repository.js'
+import { includeRelasiRencanPerbaikan } from '../rencana-perbaikan/rencana-perbaikan.repository.js';
+import { includeRelasiPemantauanOperasional } from '../pemantauan-operasional/pemantauan-operasional.repository.js';
 export default class ExcelRepository {
 
 
@@ -14,35 +18,35 @@ export default class ExcelRepository {
     async findAllIdentifikasiBahaya() {
         return prisma.identifikasiDanKejadianBahaya.findMany({
             where: { deletedAt: null },
-            include: { lokasiSpam: true, bahayaKontaminasi: true },
+            include:  includeRelasiIdentifikasiDanKejadianBahaya ,
         });
     }
 
     async findAllPenilaianRisiko() {
         return prisma.penilaianRisiko.findMany({
             where: { deletedAt: null },
-            include: { identifikasiDanKejadianBahaya: true },
+            include: includeRelasiPenilaianRisiko,
         });
     }
 
     async findAllKajiUlangRisiko() {
         return prisma.kajiUlangRisiko.findMany({
             where: { deletedAt: null },
-            include: { penilaianRisiko: { include: { identifikasiDanKejadianBahaya: true } } },
+            include:  includeRelasiKajiUlangRisiko,
         });
     }
 
     async findAllRencanaPerbaikan() {
         return prisma.rencanaPerbaikan.findMany({
             where: { deletedAt: null },
-            include: { kajiUlangRisiko: { include: { penilaianRisiko: { include: { identifikasiDanKejadianBahaya: true } } } } },
+            include:includeRelasiRencanPerbaikan,
         });
     }
 
     async findAllPemantauanOperasional() {
         return prisma.pemantauanOperasional.findMany({
             where: { deletedAt: null },
-            include: { kajiUlangRisiko: { include: { penilaianRisiko: { include: { identifikasiDanKejadianBahaya: true } } } } },
+            include: includeRelasiPemantauanOperasional,
         });
     }
 

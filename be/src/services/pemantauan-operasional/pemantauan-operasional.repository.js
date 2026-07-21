@@ -3,7 +3,7 @@ import { prisma } from "../../databases/client.js";
 
 
 
-const includeRelasi = {
+export const includeRelasiPemantauanOperasional = {
     kajiUlangRisiko: {
         include: {
             rencanaPerbaikan: true,
@@ -12,6 +12,7 @@ const includeRelasi = {
                     identifikasiDanKejadianBahaya: {
                         include: {
                             lokasiSpam: true,
+                            bahayaKontaminasi: true,
                         },
                     },
                 },
@@ -24,7 +25,7 @@ export default class PemantauanOperasionalRepository {
     async create({ data }) {
         return prisma.pemantauanOperasional.create({
             data,
-            include: includeRelasi,
+            include: includeRelasiPemantauanOperasional,
         });
     }
 
@@ -34,7 +35,7 @@ export default class PemantauanOperasionalRepository {
             skip,
             take,
             orderBy,
-            include: includeRelasi,
+            include: includeRelasiPemantauanOperasional,
         });
     }
 
@@ -45,7 +46,7 @@ export default class PemantauanOperasionalRepository {
     async findById({ id }) {
         return prisma.pemantauanOperasional.findFirst({
             where: { id, deletedAt: null },
-            include: includeRelasi,
+            include: includeRelasiPemantauanOperasional,
         });
     }
 
@@ -63,7 +64,7 @@ export default class PemantauanOperasionalRepository {
         return prisma.pemantauanOperasional.update({
             where: { id },
             data,
-            include: includeRelasi,
+            include: includeRelasiPemantauanOperasional,
         });
     }
 

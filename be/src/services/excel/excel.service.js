@@ -1,80 +1,63 @@
-import XLSX from 'xlsx';
-import { catatAuditLog } from '../../utils/audit-log.helper.js';
+import ExcelJS from 'exceljs';
+import { buildLokasiSpamSheet, parseLokasiSpamRows, SHEET_NAME as LOKASI_SHEET } from '../../utils/excel/lokasi-spam.sheet.js';
+import { buildBahayaKontaminasiSheet, parseBahayaKontaminasiRows, SHEET_NAME as BAHAYA_SHEET } from '../../utils/excel/bahaya-kontaminasi.sheet.js';
+import {
+  buildIdentifikasiDanKejadianBahayaSheet,
+  parseIdentifikasiDanKejadianBahayaRows,
+  SHEET_NAME as M31_SHEET,
+} from '../../utils/excel/identifikasi-dan-kejadian-bahaya.sheet.js';
+import { buildPenilaianRisikoSheet, parsePenilaianRisikoRows, SHEET_NAME as M35_SHEET } from '../../utils/excel/penilaian-risiko.sheet.js';
+import { buildKajiUlangRisikoSheet, parseKajiUlangRisikoRows, SHEET_NAME as M4_SHEET } from '../../utils/excel/kaji-ulang.sheet.js';
+import { buildRencanaPerbaikanSheet, parseRencanaPerbaikanRows, SHEET_NAME as M5_SHEET } from '../../utils/excel/rencana-perbaikan.sheet.js';
+import {
+  buildPemantauanOperasionalSheet,
+  parsePemantauanOperasionalRows,
+  SHEET_NAME as M62_SHEET,
+} from '../../utils/excel/pemantauan-operasional.sheet.js';
 import { hitungSkorRisiko, hitungTingkatRisiko } from '../../utils/score-calculator.js';
-import { SHEET_DEFINITIONS } from '../../utils/excel/sheet-definitions.js';
+import { catatAuditLog } from '../../utils/audit-log.helper.js';
 
 const NAMA_TABEL = 'rpam_excel';
 
-const IMPORT_ORDER = [
-  'Lokasi SPAM',
-  'Bahaya Kontaminasi',
-  'Identifikasi Bahaya',
-  'Penilaian Risiko',
-  'Kaji Ulang Risiko',
-  'Rencana Perbaikan',
-  'Pemantauan Operasional',
-];
-
-function parseBoolean(v) {
-  return String(v).trim().toUpperCase() === 'YA';
+function toNumberOrNull(v) {
+  if (v === '' || v === null || v === undefined) return null;
+  const n = Number(v);
+  return isNaN(n) ? null : n;
 }
 
 export default class ExcelService {
   constructor({ excelRepository, auditLogRepository }) {
     this.excelRepository = excelRepository;
     this.auditLogRepository = auditLogRepository;
-
-    // map nama sheet -> fetcher, dipetakan dari method repository
-    this.fetchers = {
-      'Lokasi SPAM': () => this.excelRepository.findAllLokasiSpam(),
-      'Bahaya Kontaminasi': () => this.excelRepository.findAllBahayaKontaminasi(),
-      'Identifikasi Bahaya': () => this.excelRepository.findAllIdentifikasiBahaya(),
-      'Penilaian Risiko': () => this.excelRepository.findAllPenilaianRisiko(),
-      'Kaji Ulang Risiko': () => this.excelRepository.findAllKajiUlangRisiko(),
-      'Rencana Perbaikan': () => this.excelRepository.findAllRencanaPerbaikan(),
-      'Pemantauan Operasional': () => this.excelRepository.findAllPemantauanOperasional(),
-    };
-
-
-    this.importers = {
-      'Lokasi SPAM': this._importLokasiSpam.bind(this),
-      'Bahaya Kontaminasi': this._importBahayaKontaminasi.bind(this),
-      'Identifikasi Bahaya': this._importIdentifikasiBahaya.bind(this),
-      'Penilaian Risiko': this._importPenilaianRisiko.bind(this),
-      'Kaji Ulang Risiko': this._importKajiUlangRisiko.bind(this),
-      'Rencana Perbaikan': this._importRencanaPerbaikan.bind(this),
-      'Pemantauan Operasional': this._importPemantauanOperasional.bind(this),
-    };
   }
 
-  //  EXPORT 
+  // ============================= EXPORT =============================
 
   async generateWorkbook() {
-    const workbook = XLSX.utils.book_new();
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'RPAM';
+    workbook.created = new Date();
 
-    for (const def of SHEET_DEFINITIONS) {
-      const rows = await this.fetchers[def.sheet]();
-      const flatRows = rows.map(def.flatten);
+    buildLokasiSpamSheet(workbook, await this.excelRepository.findAllLokasiSpam());
+    buildBahayaKontaminasiSheet(workbook, await this.excelRepository.findAllBahayaKontaminasi());
+    buildIdentifikasiDanKejadianBahayaSheet(workbook, await this.excelRepository.findAllIdentifikasiBahaya());
+    buildPenilaianRisikoSheet(workbook, await this.excelRepository.findAllPenilaianRisiko());
+    buildKajiUlangRisikoSheet(workbook, await this.excelRepository.findAllKajiUlangRisiko());
+    buildRencanaPerbaikanSheet(workbook, await this.excelRepository.findAllRencanaPerbaikan());
+    buildPemantauanOperasionalSheet(workbook, await this.excelRepository.findAllPemantauanOperasional());
 
-      const worksheet = flatRows.length > 0
-        ? XLSX.utils.json_to_sheet(flatRows, { header: def.columns })
-        : XLSX.utils.aoa_to_sheet([def.columns]);
-
-      XLSX.utils.book_append_sheet(workbook, worksheet, def.sheet);
-    }
-
-    return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    return workbook.xlsx.writeBuffer();
   }
 
-  //  IMPORT: per-sheet 
+  // ============================= IMPORT: per-sheet =============================
 
   async _importLokasiSpam(rows, errors) {
-    for (const [i, r] of rows.entries()) {
+    for (const r of rows) {
       try {
-        if (!r.kodeLokasi) throw new Error('kodeLokasi wajib diisi');
+        if (!r.kodeLokasi) throw new Error('Kode Lokasi wajib diisi');
         await this.excelRepository.upsertLokasiSpam({
           kodeLokasi: r.kodeLokasi,
-          idPrefix: `lokasi-spam-${Date.now()}-${i}`,
+          idPrefix: `lokasi-spam-${Date.now()}-${r.excelRowNumber}`,
           data: {
             simbol: r.simbol || null,
             namaLokasi: r.namaLokasi || null,
@@ -87,39 +70,58 @@ export default class ExcelService {
           },
         });
       } catch (e) {
-        errors.push({ sheet: 'Lokasi SPAM', baris: i + 2, pesan: e.message });
+        errors.push({ sheet: LOKASI_SHEET, baris: r.excelRowNumber, pesan: e.message });
       }
     }
   }
 
   async _importBahayaKontaminasi(rows, errors) {
-    for (const [i, r] of rows.entries()) {
+    for (const r of rows) {
       try {
-        if (!r.kodeRisiko) throw new Error('kodeRisiko (prefix) wajib diisi');
+        if (!r.kodeRisiko) throw new Error('Kode Risiko (prefix) wajib diisi');
         await this.excelRepository.upsertBahayaKontaminasi({
           kodeRisiko: r.kodeRisiko,
           data: { tipeBahaya: r.tipeBahaya, kontaminasiX: r.kontaminasiX },
         });
       } catch (e) {
-        errors.push({ sheet: 'Bahaya Kontaminasi', baris: i + 2, pesan: e.message });
+        errors.push({ sheet: BAHAYA_SHEET, baris: r.excelRowNumber, pesan: e.message });
       }
     }
   }
 
   async _importIdentifikasiBahaya(rows, errors) {
-    for (const [i, r] of rows.entries()) {
+    for (const r of rows) {
       try {
-        if (!r.kodeRisiko) throw new Error('kodeRisiko wajib diisi');
+        if (!r.kodeRisiko) throw new Error('Kode Risiko wajib diisi');
+        if (!r.kodeLokasi) throw new Error('Kode Lokasi wajib diisi');
 
-        const lokasi = await this.excelRepository.findLokasiByKode(r.kodeLokasi);
-        if (!lokasi) throw new Error(`Lokasi dengan kodeLokasi "${r.kodeLokasi}" tidak ditemukan — pastikan sheet "Lokasi SPAM" diimport lebih dulu`);
+        // Kode Lokasi belum terdaftar -> auto-buat data master minimal, jangan gagalkan import
+        let lokasi = await this.excelRepository.findLokasiByKode(r.kodeLokasi);
+        if (!lokasi) {
+          lokasi = await this.excelRepository.upsertLokasiSpam({
+            kodeLokasi: r.kodeLokasi,
+            idPrefix: `lokasi-spam-${Date.now()}-${r.excelRowNumber}`,
+            data: {},
+          });
+        }
 
-        const bahaya = await this.excelRepository.findBahayaByKode(r.prefixBahayaKontaminasi);
-        if (!bahaya) throw new Error(`Bahaya kontaminasi dengan prefix "${r.prefixBahayaKontaminasi}" tidak ditemukan`);
+        // Sheet M3.1 format resmi cuma punya kolom "Kontaminasi (X)" + "Tipe Bahaya",
+        // jadi BahayaKontaminasi di-resolve dari kombinasi keduanya, auto-buat kalau belum ada
+        let bahaya = await this.excelRepository.findBahayaByKontaminasiXDanTipe({
+          kontaminasiX: r.kontaminasiX,
+          tipeBahaya: r.tipeBahaya,
+        });
+        if (!bahaya) {
+          const prefix = String(r.tipeBahaya || 'X').trim().charAt(0).toUpperCase() || 'X';
+          bahaya = await this.excelRepository.upsertBahayaKontaminasi({
+            kodeRisiko: `${prefix}-${Date.now()}-${r.excelRowNumber}`,
+            data: { tipeBahaya: r.tipeBahaya, kontaminasiX: r.kontaminasiX },
+          });
+        }
 
         await this.excelRepository.upsertIdentifikasiBahaya({
           kodeRisiko: r.kodeRisiko,
-          idPrefix: `identifikasi-bahaya-${Date.now()}-${i}`,
+          idPrefix: `identifikasi-bahaya-${Date.now()}-${r.excelRowNumber}`,
           data: {
             lokasiSpamId: lokasi.id,
             bahayaKontaminasiId: bahaya.id,
@@ -131,46 +133,45 @@ export default class ExcelService {
           },
         });
       } catch (e) {
-        errors.push({ sheet: 'Identifikasi Bahaya', baris: i + 2, pesan: e.message });
+        errors.push({ sheet: M31_SHEET, baris: r.excelRowNumber, pesan: e.message });
       }
     }
   }
-  // NOTE: upsert `where: { kodeRisiko }` di atas cuma valid kalau kodeRisiko
-  // pada model IdentifikasiDanKejadianBahaya diberi `@unique` di schema.
 
   async _importPenilaianRisiko(rows, errors) {
-    for (const [i, r] of rows.entries()) {
+    for (const r of rows) {
       try {
-        if (!r.kodeRisiko) throw new Error('kodeRisiko wajib diisi');
+        if (!r.kodeRisiko) throw new Error('Kode Risiko wajib diisi');
         const identifikasi = await this.excelRepository.findIdentifikasiByKode(r.kodeRisiko);
-        if (!identifikasi) throw new Error(`Identifikasi bahaya dengan kodeRisiko "${r.kodeRisiko}" tidak ditemukan`);
+        if (!identifikasi) throw new Error(`Identifikasi bahaya dengan Kode Risiko "${r.kodeRisiko}" tidak ditemukan — import sheet M3.1 dulu`);
 
-        const skor = r.skorRisiko || hitungSkorRisiko(r.peluangKejadianBahaya, r.dampakKeparahan);
+        const peluang = toNumberOrNull(r.peluangKejadianBahaya);
+        const dampak = toNumberOrNull(r.dampakKeparahan);
+        const skor = toNumberOrNull(r.skorRisiko) ?? hitungSkorRisiko(peluang, dampak);
         const tingkat = r.tingkatRisiko || hitungTingkatRisiko(skor);
 
         await this.excelRepository.upsertPenilaianRisiko({
           identifikasiDanKejadianBahayaId: identifikasi.id,
-          data: {
-            peluangKejadianBahaya: Number(r.peluangKejadianBahaya),
-            dampakKeparahan: Number(r.dampakKeparahan),
-            skorRisiko: skor,
-            tingkatRisiko: tingkat,
-          },
+          data: { peluangKejadianBahaya: peluang, dampakKeparahan: dampak, skorRisiko: skor, tingkatRisiko: tingkat },
         });
       } catch (e) {
-        errors.push({ sheet: 'Penilaian Risiko', baris: i + 2, pesan: e.message });
+        errors.push({ sheet: M35_SHEET, baris: r.excelRowNumber, pesan: e.message });
       }
     }
   }
 
   async _importKajiUlangRisiko(rows, errors) {
-    for (const [i, r] of rows.entries()) {
+    for (const r of rows) {
       try {
-        if (!r.kodeRisiko) throw new Error('kodeRisiko wajib diisi');
+        if (!r.kodeRisiko) throw new Error('Kode Risiko wajib diisi');
         const identifikasi = await this.excelRepository.findIdentifikasiWithPenilaianByKode(r.kodeRisiko);
-        if (!identifikasi?.penilaianRisiko) throw new Error(`Penilaian risiko untuk kodeRisiko "${r.kodeRisiko}" belum ada — import sheet "Penilaian Risiko" dulu`);
+        if (!identifikasi?.penilaianRisiko) throw new Error(`Penilaian risiko untuk Kode Risiko "${r.kodeRisiko}" belum ada — import sheet M3.5 dulu`);
 
-        const skor = r.skorRisiko || hitungSkorRisiko(r.peluangKejadianBahaya, r.dampakKeparahan);
+        if (!r.validasi) throw new Error('Validasi wajib dicentang salah satu (Efektif / Tidak Efektif / Tidak Pasti)');
+
+        const peluang = toNumberOrNull(r.peluangKejadianBahaya);
+        const dampak = toNumberOrNull(r.dampakKeparahan);
+        const skor = toNumberOrNull(r.skorRisiko) ?? hitungSkorRisiko(peluang, dampak);
         const tingkat = r.tingkatRisiko || hitungTingkatRisiko(skor);
 
         await this.excelRepository.upsertKajiUlangRisiko({
@@ -179,24 +180,26 @@ export default class ExcelService {
             tindakanPengendalian: r.tindakanPengendalian,
             referensi: r.referensi,
             validasi: r.validasi,
-            peluangKejadianBahaya: Number(r.peluangKejadianBahaya),
-            dampakKeparahan: Number(r.dampakKeparahan),
+            peluangKejadianBahaya: peluang,
+            dampakKeparahan: dampak,
             skorRisiko: skor,
             tingkatRisiko: tingkat,
           },
         });
       } catch (e) {
-        errors.push({ sheet: 'Kaji Ulang Risiko', baris: i + 2, pesan: e.message });
+        errors.push({ sheet: M4_SHEET, baris: r.excelRowNumber, pesan: e.message });
       }
     }
   }
 
   async _importRencanaPerbaikan(rows, errors) {
-    for (const [i, r] of rows.entries()) {
+    for (const r of rows) {
       try {
-        if (!r.kodeRisiko) throw new Error('kodeRisiko wajib diisi');
+        if (!r.kodeRisiko) throw new Error('Kode Risiko wajib diisi');
         const kaji = await this.excelRepository.findKajiUlangByKodeRisiko(r.kodeRisiko);
-        if (!kaji) throw new Error(`Kaji ulang risiko untuk kodeRisiko "${r.kodeRisiko}" tidak ditemukan`);
+        if (!kaji) throw new Error(`Kaji ulang risiko untuk Kode Risiko "${r.kodeRisiko}" tidak ditemukan — import sheet M4 dulu`);
+
+        if (!r.prioritas) throw new Error('Skala Prioritas wajib dicentang salah satu (Pendek / Menengah / Panjang)');
 
         await this.excelRepository.upsertRencanaPerbaikan({
           kajiUlangRisikoId: kaji.id,
@@ -204,26 +207,26 @@ export default class ExcelService {
             rencanaPerbaikan: r.rencanaPerbaikan,
             penanggungJawab: r.penanggungJawab,
             jadwalPelaksanaan: r.jadwalPelaksanaan,
-            biaya: Number(r.biaya),
+            biaya: toNumberOrNull(r.biaya) ?? 0,
             sumberPembiayaan: r.sumberPembiayaan,
             statusKemajuan: r.statusKemajuan,
-            kendalaKeuangan: parseBoolean(r.kendalaKeuangan),
-            kendalaTenagaKerja: parseBoolean(r.kendalaTenagaKerja),
+            kendalaKeuangan: r.kendalaKeuangan,
+            kendalaTenagaKerja: r.kendalaTenagaKerja,
             prioritas: r.prioritas,
           },
         });
       } catch (e) {
-        errors.push({ sheet: 'Rencana Perbaikan', baris: i + 2, pesan: e.message });
+        errors.push({ sheet: M5_SHEET, baris: r.excelRowNumber, pesan: e.message });
       }
     }
   }
 
   async _importPemantauanOperasional(rows, errors) {
-    for (const [i, r] of rows.entries()) {
+    for (const r of rows) {
       try {
-        if (!r.kodeRisiko) throw new Error('kodeRisiko wajib diisi');
+        if (!r.kodeRisiko) throw new Error('Kode Risiko wajib diisi');
         const kaji = await this.excelRepository.findKajiUlangByKodeRisiko(r.kodeRisiko);
-        if (!kaji) throw new Error(`Kaji ulang risiko untuk kodeRisiko "${r.kodeRisiko}" tidak ditemukan`);
+        if (!kaji) throw new Error(`Kaji ulang risiko untuk Kode Risiko "${r.kodeRisiko}" tidak ditemukan — import sheet M4 dulu`);
 
         await this.excelRepository.upsertPemantauanOperasional({
           kajiUlangRisikoId: kaji.id,
@@ -243,26 +246,38 @@ export default class ExcelService {
           },
         });
       } catch (e) {
-        errors.push({ sheet: 'Pemantauan Operasional', baris: i + 2, pesan: e.message });
+        errors.push({ sheet: M62_SHEET, baris: r.excelRowNumber, pesan: e.message });
       }
     }
   }
 
-  //  IMPORT 
+  // ============================= IMPORT: orkestrasi =============================
 
   async importWorkbook({ fileBuffer, userId }) {
-    const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(fileBuffer);
+
     const errors = [];
     const summary = {};
 
-    for (const sheetName of IMPORT_ORDER) {
-      if (!workbook.SheetNames.includes(sheetName)) continue;
+    // urutan penting: master data dulu, baru modul turunan (FK saling bergantung)
+    const plan = [
+      [LOKASI_SHEET, parseLokasiSpamRows, this._importLokasiSpam.bind(this)],
+      [BAHAYA_SHEET, parseBahayaKontaminasiRows, this._importBahayaKontaminasi.bind(this)],
+      [M31_SHEET, parseIdentifikasiDanKejadianBahayaRows, this._importIdentifikasiBahaya.bind(this)],
+      [M35_SHEET, parsePenilaianRisikoRows, this._importPenilaianRisiko.bind(this)],
+      [M4_SHEET, parseKajiUlangRisikoRows, this._importKajiUlangRisiko.bind(this)],
+      [M5_SHEET, parseRencanaPerbaikanRows, this._importRencanaPerbaikan.bind(this)],
+      [M62_SHEET, parsePemantauanOperasionalRows, this._importPemantauanOperasional.bind(this)],
+    ];
 
-      const worksheet = workbook.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+    for (const [sheetName, parseFn, importFn] of plan) {
+      const sheet = workbook.getWorksheet(sheetName);
+      if (!sheet) continue; // sheet nggak ada di file yang diupload -> lewati, bukan error
 
+      const rows = parseFn(sheet);
       const errorsBefore = errors.length;
-      await this.importers[sheetName](rows, errors);
+      await importFn(rows, errors);
       summary[sheetName] = { total: rows.length, gagal: errors.length - errorsBefore };
     }
 
