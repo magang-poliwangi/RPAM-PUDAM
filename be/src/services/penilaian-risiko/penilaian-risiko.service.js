@@ -49,7 +49,7 @@ export default class PenilaianRisikoService {
 
         const identifikasiFilter = {
             ...(kodeLokasi && { kodeLokasi }),
-            ...(kodeRisiko && { kodeRisiko }),
+            ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko } }),
         };
 
         const where = {

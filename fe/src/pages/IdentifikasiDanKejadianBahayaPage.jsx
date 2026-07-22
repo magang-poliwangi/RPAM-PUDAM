@@ -79,7 +79,7 @@ export default function IdentifikasiDanKejadianBahayaPage() {
     }, []);
 
     const kodeRisikoOptions = useMemo(() => {
-        const unique = [...new Set(items.map((item) => item.kodeRisiko).filter(Boolean))];
+        const unique = [...new Set(items.map((item) => item.kodeRisiko?.charAt(0)).filter(Boolean))];
         return unique.sort();
     }, [items]);
 
