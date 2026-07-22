@@ -1,12 +1,13 @@
 import { prisma } from '../../databases/client.js';
 const includeRelasi = {
-    pemantauanOperasional:true,
-    rencanaPerbaikan:true,
+    pemantauanOperasional: true,
+    rencanaPerbaikan: true,
     penilaianRisiko: {
         include: {
             identifikasiDanKejadianBahaya: {
                 include: {
-                    lokasiSpam: true
+                    lokasiSpam: true,
+                    bahayaKontaminasi: true,
                 }
             }
         }

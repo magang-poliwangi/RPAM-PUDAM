@@ -8,6 +8,7 @@ const includeRelasi = {
                     identifikasiDanKejadianBahaya: {
                         include: {
                             lokasiSpam: true,
+                            bahayaKontaminasi: true,
                         },
                     },
                 },

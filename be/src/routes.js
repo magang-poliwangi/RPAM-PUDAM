@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { authController, userController, kajiUlangRisikoController, rencanaPerbaikanController, pemantauanOperasionalController, penilaianRisikoController, identifikasiDanKejadianBahayaController, lokasiSpamController, auditLogController, bahayaKontaminasiController } from './container.js';
+import { authController, userController, kajiUlangRisikoController, rencanaPerbaikanController, pemantauanOperasionalController, penilaianRisikoController, identifikasiDanKejadianBahayaController, lokasiSpamController, auditLogController, bahayaKontaminasiController, excelController } from './container.js';
 
 import authRoute from './services/auth/auth.route.js';
 import userRoute from './services/user/user.route.js';
@@ -58,6 +58,7 @@ import {
     bahayaKontaminasiPayloadValidatorPost,
     bahayaKontaminasiPayloadValidatorPut
 } from './services/bahaya-kontaminasi/bahaya-kontaminasi.validator.js';
+import excelRoute from './services/excel/excel.route.js';
 
 const routers = express.Router();
 
@@ -161,10 +162,15 @@ routers.use(
 
 
 //log
-
 routers.use(
     '/audit-log',
     auditLogRoute(auditLogController)
+);
+
+//excel
+routers.use(
+    '/excel',
+    excelRoute(excelController)
 );
 
 export default routers;

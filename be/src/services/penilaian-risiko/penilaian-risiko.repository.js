@@ -8,7 +8,12 @@ const includeRelasi = {
             pemantauanOperasional: true
         }
     },
-    identifikasiDanKejadianBahaya: { include: { lokasiSpam: true } },
+    identifikasiDanKejadianBahaya: {
+        include: {
+            lokasiSpam: true,
+            bahayaKontaminasi: true,
+        }
+    },
 };
 
 export default class PenilaianRisikoRepository {

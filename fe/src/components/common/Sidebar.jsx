@@ -74,6 +74,18 @@ const navItems = [
     ],
   },
   {
+    group: 'Data',
+    items: [
+      {
+        to: '/excel', label: 'Export & Import Excel', icon: (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+          </svg>
+        )
+      },
+    ],
+  },
+  {
     group: 'Admin',
     adminOnly: true,
     items: [
@@ -100,7 +112,7 @@ export default function Sidebar() {
   const dispatch = useDispatch();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const enabledRoutes = new Set(['/bahaya-kontaminasi','/lokasi-spam', '/identifikasi-dan-kejadian-bahaya', '/penilaian-risiko', '/kaji-ulang', '/rencana-perbaikan', '/pemantauan-operasional', '/management-user', '/audit-log']);
+  const enabledRoutes = new Set(['/bahaya-kontaminasi','/lokasi-spam', '/identifikasi-dan-kejadian-bahaya', '/penilaian-risiko', '/kaji-ulang', '/rencana-perbaikan', '/pemantauan-operasional', '/excel', '/management-user', '/audit-log']);
 
   const isActive = (to) => location.pathname === to || location.pathname.startsWith(to + '/');
 
