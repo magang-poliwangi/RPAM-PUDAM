@@ -1,9 +1,9 @@
-import { clampColumn, columnGroup, relationColumn, textColumn } from "../common/column-helpers";
+import {  columnGroup, relationColumn, textColumn } from "../common/column-helpers";
 
 export const pemantauanOperasionalColumns = [
   relationColumn('kajiUlangRisiko.penilaianRisiko.identifikasiDanKejadianBahaya.lokasiSpam.kodeLokasi', 'Kode Lokasi'),
   relationColumn('kajiUlangRisiko.penilaianRisiko.identifikasiDanKejadianBahaya.kodeRisiko', 'Kode Risiko'),
-  clampColumn('apaYangDimonitor', 'Apa Yang Dimonitor'),
+  textColumn('apaYangDimonitor', 'Apa Yang Dimonitor'),
   textColumn('batasKritis', 'Batas Kritis'),
   columnGroup('Pemantauan Operasional', [
     textColumn('dimana', 'Dimana'),

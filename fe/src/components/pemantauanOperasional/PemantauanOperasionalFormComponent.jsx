@@ -30,7 +30,7 @@ export default function PemantauanOperasionalFormComponent({
 
     const handleKajiUlangChange = (e) => {
         setSelectedOption(e.target.selectedOption || null);
-        onChange({ ...form, kajiUlangRisikoid: e.target.value });
+        onChange({ ...form, kajiUlangRisikoId: e.target.value });
     };
 
     return (
@@ -47,7 +47,7 @@ export default function PemantauanOperasionalFormComponent({
                 </div>
             ) : (
                 <AsyncSelectField
-                    name="kajiUlangRisikoid"
+                    name="kajiUlangRisikoId"
                     label="Data Kaji Ulang Risiko"
                     required
                     value={selectedOption}

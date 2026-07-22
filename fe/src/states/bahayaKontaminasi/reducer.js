@@ -16,7 +16,7 @@ function bahayaKontaminasiReducer(state = initialState, action = {}) {
         case ActionType.ADD_BAHAYA_KONTAMINASI:
             return {
                 ...state,
-                items: [action.payload.lokasiSpam , ...state.items],
+                items: [action.payload.bahayaKontaminasi , ...state.items],
                 pagination: { ...state.pagination, total: state.pagination.total + 1 },
             };
 
@@ -24,8 +24,8 @@ function bahayaKontaminasiReducer(state = initialState, action = {}) {
             return {
                 ...state,
                 items: state.items.map((item) =>
-                    item.id === action.payload.lokasiSpam .id
-                        ? { ...item, ...action.payload.lokasiSpam  }
+                    item.id === action.payload.bahayaKontaminasi .id
+                        ? { ...item, ...action.payload.bahayaKontaminasi  }
                         : item
                 ),
             };

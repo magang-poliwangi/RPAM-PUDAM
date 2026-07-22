@@ -119,6 +119,7 @@ export default function BahayaKontaminasiPage() {
         filters.startDate || null,
         filters.endDate || null,
     ].filter(Boolean).length;
+    
     return (
         <>
             <div className="mb-6">

@@ -118,8 +118,8 @@ model IdentifikasiDanKejadianBahaya {
   id                  String            @id @default(cuid())
   lokasiSpamId        String
   bahayaKontaminasiId String
-  lokasiSpam          LokasiSpam        @relation(fields: [lokasiSpamId], references: [id])
-  bahayaKontaminasi   BahayaKontaminasi @relation(fields: [bahayaKontaminasiId], references: [id])
+  lokasiSpam          LokasiSpam        @relation(fields: [lokasiSpamId], references: [id],    onDelete: Cascade)
+  bahayaKontaminasi   BahayaKontaminasi @relation(fields: [bahayaKontaminasiId], references: [id],    onDelete: Cascade)
   kodeRisiko          String
   kodeLokasi          String
   komponenSpam        String
@@ -127,11 +127,11 @@ model IdentifikasiDanKejadianBahaya {
   komponenSpamY     String
   penyebabZ         String
   kejadianBahayaXYZ String
-  
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  deletedAt         DateTime?
-  penilaianRisiko   PenilaianRisiko?
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+  penilaianRisiko PenilaianRisiko?
 
   @@map("identifikasi_dan_kejadian_bahaya")
 }
@@ -139,7 +139,7 @@ model IdentifikasiDanKejadianBahaya {
 model PenilaianRisiko {
   id                              String                        @id @default(cuid())
   identifikasiDanKejadianBahayaId String                        @unique
-  identifikasiDanKejadianBahaya   IdentifikasiDanKejadianBahaya @relation(fields: [identifikasiDanKejadianBahayaId], references: [id])
+  identifikasiDanKejadianBahaya   IdentifikasiDanKejadianBahaya @relation(fields: [identifikasiDanKejadianBahayaId], references: [id],    onDelete: Cascade)
   peluangKejadianBahaya           Int
   dampakKeparahan                 Int
   skorRisiko                      Int
@@ -157,7 +157,7 @@ model PenilaianRisiko {
 model KajiUlangRisiko {
   id                    String                 @id @default(cuid())
   penilaianRisikoId     String                 @unique
-  penilaianRisiko       PenilaianRisiko        @relation(fields: [penilaianRisikoId], references: [id])
+  penilaianRisiko       PenilaianRisiko        @relation(fields: [penilaianRisikoId], references: [id],    onDelete: Cascade)
   rencanaPerbaikan      RencanaPerbaikan?
   pemantauanOperasional PemantauanOperasional?
   tindakanPengendalian  String
@@ -178,7 +178,7 @@ model KajiUlangRisiko {
 model RencanaPerbaikan {
   id                 String                    @id @default(cuid())
   kajiUlangRisikoId  String                    @unique
-  kajiUlangRisiko    KajiUlangRisiko           @relation(fields: [kajiUlangRisikoId], references: [id])
+  kajiUlangRisiko    KajiUlangRisiko           @relation(fields: [kajiUlangRisikoId], references: [id],    onDelete: Cascade)
   rencanaPerbaikan   String
   penanggungJawab    String
   jadwalPelaksanaan  String
@@ -199,7 +199,7 @@ model RencanaPerbaikan {
 model PemantauanOperasional {
   id                                                   String          @id @default(cuid())
   kajiUlangRisikoId                                    String          @unique
-  kajiUlangRisiko                                      KajiUlangRisiko @relation(fields: [kajiUlangRisikoId], references: [id])
+  kajiUlangRisiko                                      KajiUlangRisiko @relation(fields: [kajiUlangRisikoId], references: [id],    onDelete: Cascade)
   batasKritis                                          String?
   apaYangDimonitor                                     String
   dimana                                               String

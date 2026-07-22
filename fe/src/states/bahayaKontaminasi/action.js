@@ -52,16 +52,16 @@ export function asyncAddBahayaKontaminasi(payload) {
         const bahayaKontaminasi = getPayload(await bahayakontaminasiApi.create(payload));
         
         dispatch(addBahayaKontaminasiActionCreator(bahayaKontaminasi));
-
+    
         return bahayaKontaminasi;
     };
 }
 
 export function asyncUpdateBahayaKontaminasi({ id, payload }) {
     return async (dispatch) => {
-        const result = getPayload(await bahayakontaminasiApi.update(id, payload));
-        dispatch(updateBahayaKontaminasiActionCreator(result));
-        return result;
+        const bahayaKontaminasi = getPayload(await bahayakontaminasiApi.update(id, payload));
+        dispatch(updateBahayaKontaminasiActionCreator(bahayaKontaminasi));
+        return bahayaKontaminasi;
     };
 }
 

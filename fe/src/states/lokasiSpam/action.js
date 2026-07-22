@@ -50,9 +50,7 @@ export function asyncReceiveLokasiSpam(params = {}) {
 export function asyncAddLokasiSpam(payload) {
     return async (dispatch) => {
         const lokasiSpam = getPayload(await lokasiSpamApi.create(payload));
-        
         dispatch(addLokasiSpamActionCreator(lokasiSpam));
-
         return lokasiSpam;
     };
 }

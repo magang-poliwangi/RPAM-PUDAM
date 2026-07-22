@@ -86,16 +86,24 @@ export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit
       />
       <div className="grid grid-cols-2 gap-4">
         <SelectField
-          name="statusKemajuan" label="Status Kemajuan" required placeholder="-- Status --"
-          value={form.statusKemajuan || ''}
-          onChange={(e) => onChange({ ...form, statusKemajuan: e.target.value })}
+          name="statusKemajuan"
+          label="Status Kemajuan"
+          required
+          placeholder="-- Status --"
+          value={STATUS_OPTIONS.find((opt) => opt.value === form.statusKemajuan) || null}
+          onChange={(opt) => onChange({ ...form, statusKemajuan: opt ? opt.value : '' })}
           options={STATUS_OPTIONS}
         />
+
         <SelectField
-          name="prioritas" label="Prioritas" required placeholder="-- Prioritas --"
-          value={form.prioritas || ''}
-          onChange={(e) => onChange({ ...form, prioritas: e.target.value })}
+          name="prioritas"
+          label="Prioritas"
+          required
+          placeholder="-- Prioritas --"
+          value={PRIORITAS_OPTIONS.find((opt) => opt.value === form.prioritas) || null}
+          onChange={(opt) => onChange({ ...form, prioritas: opt ? opt.value : '' })}
           options={PRIORITAS_OPTIONS}
+
         />
       </div>
       <div>

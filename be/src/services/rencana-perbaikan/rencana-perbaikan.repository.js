@@ -25,7 +25,7 @@ export default class RencanaPerbaikanRepository {
     }
 
     async create({ data }) {
-        return prisma.rencanaPerbaikan.create({ data });
+        return prisma.rencanaPerbaikan.create({ data,include:includeRelasi });
     }
 
     async findAll({ where, skip, take, orderBy }) {
@@ -53,10 +53,15 @@ export default class RencanaPerbaikanRepository {
         return prisma.rencanaPerbaikan.update({ where: { id }, data });
     }
 
+    // async softDelete({ id }) {
+    //     return prisma.rencanaPerbaikan.update({
+    //         where: { id },
+    //         data: { deletedAt: new Date() },
+    //     });
+    // }
     async softDelete({ id }) {
-        return prisma.rencanaPerbaikan.update({
+        return prisma.rencanaPerbaikan.delete({
             where: { id },
-            data: { deletedAt: new Date() },
         });
     }
 }
