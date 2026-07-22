@@ -1,5 +1,6 @@
 import express from 'express';
 import authenticateToken from '../../middlewares/authenticate-token.js';
+import isActive from '../../middlewares/is-active.js';
 
 export default function identifikasiDanKejadianBahayaRoute(
     identifikasiBahayaController,
@@ -13,6 +14,7 @@ export default function identifikasiDanKejadianBahayaRoute(
     const router = express.Router();
 
     router.use(authenticateToken);
+    router.use(isActive);
 
     router.post('/', validate(identifikasiBahayaPayloadValidatorPost), identifikasiBahayaController.createController);
     router.get('/', identifikasiBahayaController.findAllController);

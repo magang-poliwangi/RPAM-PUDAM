@@ -1,5 +1,6 @@
 import express from 'express';
 import authenticateToken from '../../middlewares/authenticate-token.js';
+import isActive from '../../middlewares/is-active.js';
 
 export default function rencanaPerbaikanRoute(
     rencanaPerbaikanController,
@@ -13,6 +14,7 @@ export default function rencanaPerbaikanRoute(
     const router = express.Router();
 
     router.use(authenticateToken);
+    router.use(isActive);
 
     router.post('/', validate(rencanaPerbaikanPayloadValidatorPost), rencanaPerbaikanController.createController);
     router.get('/', rencanaPerbaikanController.findAllController);

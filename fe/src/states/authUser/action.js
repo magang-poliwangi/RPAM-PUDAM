@@ -27,13 +27,16 @@ export function asyncSetAuthUser({ username, password }) {
   return async (dispatch) => {
     await authApi.login({ username, password });
     const authUser = await userApi.getSelf();
+    if (!authUser.isActive) {
+      throw new Error("Akses ditolak. Akun Anda tidak aktif.");
+    }
     dispatch(setAuthUserActionCreator(authUser));
     return authUser;
   };
 }
 
 export function asyncUnsetAuthUser() {
-  return async(dispatch) => {
+  return async (dispatch) => {
     await authApi.logout();
     putAccessToken('');
     dispatch(unsetAuthUserActionCreator());

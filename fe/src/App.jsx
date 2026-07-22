@@ -28,7 +28,7 @@ function App() {
     return <div className="app-shell flex items-center justify-center text-sm text-app-text-muted">Memuat aplikasi...</div>;
   }
 
-  if (!authUser) {
+  if (!authUser || !authUser.isActive) {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -36,6 +36,7 @@ function App() {
       </Routes>
     );
   }
+
 
   return (
     <AppLayout>

@@ -15,17 +15,26 @@ export default class AuthService {
     //FR-01
     async login({ username, password }) {
         const user = await this.userRepository.findByUsername(username)
-        const valid = user && await bcrypt.compare(password, user.password);
 
-        if (!valid) throw new AuthenticationError("Kredensial yang Anda berikan salah");
+        if (!user) {
+            throw new AuthenticationError("Kredensial yang Anda berikan salah");
+        }
 
+        const valid = await bcrypt.compare(password, user.password);
+
+        if (!valid) {
+            throw new AuthenticationError("Kredensial yang Anda berikan salah");
+        }
+
+        if (!user.isActive) {
+            throw new AuthenticationError("Akun Anda telah dinonaktifkan");
+        }
 
         const accessToken = TokenManager.generateAccessToken({ id: user.id });
         const refreshToken = TokenManager.generateRefreshToken({ id: user.id });
-    
         await this.authRepository.createRefreshToken({ userId: user.id, token: refreshToken });
 
-        await catatAuditLog(this.auditLogRepository,{
+        await catatAuditLog(this.auditLogRepository, {
             userId: user.id,
             aksi: 'LOGIN',
             namaTabel: 'users',
@@ -39,7 +48,7 @@ export default class AuthService {
     //FR-05
     async logout({ token, userId }) {
         await this.authRepository.deleteRefreshToken({ token });
-        await catatAuditLog(this.auditLogRepository,{
+        await catatAuditLog(this.auditLogRepository, {
             userId,
             aksi: 'LOGOUT',
             namaTabel: 'users',

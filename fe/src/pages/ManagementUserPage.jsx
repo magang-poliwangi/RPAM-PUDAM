@@ -8,7 +8,7 @@ import IconButton from '../components/common/IconButton';
 import AddButton from '../components/common/AddButton';
 import { EditIcon, DeleteIcon, ActivateIcon, DeactivateIcon } from '../components/common/icons';
 import useModalForm from '../hooks/useModalForm';
-import useConfirmDialog from '../hooks/useConfirmDialog';import {
+import useConfirmDialog from '../hooks/useConfirmDialog'; import {
   asyncReceiveUser,
   asyncAddUser,
   asyncUpdateUser,
@@ -44,6 +44,7 @@ export default function ManagementUserPage() {
     deactivate: (row) => dispatch(asyncToggleUserStatus({ id: row.id, isActive: true })),
     activate: (row) => dispatch(asyncToggleUserStatus({ id: row.id, isActive: false })),
   });
+
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
