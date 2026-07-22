@@ -11,6 +11,11 @@ const lokasiSpamApi = (() => {
         return data;
     };
 
+    const getOptions = async () => {
+        const { data } = await axiosInstance.get("/lokasi-spam/options");
+        return data;
+    };
+
     const getById = async (id) => {
         const { data } = await axiosInstance.get(`/lokasi-spam/${id}`);
         return data;
@@ -26,7 +31,8 @@ const lokasiSpamApi = (() => {
         return data;
     };
 
-    return { create, getAll, getById, update, remove };
+    return { create, getAll, getOptions, getById, update, remove };
+    
 })();
 
 export { lokasiSpamApi };

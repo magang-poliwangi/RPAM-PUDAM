@@ -69,3 +69,13 @@ export function asyncDeletePemantauanOperasional(id) {
         dispatch(deletePemantauanOperasionalActionCreator(id));
     };
 }
+
+export function asyncGetPemantauanOperasionalOptions() {
+    return async () => {
+        const result = getPayload(
+            await pemantauanOperasionalApi.getOptions()
+        );
+
+        return result;
+    };
+}

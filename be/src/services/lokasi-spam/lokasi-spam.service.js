@@ -24,6 +24,22 @@ export default class LokasiSpamService {
         return result;
     }
 
+    async getFilterOptions() {
+        const data = await this.lokasiSpamRepository.getFilterOptions();
+
+        return {
+            kodeLokasi: [...new Set(data.map(item => item.kodeLokasi))],
+
+            simbol: [
+                ...new Set(
+                    data
+                        .map(item => item.simbol)
+                        .filter(Boolean)
+                ),
+            ],
+        };
+    }
+
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
 
@@ -34,6 +50,18 @@ export default class LokasiSpamService {
                 { namaLokasi: { contains: req.query.search, mode: 'insensitive' } },
                 { alamat: { contains: req.query.search, mode: 'insensitive' } },
             ];
+        }
+        if (req.query.kodeLokasi) {
+            where.kodeLokasi = req.query.kodeLokasi;
+        }
+        if (req.query.simbol) {
+            where.simbol = req.query.simbol;
+        }
+        if (req.query.startDate) {
+            where.createdAt = { ...where.createdAt, gte: new Date(req.query.startDate) };
+        }
+        if (req.query.endDate) {
+            where.createdAt = { ...where.createdAt, lte: new Date(req.query.endDate) };
         }
 
         const [items, total] = await Promise.all([

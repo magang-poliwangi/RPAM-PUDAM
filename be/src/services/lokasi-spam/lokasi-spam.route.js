@@ -16,6 +16,11 @@ export default function lokasiSpamRoute(lokasiSpamController, {
     lokasiSpamController.findAllController,
   );
 
+  router.get(
+    "/options",
+    lokasiSpamController.getFilterOptionsController
+  );
+
   router.get('/:id', validate(lokasiSpamIdParamValidator, "params"), lokasiSpamController.findByIdController);
 
   router.post(

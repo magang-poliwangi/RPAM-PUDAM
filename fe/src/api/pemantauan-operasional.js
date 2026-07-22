@@ -26,7 +26,15 @@ const pemantauanOperasionalApi = (() => {
         return data;
     };
 
-    return { create, getAll, getById, update, remove };
+    const getOptions = async () => {
+        const { data } = await axiosInstance.get(
+            "/pemantauan-operasional/options"
+        );
+
+        return data;
+    };
+
+    return { create, getAll, getOptions, getById, update, remove };
 })();
 
 export { pemantauanOperasionalApi };

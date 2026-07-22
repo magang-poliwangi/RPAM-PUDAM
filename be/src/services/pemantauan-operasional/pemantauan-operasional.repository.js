@@ -95,4 +95,32 @@ export default class PemantauanOperasionalRepository {
             },
         });
     }
+
+    async getFilterOptions() {
+        return prisma.pemantauanOperasional.findMany({
+            where: {
+                deletedAt: null,
+            },
+            select: {
+                kajiUlangRisiko: {
+                    select: {
+                        penilaianRisiko: {
+                            select: {
+                                identifikasiDanKejadianBahaya: {
+                                    select: {
+                                        kodeRisiko: true,
+                                        lokasiSpam: {
+                                            select: {
+                                                kodeLokasi: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
 }
