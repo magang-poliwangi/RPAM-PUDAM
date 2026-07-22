@@ -13,6 +13,7 @@ import LokasiSpamPage from "./pages/LokasiSpamPage";
 import AuditLogPage from "./pages/AuditLogPage";
 import AppLayout from "./components/common/AppLayout";
 import BahayaKontaminasiPage from "./pages/BahayaKontaminasiPage";
+import ExcelImportExportPage from "./pages/ExcelImportExportPage";
 
 function App() {
   const authUser = useSelector((state) => state.authUser);
@@ -46,6 +47,7 @@ function App() {
         <Route path="/kaji-ulang" element={<KajiUlangPage />} />
         <Route path="/rencana-perbaikan" element={<RencanaPerbaikanPage />} />
         <Route path="/pemantauan-operasional" element={<PemantauanOperasionalPage />} />
+        <Route path="/excel" element={<ExcelImportExportPage />} />
 
         {authUser.role === "ADMIN" && <Route path="/audit-log" element={<AuditLogPage />} />}
         {authUser.role === "ADMIN" && <Route path="/management-user" element={<ManagementUserPage />} />}
