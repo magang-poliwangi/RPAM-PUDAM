@@ -1,5 +1,5 @@
 import { formatRupiah } from "../../utils/format-rupiah";
-import { columnGroup, relationColumn } from "../common/column-helpers";
+import { columnGroup, enumCheckGroup, relationColumn } from "../common/column-helpers";
 import RiskLevelBadge from "../common/RiskLevelBadge";
 
 const skorTingkat = (basePath) => [
@@ -27,7 +27,11 @@ export const RELATION_COLUMN_GROUPS = {
         render: (v) => <span className="line-clamp-2 max-w-xs">{v ?? '-'}</span>,
       }),
       relationColumn('penilaianRisiko.kajiUlangRisiko.referensi', 'Referensi'),
-      relationColumn('penilaianRisiko.kajiUlangRisiko.validasi', 'Validasi'),
+      enumCheckGroup('penilaianRisiko.kajiUlangRisiko.validasi', 'Validasi', [
+        { value: 'EFEKTIF', label: 'Efektif' },
+        { value: 'TIDAK_EFEKTIF', label: 'Tidak Efektif', width: '100px' },
+        { value: 'TIDAK_PASTI', label: 'Tidak Pasti' },
+      ]),
       columnGroup('Risiko Dengan Tindakan Pengendalian', skorTingkat('penilaianRisiko.kajiUlangRisiko')),
     ],
   },

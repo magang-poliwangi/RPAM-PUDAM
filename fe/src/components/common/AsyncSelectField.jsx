@@ -5,10 +5,13 @@ export default function AsyncSelectField({
   name,
   label,
   required,
-  value,          
-  loadOptions,    
+  value,
+  loadOptions,
   onChange,
   placeholder = "Ketik untuk mencari...",
+  size = "42px",
+  fontSize = "12px",
+  styles = {},
 }) {
   const timeoutRef = useRef(null);
 
@@ -19,7 +22,7 @@ export default function AsyncSelectField({
       timeoutRef.current = setTimeout(async () => {
         const options = await loadOptions(inputValue);
         callback(options);
-      }, 400);
+      },1000);
     },
     [loadOptions]
   );
@@ -48,8 +51,70 @@ export default function AsyncSelectField({
         noOptionsMessage={() => "Data tidak ditemukan"}
         loadingMessage={() => "Mencari..."}
         isClearable={!required}
-        className="text-sm"
+        className="text-sm z-50"
         classNamePrefix="react-select"
+        menuPortalTarget={document.body}
+        menuPosition="fixed"
+        styles={{
+          control: (base, state) => ({
+            ...base,
+            minHeight: size,
+            height: size,
+            fontSize,
+            borderColor: state.isFocused ? "#14b8a6" : "#d1d5db",
+            boxShadow: "none",
+            "&:hover": {
+              borderColor: "#14b8a6",
+            },
+          }),
+
+          valueContainer: (base) => ({
+            ...base,
+            height: size,
+            padding: "0 8px",
+          }),
+
+          input: (base) => ({
+            ...base,
+            margin: 0,
+            padding: 0,
+          }),
+
+          indicatorsContainer: (base) => ({
+            ...base,
+            height: size,
+          }),
+
+          clearIndicator: (base) => ({
+            ...base,
+            padding: 4,
+          }),
+
+          dropdownIndicator: (base) => ({
+            ...base,
+            padding: 4,
+          }),
+
+          menu: (base) => ({
+            ...base,
+            fontSize,
+            zIndex: 9999,
+          }),
+
+          menuPortal: (base) => ({
+            ...base,
+            zIndex: 99999,
+          }),
+
+          option: (base, state) => ({
+            ...base,
+            fontSize,
+            backgroundColor: state.isFocused ? "#f0fdfa" : "#fff",
+            color: "#111827",
+          }),
+
+          ...styles,
+        }}
       />
     </div>
   );

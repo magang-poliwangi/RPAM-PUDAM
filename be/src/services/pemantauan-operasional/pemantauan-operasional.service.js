@@ -53,11 +53,27 @@ export default class PemantauanOperasionalService {
 
   async findAll({ req }) {
     const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
-    const { search, kajiUlangRisikoId } = req.query;
+    const { search, kajiUlangRisikoId, kodeLokasi, kodeRisiko, startDate, endDate } = req.query;
 
     const where = {
       deletedAt: null,
       ...(kajiUlangRisikoId && { kajiUlangRisikoId }),
+      ...((kodeLokasi || kodeRisiko) && {
+        kajiUlangRisiko: {
+          penilaianRisiko: {
+            identifikasiDanKejadianBahaya: {
+              ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, } }),
+              ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
+            }
+          }
+        }
+      }),
+      ...((startDate || endDate) && {
+        createdAt: {
+          ...(startDate && { gte: new Date(startDate) }),
+          ...(endDate && { lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }),
+        }
+      }),
       ...(search && {
         OR: searchableFields.map((field) => ({ [field]: { contains: search, mode: 'insensitive' } })),
       }),
@@ -131,35 +147,35 @@ export default class PemantauanOperasionalService {
 
     data.forEach(item => {
 
-        const identifikasi =
-            item.kajiUlangRisiko
-            ?.penilaianRisiko
-            ?.identifikasiDanKejadianBahaya;
+      const identifikasi =
+        item.kajiUlangRisiko
+          ?.penilaianRisiko
+          ?.identifikasiDanKejadianBahaya;
 
 
-        if (identifikasi) {
+      if (identifikasi) {
 
-            if (identifikasi.lokasiSpam?.kodeLokasi) {
-                kodeLokasi.push(
-                    identifikasi.lokasiSpam.kodeLokasi
-                );
-            }
-
-
-            if (identifikasi.kodeRisiko) {
-                kodeRisiko.push(
-                    identifikasi.kodeRisiko
-                );
-            }
-
+        if (identifikasi.lokasiSpam?.kodeLokasi) {
+          kodeLokasi.push(
+            identifikasi.lokasiSpam.kodeLokasi
+          );
         }
+
+
+        if (identifikasi.kodeRisiko) {
+          kodeRisiko.push(
+            identifikasi.kodeRisiko
+          );
+        }
+
+      }
 
     });
 
 
     return {
-        kodeLokasi: [...new Set(kodeLokasi)],
-        kodeRisiko: [...new Set(kodeRisiko)],
+      kodeLokasi: [...new Set(kodeLokasi)],
+      kodeRisiko: [...new Set(kodeRisiko)],
     };
   }
 }

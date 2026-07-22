@@ -16,7 +16,7 @@ import { asyncAddBahayaKontaminasi, asyncDeleteBahayaKontaminasi, asyncReceiveBa
 const EMPTY_FORM = {
     kodeRisiko: "",
     kontaminasiX: "",
-    tipeBahaya:""
+    tipeBahaya: ""
 };
 
 const READONLY_FIELDS = ['id'];
@@ -27,29 +27,34 @@ export default function BahayaKontaminasiPage() {
         (state) => state.bahayaKontaminasi || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
     );
 
-    const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [saveLoading, setSaveLoading] = useState(false);
-
+    const [filters, setFilters] = useState({
+        search: "",
+        // sortOrder: "",
+        startDate: "",
+        endDate: "",
+    })
     const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
         delete: (row) => dispatch(asyncDeleteBahayaKontaminasi(row.id)),
     });
-    console.log(items);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
-        dispatch(asyncReceiveBahayaKontaminasi({ page, limit: 10, search }))
+        const params = {
+            page,
+            limit: 10,
+            search: filters.search || undefined,
+            startDate: filters.startDate || undefined,
+            endDate: filters.endDate || undefined,
+        };
+        dispatch(asyncReceiveBahayaKontaminasi(params))
             .catch(() => { })
             .finally(() => setLoading(false));
-    }, [dispatch, page, search]);
-
-    const handleSearchChange = useCallback((value) => {
-        setSearch(value);
-        setPage(1);
-    }, []);
+    }, [dispatch, page, filters]);
 
     const handleSave = useCallback(
         async (e) => {
@@ -57,8 +62,7 @@ export default function BahayaKontaminasiPage() {
             setSaveLoading(true);
             try {
                 const payload = omitFields(modal.form, READONLY_FIELDS);
-                console.log(modal.form);
-                
+
                 if (modal.mode === 'edit') {
                     await dispatch(asyncUpdateBahayaKontaminasi({ id: modal.form.id, payload }));
                 } else {
@@ -87,7 +91,34 @@ export default function BahayaKontaminasiPage() {
             label: "Tipe Bahaya",
         },
     ];
+    const updateFilter = useCallback((key, value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+        setPage(1);
+    }, []);
+    const handleSearchChange = useCallback(
+        (value) => updateFilter("search", value),
+        [updateFilter]
+    );
+    const handleResetFilter = () => {
+        setFilters({
+            search: "",
+            // sortOrder: "",
+            startDate: "",
+            endDate: "",
+            lokasi: null,
+            bahaya: null,
 
+        });
+        setPage(1);
+    };
+
+    const activeCount = [
+        filters.startDate || null,
+        filters.endDate || null,
+    ].filter(Boolean).length;
     return (
         <>
             <div className="mb-6">
@@ -100,11 +131,42 @@ export default function BahayaKontaminasiPage() {
                 loading={loading}
                 pagination={pagination}
                 onPageChange={setPage}
-                search={search}
+                search={filters.search}
                 onSearchChange={handleSearchChange}
                 searchPlaceholder="Cari..."
                 emptyMessage="Data tidak ditemukan"
-                headerExtra={<AddButton id="btn-add-kaji-ulang" onClick={openAdd} />}
+                headerExtra={<div className="flex flex-wrap items-end gap-3">
+                    <div className="flex flex-col gap-0.5">
+                        <label className="text-[10px] font-semibold text-gray-500">Dari Tanggal</label>
+                        <input
+                            type="date"
+                            value={filters.startDate}
+                            onChange={(e) => updateFilter("startDate", e.target.value)}
+                            className="app-input py-1.5 px-2 text-xs w-full"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-0.5">
+                        <label className="text-[10px] font-semibold text-gray-500">Sampai Tanggal</label>
+                        <input
+                            type="date"
+                            value={filters.endDate}
+                            onChange={(e) => updateFilter("endDate", e.target.value)}
+                            className="app-input py-1.5 px-2 text-xs w-full"
+                        />
+                    </div>
+                    {activeCount > 0 && (
+                        <button
+                            type="button"
+                            onClick={handleResetFilter}
+                            className="text-sm text-teal-700 hover:text-teal-800 font-medium px-3 py-2"
+                        >
+                            Reset Filter
+                        </button>
+                    )}
+                    <AddButton id="btn-add-bahaya-kontaminasi" onClick={openAdd} />
+                </div>
+                }
                 actions={(row) => (
                     <>
                         <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>

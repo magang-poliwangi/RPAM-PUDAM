@@ -42,27 +42,23 @@ export default class LokasiSpamService {
 
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
+        const { search, startDate, endDate } = req.query;
+        const where = {
+            deletedAt: null,
+            ...((startDate || endDate) && {
+                createdAt: {
+                    ...(startDate && { gte: new Date(startDate) }),
+                    ...(endDate && { lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }),
+                },
+            }),
+            ...(search && {
+                OR: [
+                    { kodeLokasi: { contains: req.query.search, mode: 'insensitive' } },
+                    { namaLokasi: { contains: req.query.search, mode: 'insensitive' } },
+                ],
+            }),
+        };
 
-        const where = { deletedAt: null };
-        if (req.query.search) {
-            where.OR = [
-                { kodeLokasi: { contains: req.query.search, mode: 'insensitive' } },
-                { namaLokasi: { contains: req.query.search, mode: 'insensitive' } },
-                { alamat: { contains: req.query.search, mode: 'insensitive' } },
-            ];
-        }
-        if (req.query.kodeLokasi) {
-            where.kodeLokasi = req.query.kodeLokasi;
-        }
-        if (req.query.simbol) {
-            where.simbol = req.query.simbol;
-        }
-        if (req.query.startDate) {
-            where.createdAt = { ...where.createdAt, gte: new Date(req.query.startDate) };
-        }
-        if (req.query.endDate) {
-            where.createdAt = { ...where.createdAt, lte: new Date(req.query.endDate) };
-        }
 
         const [items, total] = await Promise.all([
             this.lokasiSpamRepository.findAll({

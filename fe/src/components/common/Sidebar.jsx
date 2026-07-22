@@ -3,19 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, Link } from 'react-router';
 import { CiLogin } from "react-icons/ci";
 import { asyncUnsetAuthUser } from '../../states/authUser/action';
+
 const navItems = [
-  {
-    group: 'Utama',
-    items: [
-      {
-        to: '/dashboard', label: 'Dashboard', icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-        )
-      },
-    ],
-  },
   {
     group: 'Modul RPAM',
     items: [
@@ -107,89 +96,134 @@ const navItems = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
   const authUser = useSelector((state) => state.authUser);
   const dispatch = useDispatch();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const enabledRoutes = new Set(['/bahaya-kontaminasi','/lokasi-spam', '/identifikasi-dan-kejadian-bahaya', '/penilaian-risiko', '/kaji-ulang', '/rencana-perbaikan', '/pemantauan-operasional', '/excel', '/management-user', '/audit-log']);
+  const enabledRoutes = new Set([
+    '/bahaya-kontaminasi',
+    '/lokasi-spam',
+    '/identifikasi-dan-kejadian-bahaya',
+    '/penilaian-risiko',
+    '/kaji-ulang',
+    '/rencana-perbaikan',
+    '/pemantauan-operasional',
+    '/excel',
+    '/management-user',
+    '/audit-log'
+  ]);
 
   const isActive = (to) => location.pathname === to || location.pathname.startsWith(to + '/');
 
   return (
-    <aside className={`flex flex-col bg-white border-r border-gray-100 shadow-sm transition-all duration-200 ${collapsed ? 'w-16' : 'w-64'} min-h-screen flex-shrink-0`}>
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
-        <div className="w-8 h-8 rounded-lg bg-teal-700 flex items-center justify-center flex-shrink-0">
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        </div>
-        {!collapsed && (
-          <div>
-            <p className="text-sm font-bold text-gray-900 leading-none">RPAM</p>
-            <p className="text-xs text-gray-400 mt-0.5">PUDAM</p>
-          </div>
-        )}
-        <button
-          onClick={() => setCollapsed((prev) => !prev)}
-          className="ml-auto p-1 rounded-md cursor-pointer z-50 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={collapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'} />
-          </svg>
-        </button>
-      </div>
+    <>
+      {/* Overlay hitam transparan untuk tampilan Mobile */}
+      {isMobileOpen && (
+        <div
+          onClick={() => setIsMobileOpen(false)}
+          className="fixed inset-0 z-40 bg-black/75 md:hidden"
+        />
+      )}
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 scrollbar-thin">
-        {navItems.map((group) => {
-          if (group.adminOnly && authUser?.role !== 'ADMIN') return null;
-          return (
-            <div key={group.group} className="mb-4">
-              {!collapsed && (
-                <p className="px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">{group.group}</p>
-              )}
-              {group.items.filter((item) => enabledRoutes.has(item.to)).map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  title={collapsed ? item.label : undefined}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-medium transition-all duration-150 ${isActive(item.to)
-                    ? 'bg-teal-50 text-teal-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                >
-                  <span className={`flex-shrink-0 ${isActive(item.to) ? 'text-teal-700' : 'text-gray-400'}`}>{item.icon}</span>
-                  {!collapsed && <span className="truncate">{item.label}</span>}
-                </Link>
-              ))}
-            </div>
-          );
-        })}
-      </nav>
-
-      {/* User info */}
-      <div className="border-t border-gray-100 p-3">
-        <div className={`flex items-center gap-3 px-2 py-2 rounded-lg ${collapsed ? 'justify-center' : ''}`}>
-          <div className="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-white">{authUser?.username?.[0]?.toUpperCase() || 'U'}</span>
+      {/* Sidebar Container */}
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-100 shadow-sm transition-transform duration-200 ease-in-out
+          md:static md:translate-x-0
+          ${isMobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'}
+          ${collapsed ? 'md:w-16' : 'md:w-64'}
+          min-h-screen flex-shrink-0
+        `}
+      >
+        {/* Logo & Toggle Collapse/Close */}
+        <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
+          <div className="w-8 h-8 rounded-lg bg-teal-700 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
           </div>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">{authUser?.username}</p>
-              <p className="text-xs text-gray-400">{authUser?.role === 'ADMIN' ? 'Admin' : 'User'}</p>
+          {(!collapsed || isMobileOpen) && (
+            <div>
+              <p className="text-sm font-bold text-gray-900 leading-none">RPAM</p>
+              <p className="text-xs text-gray-400 mt-0.5">PUDAM</p>
             </div>
           )}
-          <button onClick={() => {
-            try { dispatch(asyncUnsetAuthUser()) } catch (error) {
-              console.log(error);
-            }
-          }} className='cursor-pointer hover:bg-red-200 active:bg-red-200 p-1 hover:ring-1 active:ring-1 hover:ring-red-500 transition ease-in rounded-md '>
-            <CiLogin className='text-2xl  text-red-500' />
+
+          {/* Tombol Collapse (Tampilan Desktop) */}
+          <button
+            onClick={() => setCollapsed((prev) => !prev)}
+            className="hidden md:block ml-auto p-1 rounded-md cursor-pointer z-50 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={collapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'} />
+            </svg>
+          </button>
+
+          {/* Tombol Close (Tampilan Mobile) */}
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="md:hidden ml-auto p-1 rounded-md cursor-pointer text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-      </div>
-    </aside>
+
+        {/* Navigasi */}
+        <nav className="flex-1 overflow-y-auto py-4 px-2 scrollbar-thin">
+          {navItems.map((group) => {
+            if (group.adminOnly && authUser?.role !== 'ADMIN') return null;
+            return (
+              <div key={group.group} className="mb-4">
+                {(!collapsed || isMobileOpen) && (
+                  <p className="px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">{group.group}</p>
+                )}
+                {group.items.filter((item) => enabledRoutes.has(item.to)).map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setIsMobileOpen(false)} // Tutup sidebar mobile saat opsi diklik
+                    title={collapsed ? item.label : undefined}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-medium transition-all duration-150 ${
+                      isActive(item.to)
+                        ? 'bg-teal-50 text-teal-700'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    <span className={`flex-shrink-0 ${isActive(item.to) ? 'text-teal-700' : 'text-gray-400'}`}>{item.icon}</span>
+                    {(!collapsed || isMobileOpen) && <span className="truncate">{item.label}</span>}
+                  </Link>
+                ))}
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* User Info */}
+        <div className="border-t border-gray-100 p-3">
+          <div className={`flex flex-wrap items-center gap-3 px-2 py-2 rounded-lg ${collapsed && !isMobileOpen ? 'justify-center' : ''}`}>
+            <div className="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-bold text-white">{authUser?.username?.[0]?.toUpperCase() || 'U'}</span>
+            </div>
+            {(!collapsed || isMobileOpen) && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{authUser?.username}</p>
+                <p className="text-xs text-gray-400">{authUser?.role === 'ADMIN' ? 'Admin' : 'User'}</p>
+              </div>
+            )}
+            <button
+              onClick={() => {
+                dispatch(asyncUnsetAuthUser());
+              }}
+              className="cursor-pointer hover:bg-red-200 active:bg-red-200 p-1 hover:ring-1 active:ring-1 hover:ring-red-500 active:ring-red-500 transition ease-in rounded-md"
+            >
+              <CiLogin className="text-2xl text-red-500" />
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }

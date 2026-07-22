@@ -45,6 +45,10 @@
   textarea { font: inherit; }
 }
 
+button {
+  @apply cursor-pointer
+}
+
 @layer components {
   .app-shell { @apply  h-screen bg-app-canvas text-app-text; }
   .app-main { @apply flex-1 overflow-auto; }

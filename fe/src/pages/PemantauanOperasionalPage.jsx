@@ -6,7 +6,7 @@ import DataTable from "../components/common/DataTable";
 import IconButton from "../components/common/IconButton";
 import { DeleteIcon, EditIcon } from "../components/common/icons";
 import Modal from "../components/common/Modal";
-import { asyncAddPemantauanOperasional, asyncDeletePemantauanOperasional, asyncReceivePemantauanOperasional, asyncGetPemantauanOperasionalOptions } from "../states/pemantauanOperasional/action";
+import { asyncAddPemantauanOperasional, asyncDeletePemantauanOperasional, asyncReceivePemantauanOperasional, asyncUpdatePemantauanOperasional } from "../states/pemantauanOperasional/action";
 import { omitFields } from "../utils/omit-fields";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,10 @@ import useModalForm from "../hooks/useModalForm";
 import PemantauanOperasionalFormComponent from "../components/pemantauanOperasional/PemantauanOperasionalFormComponent";
 import { RELATION_COLUMN_GROUPS, RELATION_ORDER } from "../components/pemantauanOperasional/pemantauanOperasional.relationColumns";
 import { pemantauanOperasionalColumns } from "../components/pemantauanOperasional/pemantauanOperasional.columns";
-import Select from "react-select";
+import { createAsyncOptionsLoader } from "../utils/option-loader";
+import { lokasiSpamApi } from "../api/lokasi-spam";
+import { bahayakontaminasiApi } from "../api/bahaya-kontaminasi";
+import FilterPanelComponent from "../components/common/FilterPanelComponent";
 
 const EMPTY_FORM = {
     kajiUlangRisikoId: "",
@@ -43,7 +46,7 @@ export default function PemantauanOperasionalPage() {
     );
 
 
-    const [search, setSearch] = useState('');
+
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [saveLoading, setSaveLoading] = useState(false);
@@ -52,36 +55,31 @@ export default function PemantauanOperasionalPage() {
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
         delete: (row) => dispatch(asyncDeletePemantauanOperasional(row.id)),
     });
-    const [kodeLokasi, setKodeLokasi] = useState("");
-    const [kodeRisiko, setKodeRisiko] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [kodeLokasiOptions, setKodeLokasiOptions] = useState([]);
-const [kodeRisikoOptions, setKodeRisikoOptions] = useState([]);
+    const [filters, setFilters] = useState({
+        search: "",
+        // sortOrder: "",
+        startDate: "",
+        endDate: "",
+        lokasi: null,
+        bahaya: null
+    })
 
     useEffect(() => {
+        const params = {
+            page,
+            limit: 10,
+            search: filters.search || undefined,
+            startDate: filters.startDate || undefined,
+            endDate: filters.endDate || undefined,
+            kodeLokasi: filters.lokasi?.raw?.kodeLokasi || undefined,
+            kodeRisiko: filters.bahaya?.raw?.kodeRisiko || undefined,
+        };
+
         setLoading(true);
-        dispatch(asyncReceivePemantauanOperasional({ page, limit: 10, search }))
+        dispatch(asyncReceivePemantauanOperasional(params))
             .catch(() => { })
             .finally(() => setLoading(false));
-    }, [dispatch, page, search]);
-
-    useEffect(() => {
-        dispatch(asyncGetPemantauanOperasionalOptions())
-            .then((result) => {
-                setKodeLokasiOptions(result.kodeLokasi);
-                setKodeRisikoOptions(result.kodeRisiko);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }, [dispatch]);
-
-    const handleSearchChange = useCallback((value) => {
-        setSearch(value);
-        setPage(1);
-    }, []);
-
+    }, [dispatch, page, filters]);
 
     const handleSave = useCallback(
         async (e) => {
@@ -90,7 +88,7 @@ const [kodeRisikoOptions, setKodeRisikoOptions] = useState([]);
             try {
                 const payload = omitFields(modal.form, READONLY_FIELDS);
                 if (modal.mode === 'edit') {
-                    await dispatch(asyncReceivePemantauanOperasional({ id: modal.form.id, payload }));
+                    await dispatch(asyncUpdatePemantauanOperasional({ id: modal.form.id, payload }));
                 } else {
                     await dispatch(asyncAddPemantauanOperasional(payload));
                 }
@@ -116,7 +114,55 @@ const [kodeRisikoOptions, setKodeRisikoOptions] = useState([]);
             ...sorted.flatMap(({ value }) => RELATION_COLUMN_GROUPS[value]?.columns ?? []),
         ];
     }, [selectedColumns]);
-    
+
+    const loadLokasiSpamOptions = useMemo(
+        () =>
+            createAsyncOptionsLoader(
+                lokasiSpamApi,
+                (item) => `${item.kodeLokasi} - ${item.namaLokasi} `
+            ),
+        []
+    );
+    const loadBahayaKontaminasiOptions = useMemo(
+        () =>
+            createAsyncOptionsLoader(
+                bahayakontaminasiApi,
+                (item) => `${item.kodeRisiko} - ${item.kontaminasiX} - ${item.tipeBahaya}`
+            ),
+        []
+    );
+
+    const handleResetFilter = () => {
+        setFilters({
+            search: "",
+            // sortOrder: "",
+            startDate: "",
+            endDate: "",
+            lokasi: null,
+            bahaya: null,
+
+        });
+        setSelectedColumns([]);
+        setPage(1);
+    };
+    const updateFilter = useCallback((key, value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+        setPage(1);
+    }, []);
+
+    const handleSearchChange = useCallback(
+        (value) => updateFilter("search", value),
+        [updateFilter]
+    );
+
+    const handleSelectFilter = useCallback((key, e) => {
+        updateFilter(key, e?.target?.selectedOption ?? null);
+    }, [updateFilter]);
+
+
     return (
         <>
             <div className="mb-6">
@@ -128,6 +174,24 @@ const [kodeRisikoOptions, setKodeRisikoOptions] = useState([]);
                     Kelola data pemantauan operasional RPAM
                 </p>
             </div>
+            <FilterPanelComponent
+                lokasiValue={filters.lokasi}
+                onLokasiChange={(e) => handleSelectFilter("lokasi", e)}
+                loadLokasiOptions={loadLokasiSpamOptions}
+                bahayaValue={filters.bahaya}
+                onBahayaChange={(e) => handleSelectFilter("bahaya", e)}
+                loadBahayaOptions={loadBahayaKontaminasiOptions}
+                // sortOrder={filters.sortOrder}
+                // onSortOrderChange={(v) => updateFilter("sortOrder", v)}
+                startDate={filters.startDate}
+                onStartDateChange={(v) => updateFilter("startDate", v)}
+                endDate={filters.endDate}
+                onEndDateChange={(v) => updateFilter("endDate", v)}
+                columnOptions={columnOptions}
+                selectedColumns={selectedColumns}
+                onSelectedColumnsChange={setSelectedColumns}
+                onReset={handleResetFilter}
+            />
 
             <DataTable
                 columns={columns}
@@ -135,100 +199,16 @@ const [kodeRisikoOptions, setKodeRisikoOptions] = useState([]);
                 loading={loading}
                 pagination={pagination}
                 onPageChange={setPage}
-                search={search}
+                search={filters.search}
                 onSearchChange={handleSearchChange}
                 searchPlaceholder="Cari..."
                 emptyMessage="Data tidak ditemukan"
                 //showSearch={false}
                 headerExtra={
-                    <div className="flex flex-wrap items-end gap-3">
-
-                        <div>
-                            <label className="block text-xs text-gray-500 mb-1">
-                                Kode Lokasi
-                            </label>
-
-                            <select
-                                value={kodeLokasi}
-                                onChange={(e) => setKodeLokasi(e.target.value)}
-                                className="border rounded-md h-10 w-36 px-3"
-                            >
-                                <option value="">Semua Lokasi</option>
-
-                                {kodeLokasiOptions.map((kode) => (
-                                    <option key={kode} value={kode}>
-                                        {kode}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs text-gray-500 mb-1">
-                                Kode Risiko
-                            </label>
-
-                            <select
-                                value={kodeRisiko}
-                                onChange={(e) => setKodeRisiko(e.target.value)}
-                                className="border rounded-md h-10 w-36 px-3"
-                            >
-                                <option value="">Semua Risiko</option>
-
-                                {kodeRisikoOptions.map((kode) => (
-                                    <option key={kode} value={kode}>
-                                        {kode}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs text-gray-500 mb-1">
-                                Dari Tanggal
-                            </label>
-
-                            <input
-                                type="date"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                className="border rounded-md h-10 w-36 px-3"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-xs text-gray-500 mb-1">
-                                Sampai Tanggal
-                            </label>
-
-                            <input
-                                type="date"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                className="border rounded-md h-10 w-36 px-3"
-                            />
-                        </div>
-
-                        <div className="w-44">
-                            <label className="block text-xs text-gray-500 mb-1">
-                                Pilih Kolom
-                            </label>
-
-                            <Select
-                                isMulti
-                                options={columnOptions}
-                                value={selectedColumns}
-                                onChange={(value) => setSelectedColumns(value || [])}
-                                placeholder="Pilih kolom..."
-                            />
-                        </div>
-
-                        <AddButton
-                            id="btn-add-kaji-ulang"
-                            onClick={openAdd}
-                        />
-
-                    </div>
+                    <AddButton
+                        id="btn-add-kaji-ulang"
+                        onClick={openAdd}
+                    />
                 }
                 actions={(row) => (
                     <>

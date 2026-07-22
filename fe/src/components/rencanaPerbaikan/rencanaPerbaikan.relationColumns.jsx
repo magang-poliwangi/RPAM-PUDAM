@@ -1,4 +1,4 @@
-import { columnGroup, relationColumn } from "../common/column-helpers";
+import { columnGroup, enumCheckGroup, relationColumn } from "../common/column-helpers";
 import RiskLevelBadge from "../common/RiskLevelBadge";
 
 const skorTingkat = (basePath) => [
@@ -40,6 +40,11 @@ export const RELATION_COLUMN_GROUPS = {
       }),
       relationColumn('kajiUlangRisiko.referensi', 'Referensi'),
       relationColumn('kajiUlangRisiko.validasi', 'Validasi'),
+      enumCheckGroup('kajiUlangRisiko.validasi', 'Validasi', [
+        { value: 'EFEKTIF', label: 'Efektif' },
+        { value: 'TIDAK_EFEKTIF', label: 'Tidak Efektif', width: '100px' },
+        { value: 'TIDAK_PASTI', label: 'Tidak Pasti' },
+      ]),
       columnGroup('Risiko Dengan Tindakan Pengendalian', skorTingkat('kajiUlangRisiko')),
     ],
   },

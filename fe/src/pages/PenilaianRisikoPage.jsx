@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useModalForm from "../hooks/useModalForm";
 import { asyncAddPenilaianRisiko, asyncDeletePenilaianRisiko, asyncReceivePenilaianRisiko, asyncUpdatePenilaianRisiko } from "../states/penilaianRisiko/action";
-import { asyncReceiveLokasiSpam } from "../states/lokasiSpam/action";
 import { omitFields } from "../utils/omit-fields";
 import DataTable from "../components/common/DataTable";
 import AddButton from "../components/common/AddButton";
@@ -15,7 +14,10 @@ import { DeleteIcon, EditIcon } from "../components/common/icons";
 import useConfirmDialog from "../hooks/useConfirmDialog";
 import { penilaianRisikoColumns } from "../components/penilaianRisiko/penilaianRisiko.columns";
 import { RELATION_COLUMN_GROUPS, RELATION_ORDER } from "../components/penilaianRisiko/penilaianRisiko.relationColumns";
-import Select from "react-select";
+import { createAsyncOptionsLoader } from "../utils/option-loader";
+import { lokasiSpamApi } from "../api/lokasi-spam";
+import { bahayakontaminasiApi } from "../api/bahaya-kontaminasi";
+import FilterPanelComponent from "../components/common/FilterPanelComponent";
 
 
 const EMPTY_FORM = { identifikasiBahayaId: '', peluangKejadianBahaya: '', dampakKeparahan: '' };
@@ -27,54 +29,45 @@ export default function PenilaianRisikoPage() {
   const { items, pagination } = useSelector(
     (state) => state.penilaianRisiko || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
   );
-  const lokasiSpamState = useSelector((state) => state.lokasiSpam || { items: [] });
 
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(false);
-  const [selectedColumns, setSelectedColumns] = useState([]);
-  const [filters, setFilters] = useState({ kodeLokasi: '', kodeRisiko: '', sortOrder: 'asc', startDate: '', endDate: '' });
-  const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
+  const [selectedColumns, setSelectedColumns] = useState([]); const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
   const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
     delete: (row) => dispatch(asyncDeletePenilaianRisiko(row.id)),
   });
+  const [filters, setFilters] = useState({
+    search: "",
+    // sortOrder: "",
+    startDate: "",
+    endDate: "",
+    lokasi: null,
+    bahaya: null
+  })
+
+
 
   useEffect(() => {
-    dispatch(asyncReceiveLokasiSpam()).catch(() => { });
-  }, [dispatch]);
-
-  useEffect(() => {
-    setLoading(true);
-    dispatch(asyncReceivePenilaianRisiko({
+    const params = {
       page,
       limit: 10,
-      search,
-      kodeLokasi: filters.kodeLokasi || undefined,
-      kodeRisiko: filters.kodeRisiko || undefined,
-      sortBy: 'kodeRisiko',
-      sortOrder: filters.sortOrder,
+      search: filters.search || undefined,
       startDate: filters.startDate || undefined,
       endDate: filters.endDate || undefined,
-    }))
+      kodeLokasi: filters.lokasi?.raw?.kodeLokasi || undefined,
+      kodeRisiko: filters.bahaya?.raw?.kodeRisiko || undefined,
+    };
+
+    setLoading(true);
+    dispatch(asyncReceivePenilaianRisiko(params))
       .catch(() => { })
       .finally(() => setLoading(false));
-  }, [dispatch, page, search, filters]);
+  }, [dispatch, page, filters]);
 
-  const handleSearchChange = useCallback((value) => {
-    setSearch(value);
-    setPage(1);
-  }, []);
 
-  const handleFilterChange = useCallback((key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-    setPage(1);
-  }, []);
 
-  const kodeRisikoOptions = useMemo(() => {
-    const unique = [...new Set(items.map((item) => item.identifikasiDanKejadianBahaya?.kodeRisiko?.charAt(0)).filter(Boolean))];
-    return unique.sort();
-  }, [items]);
+
 
   const handleSave = useCallback(
     async (e) => {
@@ -109,95 +102,91 @@ export default function PenilaianRisikoPage() {
       ...sorted.flatMap(({ value }) => RELATION_COLUMN_GROUPS[value]?.columns ?? []),
     ];
   }, [selectedColumns]);
+
+  const loadLokasiSpamOptions = useMemo(
+    () =>
+      createAsyncOptionsLoader(
+        lokasiSpamApi,
+        (item) => `${item.kodeLokasi} - ${item.namaLokasi} `
+      ),
+    []
+  );
+  const loadBahayaKontaminasiOptions = useMemo(
+    () =>
+      createAsyncOptionsLoader(
+        bahayakontaminasiApi,
+        (item) => `${item.kodeRisiko} - ${item.kontaminasiX} - ${item.tipeBahaya}`
+      ),
+    []
+  );
+
+  const handleResetFilter = () => {
+    setFilters({
+      search: "",
+      // sortOrder: "",
+      startDate: "",
+      endDate: "",
+      lokasi: null,
+      bahaya: null,
+
+    });
+    setSelectedColumns([]);
+    setPage(1);
+  };
+  const updateFilter = useCallback((key, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+    setPage(1);
+  }, []);
+
+  const handleSearchChange = useCallback(
+    (value) => updateFilter("search", value),
+    [updateFilter]
+  );
+
+  const handleSelectFilter = useCallback((key, e) => {
+    updateFilter(key, e?.target?.selectedOption ?? null);
+  }, [updateFilter]);
+
   return (
     <>
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">Penilaian Risiko</h1>
         <p className="text-sm text-gray-500 mt-0.5">Penilaian peluang dan dampak untuk setiap bahaya</p>
       </div>
+      <FilterPanelComponent
+        lokasiValue={filters.lokasi}
+        onLokasiChange={(e) => handleSelectFilter("lokasi", e)}
+        loadLokasiOptions={loadLokasiSpamOptions}
+        bahayaValue={filters.bahaya}
+        onBahayaChange={(e) => handleSelectFilter("bahaya", e)}
+        loadBahayaOptions={loadBahayaKontaminasiOptions}
+        // sortOrder={filters.sortOrder}
+        // onSortOrderChange={(v) => updateFilter("sortOrder", v)}
+        startDate={filters.startDate}
+        onStartDateChange={(v) => updateFilter("startDate", v)}
+        endDate={filters.endDate}
+        onEndDateChange={(v) => updateFilter("endDate", v)}
+        columnOptions={columnOptions}
+        selectedColumns={selectedColumns}
+        onSelectedColumnsChange={setSelectedColumns}
+        onReset={handleResetFilter}
+      />
       <DataTable
         columns={columns}
         data={items}
         loading={loading}
         pagination={pagination}
         onPageChange={setPage}
-        search={search}
+        search={filters.search}
         onSearchChange={handleSearchChange}
         searchPlaceholder="Cari..."
         emptyMessage="Data tidak ditemukan"
-        headerExtra={<>
-          <div className="flex flex-wrap items-end gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-gray-500">Kode Lokasi</label>
-              <select
-                value={filters.kodeLokasi}
-                onChange={(e) => handleFilterChange('kodeLokasi', e.target.value)}
-                className="app-input text-sm min-w-[8rem]"
-              >
-                <option value="">Semua</option>
-                {(lokasiSpamState.items || []).map((lok) => (
-                  <option key={lok.id} value={lok.kodeLokasi}>{lok.kodeLokasi}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-gray-500">Kode Risiko</label>
-              <select
-                value={filters.kodeRisiko}
-                onChange={(e) => handleFilterChange('kodeRisiko', e.target.value)}
-                className="app-input text-sm min-w-[8rem]"
-              >
-                <option value="">Semua</option>
-                {kodeRisikoOptions.map((kode) => (
-                  <option key={kode} value={kode}>{kode}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-gray-500">Urutan Risiko</label>
-              <select
-                value={filters.sortOrder}
-                onChange={(e) => handleFilterChange('sortOrder', e.target.value)}
-                className="app-input text-sm"
-              >
-                <option value="asc">ASC (A-Z)</option>
-                <option value="desc">DESC (Z-A)</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-gray-500">Dari Tanggal</label>
-              <input
-                type="date"
-                value={filters.startDate}
-                onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                className="app-input text-sm"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-gray-500">Sampai Tanggal</label>
-              <input
-                type="date"
-                value={filters.endDate}
-                onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                className="app-input text-sm"
-              />
-            </div>
-
-            <Select
-              className="z-50"
-              isMulti
-              options={columnOptions}
-              value={selectedColumns}
-              onChange={(value) => setSelectedColumns(value || [])}
-              placeholder="Pilih kolom..."
-            />
-            <AddButton id="btn-add-kaji-ulang" onClick={openAdd} />
-          </div>
-        </>}
+        headerExtra={
+          <AddButton id="btn-add-kaji-ulang" onClick={openAdd} />
+        }
         actions={(row) => (
           <>
             <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>

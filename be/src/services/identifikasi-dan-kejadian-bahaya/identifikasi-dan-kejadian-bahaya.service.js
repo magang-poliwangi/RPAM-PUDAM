@@ -25,12 +25,12 @@ export default class IdentifikasiDanKejadianBahayaService {
         if (!bahayaKontaminasi) throw new NotFoundError('Bahaya kontaminasi tidak ditemukan');
 
 
-        
+
         const prefixKodeRisiko = bahayaKontaminasi.kodeRisiko;
         const prefixKodeLokasi = lokasiSpam.kodeLokasi;;
         const lastNumberKodeRisiko = await this.identifikasiDanKejadianBahayaRepository.getLastKodeRisikoNumber(prefixKodeRisiko);
         const lastNumberKodeLokasi = await this.identifikasiDanKejadianBahayaRepository.getLastKodeLokasiNumber(prefixKodeLokasi);
-        
+
         data.kodeLokasi = generateKode(prefixKodeLokasi, lastNumberKodeLokasi + 1)
         data.kodeRisiko = generateKodeRisiko(prefixKodeRisiko, lastNumberKodeRisiko + 1);
 
@@ -48,14 +48,12 @@ export default class IdentifikasiDanKejadianBahayaService {
 
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
-        const { search, lokasiSpamId, kodeLokasi, kodeRisiko, tipeBahaya, tanpaPenilaianRisiko, startDate, endDate } = req.query;
+        const { search, lokasiSpamId, kodeLokasi, kodeRisiko, tanpaPenilaianRisiko, startDate, endDate } = req.query;
 
         const where = {
             deletedAt: null,
-            ...(lokasiSpamId && { lokasiSpamId }),
-            ...(kodeLokasi && { kodeLokasi }),
-            ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko } }),
-            ...(tipeBahaya && { tipeBahaya }),
+            ...(lokasiSpamId && { lokasiSpamId }), ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, } }),
+            ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
             ...(tanpaPenilaianRisiko === 'true' && { penilaianRisiko: null }),
             ...((startDate || endDate) && {
                 createdAt: {
