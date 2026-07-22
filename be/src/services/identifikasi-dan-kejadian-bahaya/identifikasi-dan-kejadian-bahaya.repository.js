@@ -1,7 +1,7 @@
 import { prisma } from '../../databases/client.js';
 import { parseKodeNumber, parseKodeRisikoNumber } from '../../utils/generate-kode.js';
 
-export const includeRelasiIdentifikasiDanKejadianBahaya = {
+const includeRelasi = {
     lokasiSpam: true,
     bahayaKontaminasi: true,
     penilaianRisiko: {
@@ -20,7 +20,7 @@ export default class IdentifikasiDanKejadianBahayaRepository {
     async create({ data }) {
         return prisma.identifikasiDanKejadianBahaya.create({
             data,
-            include: includeRelasiIdentifikasiDanKejadianBahaya,
+            include: includeRelasi,
         });
     }
 
@@ -30,7 +30,7 @@ export default class IdentifikasiDanKejadianBahayaRepository {
             skip,
             take,
             orderBy,
-            include: includeRelasiIdentifikasiDanKejadianBahaya,
+            include: includeRelasi,
         });
     }
 
@@ -41,7 +41,7 @@ export default class IdentifikasiDanKejadianBahayaRepository {
     async findById({ id }) {
         return prisma.identifikasiDanKejadianBahaya.findFirst({
             where: { id, deletedAt: null },
-            include: includeRelasiIdentifikasiDanKejadianBahaya,
+            include: includeRelasi,
         });
     }
 

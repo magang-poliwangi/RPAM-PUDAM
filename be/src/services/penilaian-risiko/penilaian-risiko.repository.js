@@ -1,7 +1,7 @@
 
 import { prisma } from '../../databases/client.js';
 
-export const includeRelasiPenilaianRisiko = {
+const includeRelasi = {
     kajiUlangRisiko: {
         include: {
             rencanaPerbaikan: true,
@@ -33,7 +33,7 @@ export default class PenilaianRisikoRepository {
             skip,
             take,
             orderBy,
-            include: includeRelasiPenilaianRisiko,
+            include: includeRelasi,
         });
     }
 
@@ -44,7 +44,7 @@ export default class PenilaianRisikoRepository {
     async findById({ id }) {
         return prisma.penilaianRisiko.findFirst({
             where: { id, deletedAt: null },
-            include: includeRelasiPenilaianRisiko,
+            include: includeRelasi,
         });
     }
 
