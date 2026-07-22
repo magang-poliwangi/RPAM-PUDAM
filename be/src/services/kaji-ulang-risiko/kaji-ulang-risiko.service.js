@@ -69,7 +69,7 @@ export default class KajiUlangRisikoService {
             recordId: kaji.id,
             keterangan: `Menambah data kaji ulang risiko `,
         });
-        
+
         return {
             ...kaji,
             skorSetelah: kaji.skorRisiko,
@@ -84,8 +84,18 @@ export default class KajiUlangRisikoService {
 
         const where = {
             deletedAt: null,
-            ...(tanpaRencanaPerbaikan === 'true' && { rencanaPerbaikan: null }),
-            ...(tanpaPemantauanOperasional === 'true' && { pemantauanOperasional: null }),
+            ...(tanpaRencanaPerbaikan === 'true' && {
+                OR: [
+                    { rencanaPerbaikan: null },
+                    { rencanaPerbaikan: { deletedAt: { not: null } } }
+                ]
+            }),
+            ...(tanpaPemantauanOperasional === 'true' && {
+                OR: [
+                    { pemantauanOperasional: null },
+                    { pemantauanOperasional: { deletedAt: { not: null } } }
+                ]
+            }),
             ...((kodeLokasi || kodeRisiko) && {
                 penilaianRisiko: {
                     identifikasiDanKejadianBahaya: {

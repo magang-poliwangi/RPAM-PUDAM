@@ -65,8 +65,8 @@ export default function KajiUlangRisikoFormComponent({ form, onChange, onSubmit,
       />
       <SelectField
         name="validasi" label="Validasi" required
-        value={form.validasi || ''}
-        onChange={(e) => onChange({ ...form, validasi: e.target.value })}
+        value={VALIDASI_OPTIONS.find((opt) => opt.value === form.validasi) || null}
+        onChange={(opt) => onChange({ ...form, validasi: opt ? opt.value : '' })}
         options={VALIDASI_OPTIONS}
       />
       <InputComponent

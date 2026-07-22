@@ -57,54 +57,60 @@ export default class IdentifikasiDanKejadianBahayaRepository {
     }
 
     async cascadeSoftDelete({ id }) {
-        const now = new Date();
 
-        return prisma.$transaction(async (tx) => {
-
-            const penilaian = await tx.penilaianRisiko.findFirst({
-                where: { identifikasiDanKejadianBahayaId: id },
-                select: { id: true },
-            });
-
-            if (penilaian) {
-
-                const kaji = await tx.kajiUlangRisiko.findFirst({
-                    where: { penilaianRisikoId: penilaian.id },
-                    select: { id: true },
-                });
-
-                if (kaji) {
-
-                    await tx.rencanaPerbaikan.updateMany({
-                        where: { kajiUlangRisikoId: kaji.id, deletedAt: null },
-                        data: { deletedAt: now },
-                    });
-                    await tx.pemantauanOperasional.updateMany({
-                        where: { kajiUlangRisikoId: kaji.id, deletedAt: null },
-                        data: { deletedAt: now },
-                    });
-
-
-                    await tx.kajiUlangRisiko.update({
-                        where: { id: kaji.id },
-                        data: { deletedAt: now },
-                    });
-                }
-
-
-                await tx.penilaianRisiko.update({
-                    where: { id: penilaian.id },
-                    data: { deletedAt: now },
-                });
-            }
-
-            // 6. Soft-delete IdentifikasiDanKejadianBahaya (parent)
-            return tx.identifikasiDanKejadianBahaya.update({
-                where: { id },
-                data: { deletedAt: now },
-            });
-        });
+        return prisma.identifikasiDanKejadianBahaya.delete({
+            where: { id }
+        })
     }
+    // async cascadeSoftDelete({ id }) {
+    //     const now = new Date();
+
+    //     return prisma.$transaction(async (tx) => {
+
+    //         const penilaian = await tx.penilaianRisiko.findFirst({
+    //             where: { identifikasiDanKejadianBahayaId: id },
+    //             select: { id: true },
+    //         });
+
+    //         if (penilaian) {
+
+    //             const kaji = await tx.kajiUlangRisiko.findFirst({
+    //                 where: { penilaianRisikoId: penilaian.id },
+    //                 select: { id: true },
+    //             });
+
+    //             if (kaji) {
+
+    //                 await tx.rencanaPerbaikan.updateMany({
+    //                     where: { kajiUlangRisikoId: kaji.id, deletedAt: null },
+    //                     data: { deletedAt: now },
+    //                 });
+    //                 await tx.pemantauanOperasional.updateMany({
+    //                     where: { kajiUlangRisikoId: kaji.id, deletedAt: null },
+    //                     data: { deletedAt: now },
+    //                 });
+
+
+    //                 await tx.kajiUlangRisiko.update({
+    //                     where: { id: kaji.id },
+    //                     data: { deletedAt: now },
+    //                 });
+    //             }
+
+
+    //             await tx.penilaianRisiko.update({
+    //                 where: { id: penilaian.id },
+    //                 data: { deletedAt: now },
+    //             });
+    //         }
+
+    //         // 6. Soft-delete IdentifikasiDanKejadianBahaya (parent)
+    //         return tx.identifikasiDanKejadianBahaya.update({
+    //             where: { id },
+    //             data: { deletedAt: now },
+    //         });
+    //     });
+    // }
 
     async findLokasiSpamById(lokasiSpamId) {
         return prisma.lokasiSpam.findFirst({

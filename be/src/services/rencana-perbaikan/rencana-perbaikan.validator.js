@@ -16,9 +16,6 @@ export const rencanaPerbaikanPayloadValidatorPost = Joi.object({
     jadwalPelaksanaan: Joi.string().optional().messages({
         'string.empty': 'Jadwal tidak boleh kosong',
     }),
-    jadwal: Joi.string().optional().messages({
-        'string.empty': 'Jadwal tidak boleh kosong',
-    }),
     biaya: Joi.number().min(0).allow(null, '').optional().messages({
         'number.min': 'Biaya tidak boleh negatif',
     }),
@@ -49,9 +46,6 @@ export const rencanaPerbaikanPayloadValidatorPut = Joi.object({
         'string.empty': 'Penanggung jawab tidak boleh kosong',
     }),
     jadwalPelaksanaan: Joi.string().optional().messages({
-        'string.empty': 'Jadwal tidak boleh kosong',
-    }),
-    jadwal: Joi.string().optional().messages({
         'string.empty': 'Jadwal tidak boleh kosong',
     }),
     biaya: Joi.number().min(0).allow(null, '').optional().messages({

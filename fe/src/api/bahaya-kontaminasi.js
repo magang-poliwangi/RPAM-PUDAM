@@ -3,6 +3,8 @@ import { axiosInstance } from "./axios-instance";
 const bahayakontaminasiApi = (() => {
     const create = async (payload) => {
         const { data } = await axiosInstance.post("/bahaya-kontaminasi", payload);
+        console.log(data);
+        
         return data;
     };
 

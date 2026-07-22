@@ -26,64 +26,70 @@ export default class BahayaKontaminasiRepository {
             data,
         });
     }
-      async count({ where }) {
+    async count({ where }) {
         return prisma.bahayaKontaminasi.count({ where });
     }
 
+    // async cascadeSoftDelete({ id }) {
+    //     const now = new Date();
+    //     return prisma.$transaction(async (tx) => {
+    //         const identifikasiList = await tx.identifikasiDanKejadianBahaya.findMany({
+    //             where: { bahayaKontaminasiId: id },
+    //             select: { id: true },
+    //         });
+    //         const identifikasiIds = identifikasiList.map((i) => i.id);
+
+    //         if (identifikasiIds.length > 0) {
+    //             const penilaianList = await tx.penilaianRisiko.findMany({
+    //                 where: { identifikasiDanKejadianBahayaId: { in: identifikasiIds } },
+    //                 select: { id: true },
+    //             });
+    //             const penilaianIds = penilaianList.map((p) => p.id);
+
+    //             if (penilaianIds.length > 0) {
+    //                 const kajiList = await tx.kajiUlangRisiko.findMany({
+    //                     where: { penilaianRisikoId: { in: penilaianIds } },
+    //                     select: { id: true },
+    //                 });
+    //                 const kajiIds = kajiList.map((k) => k.id);
+
+    //                 if (kajiIds.length > 0) {
+    //                     await tx.rencanaPerbaikan.updateMany({
+    //                         where: { kajiUlangRisikoId: { in: kajiIds }, deletedAt: null },
+    //                         data: { deletedAt: now },
+    //                     });
+    //                     await tx.pemantauanOperasional.updateMany({
+    //                         where: { kajiUlangRisikoId: { in: kajiIds }, deletedAt: null },
+    //                         data: { deletedAt: now },
+    //                     });
+    //                     await tx.kajiUlangRisiko.updateMany({
+    //                         where: { id: { in: kajiIds } },
+    //                         data: { deletedAt: now },
+    //                     });
+    //                 }
+
+    //                 await tx.penilaianRisiko.updateMany({
+    //                     where: { id: { in: penilaianIds } },
+    //                     data: { deletedAt: now },
+    //                 });
+    //             }
+
+    //             await tx.identifikasiDanKejadianBahaya.updateMany({
+    //                 where: { id: { in: identifikasiIds } },
+    //                 data: { deletedAt: now },
+    //             });
+    //         }
+
+    //         return tx.bahayaKontaminasi.update({
+    //             where: { id },
+    //             data: { deletedAt: now },
+    //         });
+    //     });
+    // }
     async cascadeSoftDelete({ id }) {
-        const now = new Date();
-        return prisma.$transaction(async (tx) => {
-            const identifikasiList = await tx.identifikasiDanKejadianBahaya.findMany({
-                where: { bahayaKontaminasiId: id },
-                select: { id: true },
-            });
-            const identifikasiIds = identifikasiList.map((i) => i.id);
 
-            if (identifikasiIds.length > 0) {
-                const penilaianList = await tx.penilaianRisiko.findMany({
-                    where: { identifikasiDanKejadianBahayaId: { in: identifikasiIds } },
-                    select: { id: true },
-                });
-                const penilaianIds = penilaianList.map((p) => p.id);
-
-                if (penilaianIds.length > 0) {
-                    const kajiList = await tx.kajiUlangRisiko.findMany({
-                        where: { penilaianRisikoId: { in: penilaianIds } },
-                        select: { id: true },
-                    });
-                    const kajiIds = kajiList.map((k) => k.id);
-
-                    if (kajiIds.length > 0) {
-                        await tx.rencanaPerbaikan.updateMany({
-                            where: { kajiUlangRisikoId: { in: kajiIds }, deletedAt: null },
-                            data: { deletedAt: now },
-                        });
-                        await tx.pemantauanOperasional.updateMany({
-                            where: { kajiUlangRisikoId: { in: kajiIds }, deletedAt: null },
-                            data: { deletedAt: now },
-                        });
-                        await tx.kajiUlangRisiko.updateMany({
-                            where: { id: { in: kajiIds } },
-                            data: { deletedAt: now },
-                        });
-                    }
-
-                    await tx.penilaianRisiko.updateMany({
-                        where: { id: { in: penilaianIds } },
-                        data: { deletedAt: now },
-                    });
-                }
-
-                await tx.identifikasiDanKejadianBahaya.updateMany({
-                    where: { id: { in: identifikasiIds } },
-                    data: { deletedAt: now },
-                });
-            }
-
-            return tx.bahayaKontaminasi.update({
-                where: { id },
-                data: { deletedAt: now },
-            });
-        });
+        return prisma.bahayaKontaminasi.delete({
+            where: { id }
+        })
     }
 }

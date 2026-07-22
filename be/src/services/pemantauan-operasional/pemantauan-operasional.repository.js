@@ -69,11 +69,16 @@ export default class PemantauanOperasionalRepository {
     }
 
     async softDelete({ id }) {
-        return prisma.pemantauanOperasional.update({
+        return prisma.pemantauanOperasional.delete({
             where: { id },
-            data: { deletedAt: new Date() },
         });
     }
+    // async softDelete({ id }) {
+    //     return prisma.pemantauanOperasional.update({
+    //         where: { id },
+    //         data: { deletedAt: new Date() },
+    //     });
+    // }
 
     async findDropdownKajiUlangRisiko() {
         return prisma.kajiUlangRisiko.findMany({

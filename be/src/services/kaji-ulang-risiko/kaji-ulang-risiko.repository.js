@@ -21,7 +21,7 @@ export default class KajiUlangRisikoRepository {
     }
 
     async create({ data }) {
-        return prisma.kajiUlangRisiko.create({ data });
+        return prisma.kajiUlangRisiko.create({ data, include: includeRelasi });
     }
 
     async findAll({ where, skip, take, orderBy }) {
@@ -49,21 +49,27 @@ export default class KajiUlangRisikoRepository {
         return prisma.kajiUlangRisiko.update({ where: { id }, data });
     }
 
+    // async cascadeSoftDelete({ id }) {
+    //     const now = new Date();
+    //     return prisma.$transaction(async (tx) => {
+    //         await tx.rencanaPerbaikan.updateMany({
+    //             where: { kajiUlangRisikoId: id, deletedAt: null },
+    //             data: { deletedAt: now },
+    //         });
+    //         await tx.pemantauanOperasional.updateMany({
+    //             where: { kajiUlangRisikoId: id, deletedAt: null },
+    //             data: { deletedAt: now },
+    //         });
+    //         return tx.kajiUlangRisiko.update({
+    //             where: { id },
+    //             data: { deletedAt: now },
+    //         });
+    //     });
+    // }
+
     async cascadeSoftDelete({ id }) {
-        const now = new Date();
-        return prisma.$transaction(async (tx) => {
-            await tx.rencanaPerbaikan.updateMany({
-                where: { kajiUlangRisikoId: id, deletedAt: null },
-                data: { deletedAt: now },
-            });
-            await tx.pemantauanOperasional.updateMany({
-                where: { kajiUlangRisikoId: id, deletedAt: null },
-                data: { deletedAt: now },
-            });
-            return tx.kajiUlangRisiko.update({
-                where: { id },
-                data: { deletedAt: now },
-            });
-        });
+        return prisma.kajiUlangRisiko.delete({
+            where: { id }
+        })
     }
 }

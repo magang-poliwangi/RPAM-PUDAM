@@ -19,7 +19,6 @@ export default class BahayaKontaminasiController {
 
     createController = async (req, res, next) => {
         const data = req.validated;
-        console.log(data);
         const result = await this.bahayaKontaminasiService.create({ data, userId: req.user.id });
         return response(res, 201, 'Data berhasil dibuat', result);
     };
