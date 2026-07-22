@@ -8,7 +8,7 @@ import { EditIcon, DeleteIcon } from '../components/common/icons';
 import useModalForm from '../hooks/useModalForm';
 import useConfirmDialog from '../hooks/useConfirmDialog';
 
-import { asyncAddLokasiSpam, asyncDeleteLokasiSpam, asyncReceiveLokasiSpam, asyncUpdateLokasiSpam, asyncGetLokasiSpamOptions } from '../states/lokasiSpam/action';
+import { asyncAddLokasiSpam, asyncDeleteLokasiSpam, asyncReceiveLokasiSpam, asyncUpdateLokasiSpam } from '../states/lokasiSpam/action';
 import LokasiSpamFormComponent from '../components/lokasiSpam/LokasiSpamFormComponent';
 import { omitFields } from '../utils/omit-fields';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -33,47 +33,35 @@ export default function LokasiSpamPage() {
         (state) => state.lokasiSpam || { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 1 } }
     );
 
-    const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [saveLoading, setSaveLoading] = useState(false);
-    const [kodeLokasi, setKodeLokasi] = useState("");
-    const [simbol, setSimbol] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-
-    const [kodeLokasiOptions, setKodeLokasiOptions] = useState([]);
-    const [simbolOptions, setSimbolOptions] = useState([]);
-
+    const [filters, setFilters] = useState({
+        search: "",
+        // sortOrder: "",
+        startDate: "",
+        endDate: "",
+    })
     const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
     const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
         delete: (row) => dispatch(asyncDeleteLokasiSpam(row.id)),
     });
-    console.log(items);
-
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
-        dispatch(asyncReceiveLokasiSpam({ page, limit: 10, search, kodeLokasi, simbol, startDate, endDate }))
+        const params = {
+            page,
+            limit: 10,
+            search: filters.search || undefined,
+            startDate: filters.startDate || undefined,
+            endDate: filters.endDate || undefined,
+        };
+
+        dispatch(asyncReceiveLokasiSpam(params))
             .catch(() => { })
             .finally(() => setLoading(false));
-    }, [dispatch, page, search, kodeLokasi, simbol, startDate, endDate]); 
+    }, [dispatch, page, filters]);
 
-    useEffect(() => {
-        dispatch(asyncGetLokasiSpamOptions())
-            .then((result) => {
-                setKodeLokasiOptions(result.kodeLokasi);
-                setSimbolOptions(result.simbol);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }, [dispatch]);
-
-    const handleSearchChange = useCallback((value) => {
-        setSearch(value);
-        setPage(1);
-    }, []);
 
     const handleSave = useCallback(
         async (e) => {
@@ -138,6 +126,34 @@ export default function LokasiSpamPage() {
             label: "Referensi",
         },
     ];
+    const updateFilter = useCallback((key, value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+        setPage(1);
+    }, []);
+    const handleSearchChange = useCallback(
+        (value) => updateFilter("search", value),
+        [updateFilter]
+    );
+    const handleResetFilter = () => {
+        setFilters({
+            search: "",
+            // sortOrder: "",
+            startDate: "",
+            endDate: "",
+            lokasi: null,
+            bahaya: null,
+
+        });
+        setPage(1);
+    };
+
+    const activeCount = [
+        filters.startDate || null,
+        filters.endDate || null,
+    ].filter(Boolean).length;
 
     return (
         <>
@@ -151,82 +167,45 @@ export default function LokasiSpamPage() {
                 loading={loading}
                 pagination={pagination}
                 onPageChange={setPage}
-                search={search}
+                search={filters.search}
                 onSearchChange={handleSearchChange}
                 searchPlaceholder="Cari..."
                 emptyMessage="Data tidak ditemukan"
-                
+
                 headerExtra={
                     <div className="flex flex-wrap items-end gap-3">
-
-                        <div>
-                            <label className="block text-xs text-gray-500 mb-1">
-                                Kode Lokasi
-                            </label>
-                        <select
-                            value={kodeLokasi}
-                            onChange={(e) => setKodeLokasi(e.target.value)}
-                            className="border rounded-md h-10 px-3 w-44"
-                        >
-                            <option value="">Semua Lokasi</option>
-
-                            {kodeLokasiOptions.map((kode) => (
-                                <option key={kode} value={kode}>
-                                    {kode}
-                                </option>
-                            ))}
-                        </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs text-gray-500 mb-1">
-                                Simbol
-                            </label>    
-                        <select
-                            value={simbol}
-                            onChange={(e) => setSimbol(e.target.value)}
-                            className="border rounded-md h-10 px-3 w-44"
-                        >
-                            <option value="">Semua Simbol</option>
-
-                            {simbolOptions.map((item) => (
-                                <option key={item} value={item}>
-                                    {item}
-                                </option>
-                            ))}
-                        </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs mb-1">
-                                Dari Tanggal
-                            </label>
-
+                        <div className="flex flex-col gap-0.5">
+                            <label className="text-[10px] font-semibold text-gray-500">Dari Tanggal</label>
                             <input
                                 type="date"
-                                value={startDate}
-                                onChange={(e)=>setStartDate(e.target.value)}
-                                className="border rounded-md h-10 px-3"
+                                value={filters.startDate}
+                                onChange={(e) => updateFilter("startDate", e.target.value)}
+                                className="app-input py-1.5 px-2 text-xs w-full"
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-xs mb-1">
-                                Sampai Tanggal
-                            </label>
-
+                        <div className="flex flex-col gap-0.5">
+                            <label className="text-[10px] font-semibold text-gray-500">Sampai Tanggal</label>
                             <input
                                 type="date"
-                                value={endDate}
-                                onChange={(e)=>setEndDate(e.target.value)}
-                                className="border rounded-md h-10 px-3"
+                                value={filters.endDate}
+                                onChange={(e) => updateFilter("endDate", e.target.value)}
+                                className="app-input py-1.5 px-2 text-xs w-full"
                             />
                         </div>
+                        {activeCount > 0 && (
+                            <button
+                                type="button"
+                                onClick={handleResetFilter}
+                                className="text-sm text-teal-700 hover:text-teal-800 font-medium px-3 py-2"
+                            >
+                                Reset Filter
+                            </button>
+                        )}
+                        <AddButton id="btn-add-lokasi" onClick={openAdd} />
+                    </div>
+                }
 
-                        <AddButton id="btn-add-lokasi" onClick={openAdd}/>
-                        </div>
-                    }
-                        
                 actions={(row) => (
                     <>
                         <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>

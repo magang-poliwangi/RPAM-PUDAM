@@ -1,9 +1,9 @@
 
 // akses nested value pakai dot path, misal getByPath(row, 'lokasiSpam.kodeLokasi')
-export function getByPath(obj, path) {
-  return path.split('.').reduce((acc, key) => (acc == null ? acc : acc[key]), obj);
+function getByPath(obj, path) {
+  if (!obj || !path) return undefined;
+  return path.split('.').reduce((acc, key) => acc?.[key], obj);
 }
-
 // kolom teks biasa
 export function textColumn(key, label, opts = {}) {
   return { key, label, ...opts };
@@ -48,12 +48,19 @@ export function columnGroup(label, children) {
 
 // SATU field enum -> beberapa kolom checkmark (pola "Validasi", "Skala Prioritas")
 export function enumCheckGroup(sourceKey, groupLabel, options) {
-  return columnGroup(groupLabel, options.map((opt) => ({
-    key: `${sourceKey}__${opt.value}`,
-    label: opt.label,
-    width: opt.width || '90px',
-    render: (_, row) => (row[sourceKey] === opt.value ? '✓' : ''),
-  })));
+  return columnGroup(
+    groupLabel,
+    options.map((opt) => ({
+      key: `${sourceKey}__${opt.value}`,
+      label: opt.label,
+      width: opt.width || '90px',
+      render: (_, row) => {
+        // 💡 Ambil nilai menggunakan getByPath, BUKAN row[sourceKey]
+        const value = getByPath(row, sourceKey);
+        return value === opt.value ? '✓' : '';
+      },
+    }))
+  );
 }
 
 // kolom badge status pakai map label+variant

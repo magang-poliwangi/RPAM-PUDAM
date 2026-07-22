@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../components/common/DataTable';
 import Modal from '../components/common/Modal';
@@ -8,9 +8,7 @@ import IconButton from '../components/common/IconButton';
 import AddButton from '../components/common/AddButton';
 import { EditIcon, DeleteIcon, ActivateIcon, DeactivateIcon } from '../components/common/icons';
 import useModalForm from '../hooks/useModalForm';
-import useConfirmDialog from '../hooks/useConfirmDialog';
-import useSearchFilter from '../hooks/useSearchFilter';
-import {
+import useConfirmDialog from '../hooks/useConfirmDialog';import {
   asyncReceiveUser,
   asyncAddUser,
   asyncUpdateUser,
@@ -27,7 +25,11 @@ const CONFIRM_CONFIG = {
   deactivate: { title: 'Nonaktifkan User?', message: 'User ini tidak akan bisa login sampai diaktifkan kembali.', label: 'Nonaktifkan', danger: true },
 };
 
-
+const AKSI_OPTIONS = [
+  { value: '', label: 'Semua Aksi' },
+  { value: true, label: 'Aktif' },
+  { value: false, label: 'Nonaktif' },
+];
 
 export default function ManagementUserPage() {
   const dispatch = useDispatch();
@@ -35,7 +37,7 @@ export default function ManagementUserPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
-
+  const [statusFilter, setStatusFilter] = useState("");
   const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
   const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
     delete: (row) => dispatch(asyncDeleteUser(row.id)),
@@ -46,20 +48,33 @@ export default function ManagementUserPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
-    dispatch(asyncReceiveUser()).catch(() => {}).finally(() => setLoading(false));
+    dispatch(asyncReceiveUser()).catch(() => { }).finally(() => setLoading(false));
   }, [dispatch]);
 
-  const filteredUsers = useSearchFilter(users, search, (user) => user.username);
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      const matchSearch = user.username
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      const matchStatus =
+        statusFilter === ""
+          ? true
+          : user.isActive === (statusFilter === "true");
+
+      return matchSearch && matchStatus;
+    });
+  }, [users, search, statusFilter]);
 
   const handleSave = async (e) => {
     e.preventDefault();
     setSaveLoading(true);
     try {
-      const { id, username, password} = modal.form;
+      const { id, username, password } = modal.form;
       if (modal.mode === 'edit') {
         await dispatch(asyncUpdateUser({ id, username, password }));
       } else {
-        await dispatch(asyncAddUser({ username, password}));
+        await dispatch(asyncAddUser({ username, password }));
       }
       closeModal();
     } catch (err) {
@@ -86,7 +101,35 @@ export default function ManagementUserPage() {
       <DataTable
         columns={columns} data={filteredUsers} loading={loading} hasMore={false}
         search={search} onSearchChange={setSearch} searchPlaceholder="Cari username..." emptyMessage="Data tidak ditemukan"
-        headerExtra={<AddButton id="btn-add-user" onClick={openAdd} label="Tambah User" />}
+        headerExtra={(
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-gray-500">
+                Status
+              </label>
+
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="app-input text-sm min-w-[10rem]"
+              >
+                {AKSI_OPTIONS.map((opt) => (
+                  <option key={String(opt.value)} value={String(opt.value)}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <AddButton
+              id="btn-add-user"
+              onClick={openAdd}
+              label="Tambah User"
+            />
+          </div>
+
+        )
+        }
         actions={(row) => (
           <>
             <IconButton onClick={() => openEdit(row)} title="Edit" colorClass="hover:text-teal-700 hover:bg-teal-50"><EditIcon /></IconButton>

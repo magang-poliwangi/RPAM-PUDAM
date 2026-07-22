@@ -79,19 +79,17 @@ export default class KajiUlangRisikoService {
 
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
-        const { search, validasi, tanpaRencanaPerbaikan, tanpaPemantauanOperasional, tingkatRisiko, kodeLokasi, kodeRisiko, startDate, endDate } = req.query;
+        const { search, tanpaRencanaPerbaikan, tanpaPemantauanOperasional, kodeLokasi, kodeRisiko, startDate, endDate } = req.query;
 
 
         const where = {
             deletedAt: null,
             ...(tanpaRencanaPerbaikan === 'true' && { rencanaPerbaikan: null }),
             ...(tanpaPemantauanOperasional === 'true' && { pemantauanOperasional: null }),
-            ...(tingkatRisiko && { tingkatRisiko }),
-            ...(validasi && { validasi }),
             ...((kodeLokasi || kodeRisiko) && {
                 penilaianRisiko: {
                     identifikasiDanKejadianBahaya: {
-                        ...(kodeLokasi && { kodeLokasi: { equals: kodeLokasi } }),
+                        ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, } }),
                         ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
                     }
                 }

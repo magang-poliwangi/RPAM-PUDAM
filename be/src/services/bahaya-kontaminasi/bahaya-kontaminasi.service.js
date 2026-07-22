@@ -25,15 +25,24 @@ export default class BahayaKontaminasiService {
 
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
+        const { search, startDate, endDate } = req.query;
 
-        const where = { deletedAt: null };
-        if (req.query.search) {
-            where.OR = [
-                { kodeRisiko: { contains: req.query.search, mode: 'insensitive' } },
-                { tipeBahaya: { contains: req.query.search, mode: 'insensitive' } },
-                { kontaminasiX: { contains: req.query.search, mode: 'insensitive' } },
-            ];
-        }
+        const where = {
+            deletedAt: null,
+            ...((startDate || endDate) && {
+                createdAt: {
+                    ...(startDate && { gte: new Date(startDate) }),
+                    ...(endDate && { lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }),
+                },
+            }),
+            ...(search && {
+                OR: [
+                    { kodeRisiko: { contains: search, mode: 'insensitive' } },
+                    { tipeBahaya: { contains: search, mode: 'insensitive' } },
+                    { kontaminasiX: { contains: search, mode: 'insensitive' } },
+                ],
+            }),
+        };
 
         const [items, total] = await Promise.all([
             this.bahayaKontaminasiRepository.findAll({
@@ -59,7 +68,7 @@ export default class BahayaKontaminasiService {
 
     async update({ id, data, userId }) {
         await this.findById({ id });
-        console.log(data);
+     
 
         const result = await this.bahayaKontaminasiRepository.update({ id, data });
 

@@ -15,7 +15,7 @@ function pemantauanOperasionalReducer(state = initialState, action = {}) {
         case ActionType.ADD_PEMANTAUAN_OPERASIONAL:
             return {
                 ...state,
-                items: [action.payload.kajiUlangRisiko, ...state.items],
+                items: [action.payload.pemantauanOperasional, ...state.items],
                 pagination: { ...state.pagination, total: state.pagination.total + 1 },
             };
 
@@ -23,8 +23,8 @@ function pemantauanOperasionalReducer(state = initialState, action = {}) {
             return {
                 ...state,
                 items: state.items.map((item) =>
-                    item.id === action.payload.kajiUlangRisiko.id
-                        ? { ...item, ...action.payload.kajiUlangRisiko }
+                    item.id === action.payload.pemantauanOperasional.id
+                        ? { ...item, ...action.payload.pemantauanOperasional }
                         : item
                 ),
             };
