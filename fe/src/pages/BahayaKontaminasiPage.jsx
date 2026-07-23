@@ -11,7 +11,7 @@ import useConfirmDialog from '../hooks/useConfirmDialog';
 import { omitFields } from '../utils/omit-fields';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import BahayaKontaminasiFormComponent from '../components/bahayaKontaminasi/BahayakontaminasiFormComponent';
-import { asyncAddBahayaKontaminasi, asyncDeleteBahayaKontaminasi, asyncReceiveBahayaKontaminasi, asyncUpdateBahayaKontaminasi } from '../states/BahayaKontaminasi/action';
+import { asyncAddBahayaKontaminasi, asyncDeleteBahayaKontaminasi, asyncReceiveBahayaKontaminasi, asyncUpdateBahayaKontaminasi } from '../states/bahayaKontaminasi/action';
 
 const EMPTY_FORM = {
     kodeRisiko: "",
