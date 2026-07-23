@@ -8,6 +8,7 @@
   "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server.js",
+    "build": "npm run prisma:generate",
     "dev": "nodemon ./src/server.js",
     "lint": "eslint ./src",
     "lint-fix": "eslint --fix ./src",
@@ -18,7 +19,6 @@
     "prisma:seed:prod": "node src/databases/prisma/seed.prod.js",
     "prisma:reset": "prisma migrate reset --config src/databases/prisma.config.ts"
   },
-
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
