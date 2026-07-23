@@ -1,18 +1,31 @@
-import { clampColumn, columnGroup, enumCheckGroup, relationColumn, textColumn } from "../common/column-helpers";
+import { columnGroup,  relationColumn, textColumn } from "../common/column-helpers";
 import RiskLevelBadge from "../common/RiskLevelBadge";
 
 export const kajiUlangRisikoColumns = [
-  relationColumn('penilaianRisiko.identifikasiDanKejadianBahaya.lokasiSpam.kodeLokasi', 'Kode Lokasi'),
+  relationColumn('penilaianRisiko.identifikasiDanKejadianBahaya.kodeLokasi', 'Kode Lokasi'),
   relationColumn('penilaianRisiko.identifikasiDanKejadianBahaya.kodeRisiko', 'Kode Risiko'),
-  clampColumn('tindakanPengendalian', 'Tindakan Pengendalian'),
-  clampColumn('referensi', 'Referensi'),
-  enumCheckGroup('validasi', 'Validasi', [
-    { value: 'EFEKTIF', label: 'Efektif' },
-    { value: 'TIDAK_EFEKTIF', label: 'Tidak Efektif', width: '100px' },
-    { value: 'TIDAK_PASTI', label: 'Tidak Pasti' },
+  textColumn('tindakanPengendalian', 'Tindakan Pengendalian'),
+  columnGroup('validasi', [
+    textColumn('referensi', 'Referensi'),
+    {
+      key: 'validasi',
+      label: 'Efektif',
+      render: (v) => (v === 'EFEKTIF' ? '✓' : '-'),
+    },
+    {
+      key: 'validasi',
+      label: 'Tidak Efektif',
+      render: (v) => (v === 'TIDAK_EFEKTIF' ? '✓' : '-'),
+    },
+    {
+      key: 'validasi',
+      label: 'Tidak Pasti',
+      render: (v) => (v === 'TIDAK_PASTI' ? '✓' : '-'),
+    },
+
   ]),
   columnGroup('Risiko Dengan Tindakan Pengendalian', [
-    textColumn('peluangSetelah', 'Peluang Kejadian Bahaya'),
+    textColumn('peluangKejadianBahaya', 'Peluang Kejadian Bahaya'),
     textColumn('dampakKeparahan', 'Dampak Keparahan'),
     {
       key: 'skorRisiko',

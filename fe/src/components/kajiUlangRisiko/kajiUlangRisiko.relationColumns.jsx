@@ -37,7 +37,7 @@ export const RELATION_COLUMN_GROUPS = {
     label: 'Rencana Perbaikan',
     columns: [
       relationColumn('rencanaPerbaikan.rencanaPerbaikan', 'Rencana Perbaikan', {
-        render: (v) => <span className="line-clamp-2 max-w-xs">{v ?? '-'}</span>,
+        render: (v) => <span className=" max-w-xs">{v ?? '-'}</span>,
       }),
       relationColumn('rencanaPerbaikan.penanggungJawab', 'Penanggung Jawab'),
       relationColumn('rencanaPerbaikan.jadwalPelaksanaan', 'Jadwal Pelaksanaan'),

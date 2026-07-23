@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
@@ -13,7 +12,7 @@ export default class RencanaPerbaikanService {
 
     _mapPayload(data, isUpdate = false) {
         const mapped = { ...data };
-        
+
         if (mapped.jadwal !== undefined) {
             mapped.jadwalPelaksanaan = mapped.jadwal || '';
             delete mapped.jadwal;
@@ -54,17 +53,17 @@ export default class RencanaPerbaikanService {
             return m5;
         }
         mappedData.id = `rencana-perbaikan-${nanoid()}`;
-    
+
         const m5 = await this.rencanaPerbaikanRepository.create({ data: mappedData });
-        
+
         await catatAuditLog(this.auditLogRepository, {
-                userId,
-                aksi: 'CREATE',
-                namaTabel: NAMA_TABEL,
-                recordId: m5.id,
-                keterangan: `Menambah data rencana perbaikan`,
+            userId,
+            aksi: 'CREATE',
+            namaTabel: NAMA_TABEL,
+            recordId: m5.id,
+            keterangan: `Menambah data rencana perbaikan`,
         });
-      
+
         return m5;
     }
 
@@ -78,7 +77,7 @@ export default class RencanaPerbaikanService {
                 kajiUlangRisiko: {
                     penilaianRisiko: {
                         identifikasiDanKejadianBahaya: {
-                            ...(kodeLokasi && { kodeLokasi: { equals: kodeLokasi } }),
+                            ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, mode: 'insensitive' } }),
                             ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
                         }
                     }

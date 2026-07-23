@@ -28,6 +28,7 @@ export default function usePaginatedFetch(fetchFn, { pageSize = 15 } = {}) {
     [fetchFn, pageSize]
   );
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load(1, '', true); }, [load]);
 
   const search = useCallback((value) => { searchRef.current = value; load(1, value, true); }, [load]);
