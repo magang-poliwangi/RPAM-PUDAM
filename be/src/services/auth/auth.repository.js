@@ -3,13 +3,18 @@ export default class AuthRepository {
 
     async createRefreshToken({ userId, token }) {
         const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        return prisma.authentikasi.create({
-            data: {
+        return prisma.authentikasi.upsert({
+            where: { userId },
+            update: {
+                token,
                 expiresAt,
-                token: token,
+            },
+            create: {
+                token,
                 userId,
-            }
-        })
+                expiresAt,
+            },
+        });
     }
 
     async deleteRefreshToken({ token }) {

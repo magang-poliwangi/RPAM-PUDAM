@@ -11,8 +11,7 @@ const navItems = [
       {
         to: '/bahaya-kontaminasi', label: 'Bahaya Kontaminasi', icon: (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10 3h4M10 3v5.5L5.5 17A2 2 0 007.25 20h9.5A2 2 0 0018.5 17L14 8.5V3M8 14h8" />
           </svg>
         )
       },
@@ -186,11 +185,10 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
                     to={item.to}
                     onClick={() => setIsMobileOpen(false)} // Tutup sidebar mobile saat opsi diklik
                     title={collapsed ? item.label : undefined}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-medium transition-all duration-150 ${
-                      isActive(item.to)
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-medium transition-all duration-150 ${isActive(item.to)
                         ? 'bg-teal-50 text-teal-700'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
+                      }`}
                   >
                     <span className={`flex-shrink-0 ${isActive(item.to) ? 'text-teal-700' : 'text-gray-400'}`}>{item.icon}</span>
                     {(!collapsed || isMobileOpen) && <span className="truncate">{item.label}</span>}

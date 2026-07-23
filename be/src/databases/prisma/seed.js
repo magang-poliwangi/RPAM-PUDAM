@@ -11,11 +11,11 @@ async function main() {
 
   // 1. USERS
 
-  const passwordHash = await bcrypt.hash('password123', 10);
+  const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
 
   await prisma.user.createMany({
     data: [
-      { username: 'admin', password: passwordHash, role: 'ADMIN' },
+      { username: process.env.ADMIN_USERNAME, password: passwordHash, role: 'ADMIN' },
       { username: 'nofa', password: passwordHash, role: 'USER' },
     ],
     skipDuplicates: true,

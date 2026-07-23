@@ -31,6 +31,8 @@ const AKSI_OPTIONS = [
   { value: false, label: 'Nonaktif' },
 ];
 
+const PAGE_LIMIT = 10; // pagination cuma di FE (slice array), asyncReceiveUser tetap ambil semua data sekali di awal
+
 export default function ManagementUserPage() {
   const dispatch = useDispatch();
   const users = useSelector((state) => state.users || []);
@@ -38,6 +40,7 @@ export default function ManagementUserPage() {
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState("");
+  const [page, setPage] = useState(1);
   const { modal, openAdd, openEdit, close: closeModal, setForm } = useModalForm(EMPTY_FORM);
   const { confirm, open: openConfirm, close: closeConfirm, confirmAction } = useConfirmDialog({
     delete: (row) => dispatch(asyncDeleteUser(row.id)),
@@ -66,6 +69,31 @@ export default function ManagementUserPage() {
       return matchSearch && matchStatus;
     });
   }, [users, search, statusFilter]);
+
+  // total halaman ngikutin hasil filter, bukan `users` mentah
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_LIMIT));
+
+  // kalau filter/search bikin hasil lebih dikit dan page saat ini jadi kebesaran
+  // (misal lagi di halaman 3 terus search dipersempit jadi cuma 1 halaman), balikin ke 1
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (page > totalPages) setPage(1);
+  }, [page, totalPages]);
+
+  const paginatedUsers = useMemo(() => {
+    const start = (page - 1) * PAGE_LIMIT;
+    return filteredUsers.slice(start, start + PAGE_LIMIT);
+  }, [filteredUsers, page]);
+
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleStatusFilterChange = (value) => {
+    setStatusFilter(value);
+    setPage(1);
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -100,8 +128,15 @@ export default function ManagementUserPage() {
         <p className="text-sm text-gray-500 mt-0.5">Kelola akun pengguna sistem RPAM</p>
       </div>
       <DataTable
-        columns={columns} data={filteredUsers} loading={loading} hasMore={false}
-        search={search} onSearchChange={setSearch} searchPlaceholder="Cari username..." emptyMessage="Data tidak ditemukan"
+        columns={columns}
+        data={paginatedUsers}
+        loading={loading}
+        pagination={{ total: filteredUsers.length, page, limit: PAGE_LIMIT, totalPages }}
+        onPageChange={setPage}
+        search={search}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Cari username..."
+        emptyMessage="Data tidak ditemukan"
         headerExtra={(
           <div className="flex flex-wrap items-end gap-3">
             <div className="flex flex-col gap-1.5">
@@ -111,7 +146,7 @@ export default function ManagementUserPage() {
 
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) => handleStatusFilterChange(e.target.value)}
                 className="app-input text-sm min-w-[10rem]"
               >
                 {AKSI_OPTIONS.map((opt) => (
