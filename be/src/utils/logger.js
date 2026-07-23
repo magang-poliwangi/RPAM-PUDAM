@@ -2,13 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
 
-const logDir = path.join(process.cwd(), 'logs');
-
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
-}
-
+const isServerless = !!process.env.VERCEL;
 const isProd = process.env.NODE_ENV === 'production';
+
 const fileFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.errors({ stack: true }),
@@ -46,10 +42,16 @@ const consoleFormat = winston.format.combine(
   }),
 );
 
-const logger = winston.createLogger({
-  level: isProd ? 'info' : 'debug',
-  transports: [
-    new winston.transports.Console({ format: consoleFormat }),
+const transports = [new winston.transports.Console({ format: consoleFormat })];
+
+if (!isServerless) {
+  const logDir = path.join(process.cwd(), 'logs');
+
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+
+  transports.push(
     new winston.transports.File({
       filename: path.join(logDir, 'error.log'),
       level: 'error',
@@ -59,7 +61,12 @@ const logger = winston.createLogger({
       filename: path.join(logDir, 'combined.log'),
       format: fileFormat,
     }),
-  ],
+  );
+}
+
+const logger = winston.createLogger({
+  level: isProd ? 'info' : 'debug',
+  transports,
   exitOnError: false,
 });
 
