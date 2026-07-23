@@ -48,11 +48,11 @@ export default class IdentifikasiDanKejadianBahayaService {
 
     async findAll({ req }) {
         const { page, limit, skip, sortBy, sortOrder } = getPaginationQuery(req);
-        const { search, lokasiSpamId, kodeLokasi, kodeRisiko, tanpaPenilaianRisiko, startDate, endDate } = req.query;
+        const { search,  kodeLokasi, kodeRisiko, tanpaPenilaianRisiko, startDate, endDate } = req.query;
 
         const where = {
             deletedAt: null,
-            ...(lokasiSpamId && { lokasiSpamId }), ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, } }),
+            ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, mode: 'insensitive' } }),
             ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
             ...(tanpaPenilaianRisiko === 'true' && { penilaianRisiko: null }),
             ...((startDate || endDate) && {

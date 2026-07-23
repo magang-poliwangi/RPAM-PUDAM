@@ -20,12 +20,10 @@ export const rencanaPerbaikanPayloadValidatorPost = Joi.object({
         'number.min': 'Biaya tidak boleh negatif',
     }),
     sumberPembiayaan: Joi.string().allow('', null).optional(),
-    statusKemajuan: Joi.string()
-        .valid('BELUM_MULAI', 'SEDANG_BERJALAN', 'SELESAI', 'TERTUNDA')
-        .required()
+    statusKemajuan: Joi.string().required()
         .messages({
             'any.required': 'Status kemajuan wajib diisi',
-            'any.only': 'Status kemajuan harus salah satu dari: BELUM_MULAI, SEDANG_BERJALAN, SELESAI, TERTUNDA',
+            'string.empty': 'Status kemajuan tidak boleh kosong',
         }),
     kendalaKeuangan: Joi.boolean().optional(),
     kendalaTenagaKerja: Joi.boolean().optional(),
@@ -52,11 +50,9 @@ export const rencanaPerbaikanPayloadValidatorPut = Joi.object({
         'number.min': 'Biaya tidak boleh negatif',
     }),
     sumberPembiayaan: Joi.string().allow('', null).optional(),
-    statusKemajuan: Joi.string()
-        .valid('BELUM_MULAI', 'SEDANG_BERJALAN', 'SELESAI', 'TERTUNDA')
-        .optional()
+    statusKemajuan: Joi.string().optional().required()
         .messages({
-            'any.only': 'Status kemajuan harus salah satu dari: BELUM_MULAI, SEDANG_BERJALAN, SELESAI, TERTUNDA',
+            'string.empty': 'Status kemajuan tidak boleh kosong',
         }),
     kendalaKeuangan: Joi.boolean().optional(),
     kendalaTenagaKerja: Joi.boolean().optional(),

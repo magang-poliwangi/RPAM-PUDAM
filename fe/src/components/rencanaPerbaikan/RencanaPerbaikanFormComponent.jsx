@@ -5,12 +5,7 @@ import { getPayload } from "../../utils/response";
 import { kajiUlangRisikoApi } from "../../api/kaji-ulang-risiko";
 import AsyncSelectField from "../common/AsyncSelectField";
 import CheckboxField from "../common/CheckboxField";
-const STATUS_OPTIONS = [
-  { value: 'BELUM_MULAI', label: 'Belum Mulai' },
-  { value: 'SEDANG_BERJALAN', label: 'Sedang Berjalan' },
-  { value: 'SELESAI', label: 'Selesai' },
-  { value: 'TERTUNDA', label: 'Tertunda' },
-];
+
 const PRIORITAS_OPTIONS = [
   { value: 'PENDEK', label: 'Pendek' },
   { value: 'MENENGAH', label: 'Menengah' },
@@ -84,28 +79,21 @@ export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit
         value={form.biaya || ''}
         onChangeValue={(e) => onChange({ ...form, biaya: Number(e.target.value) })}
       />
-      <div className="grid grid-cols-2 gap-4">
-        <SelectField
-          name="statusKemajuan"
-          label="Status Kemajuan"
-          required
-          placeholder="-- Status --"
-          value={STATUS_OPTIONS.find((opt) => opt.value === form.statusKemajuan) || null}
-          onChange={(opt) => onChange({ ...form, statusKemajuan: opt ? opt.value : '' })}
-          options={STATUS_OPTIONS}
-        />
+      <InputComponent
+        name="statusKemajuan" label="Status Kemajuan"
+        value={form.statusKemajuan || ''}
+        onChangeValue={(e) => onChange({ ...form, statusKemajuan: e.target.value })}
+      />
+      <SelectField
+        name="prioritas"
+        label="Prioritas"
+        required
+        placeholder="-- Prioritas --"
+        value={PRIORITAS_OPTIONS.find((opt) => opt.value === form.prioritas) || null}
+        onChange={(opt) => onChange({ ...form, prioritas: opt ? opt.value : '' })}
+        options={PRIORITAS_OPTIONS}
 
-        <SelectField
-          name="prioritas"
-          label="Prioritas"
-          required
-          placeholder="-- Prioritas --"
-          value={PRIORITAS_OPTIONS.find((opt) => opt.value === form.prioritas) || null}
-          onChange={(opt) => onChange({ ...form, prioritas: opt ? opt.value : '' })}
-          options={PRIORITAS_OPTIONS}
-
-        />
-      </div>
+      />
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5">Kendala Sumber Daya</label>
         <div className="grid grid-cols-2 gap-3">

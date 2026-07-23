@@ -62,7 +62,7 @@ export default class PemantauanOperasionalService {
         kajiUlangRisiko: {
           penilaianRisiko: {
             identifikasiDanKejadianBahaya: {
-              ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, } }),
+              ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi,mode: 'insensitive'} }),
               ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
             }
           }

@@ -48,8 +48,8 @@ export default class PenilaianRisikoService {
         const { search, tanpaKajiUlangRisiko, tingkatRisiko, kodeLokasi, kodeRisiko, startDate, endDate } = req.query;
 
         const identifikasiFilter = {
-            ...(kodeLokasi && { kodeLokasi }),
-            ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko } }),
+            ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, mode: 'insensitive' } }),
+            ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
         };
 
         const where = {

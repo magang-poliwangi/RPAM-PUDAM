@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { nanoid } from 'nanoid';
 import { ConflictError, NotFoundError } from '../../exceptions/error.js';
 import { getPaginationQuery } from '../../utils/pagination.js';
@@ -99,7 +98,7 @@ export default class KajiUlangRisikoService {
             ...((kodeLokasi || kodeRisiko) && {
                 penilaianRisiko: {
                     identifikasiDanKejadianBahaya: {
-                        ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, } }),
+                        ...(kodeLokasi && { kodeLokasi: { startsWith: kodeLokasi, mode: 'insensitive' } }),
                         ...(kodeRisiko && { kodeRisiko: { startsWith: kodeRisiko, mode: 'insensitive' } }),
                     }
                 }

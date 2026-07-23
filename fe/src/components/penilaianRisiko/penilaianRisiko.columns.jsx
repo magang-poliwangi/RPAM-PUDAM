@@ -2,9 +2,8 @@ import { columnGroup, relationColumn, textColumn } from "../common/column-helper
 import RiskLevelBadge from "../common/RiskLevelBadge";
 
 export const penilaianRisikoColumns = [
-    relationColumn('identifikasiDanKejadianBahaya.lokasiSpam.kodeLokasi', 'Kode Lokasi'),
+    relationColumn('identifikasiDanKejadianBahaya.kodeLokasi', 'Kode Lokasi'),
     relationColumn('identifikasiDanKejadianBahaya.kodeRisiko', 'Kode Risiko'),
-    relationColumn('identifikasiDanKejadianBahaya.komponenSpam', 'Komponen SPAM'),
     columnGroup('Risiko Tanpa Tindakan Pengendalian', [
         textColumn('peluangKejadianBahaya', 'Peluang Kejadian Bahaya'),
         textColumn('dampakKeparahan', 'Dampak Keparahan'),

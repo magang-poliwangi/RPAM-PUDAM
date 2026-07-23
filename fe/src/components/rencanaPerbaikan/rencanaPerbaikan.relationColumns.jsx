@@ -36,10 +36,9 @@ export const RELATION_COLUMN_GROUPS = {
     label: 'Kaji Ulang Risiko',
     columns: [
       relationColumn('kajiUlangRisiko.tindakanPengendalian', 'Tindakan Pengendalian', {
-        render: (v) => <span className="line-clamp-2 max-w-xs">{v ?? '-'}</span>,
+        render: (v) => <span className=" max-w-xs">{v ?? '-'}</span>,
       }),
       relationColumn('kajiUlangRisiko.referensi', 'Referensi'),
-      relationColumn('kajiUlangRisiko.validasi', 'Validasi'),
       enumCheckGroup('kajiUlangRisiko.validasi', 'Validasi', [
         { value: 'EFEKTIF', label: 'Efektif' },
         { value: 'TIDAK_EFEKTIF', label: 'Tidak Efektif', width: '100px' },

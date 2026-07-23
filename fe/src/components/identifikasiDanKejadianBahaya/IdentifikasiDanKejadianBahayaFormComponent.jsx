@@ -4,6 +4,7 @@ import { getPayload } from "../../utils/response";
 import AsyncSelectField from "../common/AsyncSelectField";
 import { lokasiSpamApi } from "../../api/lokasi-spam";
 import { bahayakontaminasiApi } from "../../api/bahaya-kontaminasi";
+import { generateKejadianBahaya } from "../../utils/generate-kejadian-bahaya-xyz";
 
 export default function IdentifikasiDanKejadianBahayaFormComponent({ form, onChange, onSubmit, onCancel, loading, mode }) {
   const [selected, setSelected] = useState({
@@ -11,7 +12,7 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form, onCha
     bahaya: null
   });
 
-
+  const [isXYZEdited, setIsXYZEdited] = useState(false);
   const loadLokasiSpamOptions = useCallback(async (inputValue) => {
     const result = getPayload(await lokasiSpamApi.getAll({ search: inputValue, limit: 20 }));
     return (result.items || []).map((item) => ({
@@ -31,9 +32,34 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form, onCha
   }, []);
 
   const handleChange = (e) => {
-    onChange({ ...form, [e.target.name]: e.target.value });
+    const newForm = {
+      ...form,
+      [e.target.name]: e.target.value,
+    };
+
+    if (
+      (e.target.name === "komponenSpamY" ||
+        e.target.name === "penyebabZ") &&
+      !isXYZEdited
+    ) {
+      newForm.kejadianBahayaXYZ = generateKejadianBahaya(
+        selected.bahaya?.raw?.kontaminasiX,
+        newForm.komponenSpamY,
+        newForm.penyebabZ
+      );
+    }
+
+    onChange(newForm);
   };
 
+  const handleXYZChange = (e) => {
+    setIsXYZEdited(true);
+
+    onChange({
+      ...form,
+      kejadianBahayaXYZ: e.target.value,
+    });
+  };
   const handleLokasiSpamChange = (e) => {
     const option = e.target.selectedOption || null;
 
@@ -59,6 +85,11 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form, onCha
     onChange({
       ...form,
       bahayaKontaminasiId: e.target.value,
+      kejadianBahayaXYZ: generateKejadianBahaya(
+        option?.raw?.kontaminasiX,
+        form.komponenSpamY,
+        form.penyebabZ
+      ),
     });
   };
 
@@ -141,10 +172,8 @@ export default function IdentifikasiDanKejadianBahayaFormComponent({ form, onCha
       <InputComponent
         label="Kejadian Bahaya (XYZ)"
         name="kejadianBahayaXYZ"
-        placeholder="Masukkan kejadian bahaya (XYZ)"
-        required
         value={form.kejadianBahayaXYZ || ""}
-        onChangeValue={handleChange}
+        onChangeValue={handleXYZChange}
       />
 
       <div className="flex justify-end gap-3 pt-2">

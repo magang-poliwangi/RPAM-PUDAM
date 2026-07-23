@@ -1,11 +1,11 @@
 import {  columnGroup, relationColumn, textColumn } from "../common/column-helpers";
 
 export const pemantauanOperasionalColumns = [
-  relationColumn('kajiUlangRisiko.penilaianRisiko.identifikasiDanKejadianBahaya.lokasiSpam.kodeLokasi', 'Kode Lokasi'),
+  relationColumn('kajiUlangRisiko.penilaianRisiko.identifikasiDanKejadianBahaya.kodeLokasi', 'Kode Lokasi'),
   relationColumn('kajiUlangRisiko.penilaianRisiko.identifikasiDanKejadianBahaya.kodeRisiko', 'Kode Risiko'),
-  textColumn('apaYangDimonitor', 'Apa Yang Dimonitor'),
   textColumn('batasKritis', 'Batas Kritis'),
   columnGroup('Pemantauan Operasional', [
+    textColumn('apaYangDimonitor', 'Apa Yang Dimonitor'),
     textColumn('dimana', 'Dimana'),
     textColumn('kapan', 'Kapan'),
     textColumn('bagaimana', 'Bagaimana'),
