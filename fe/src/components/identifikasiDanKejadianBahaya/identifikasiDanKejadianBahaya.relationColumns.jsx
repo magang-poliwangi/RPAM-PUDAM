@@ -1,5 +1,5 @@
 import { formatRupiah } from "../../utils/format-rupiah";
-import { columnGroup, enumCheckGroup, relationColumn } from "../common/column-helpers";
+import { columnGroup,  relationColumn, textColumn } from "../common/column-helpers";
 import RiskLevelBadge from "../common/RiskLevelBadge";
 
 const skorTingkat = (basePath) => [
@@ -26,14 +26,28 @@ export const RELATION_COLUMN_GROUPS = {
       relationColumn('penilaianRisiko.kajiUlangRisiko.tindakanPengendalian', 'Tindakan Pengendalian', {
         render: (v) => <span className="max-w-xs">{v ?? '-'}</span>,
       }),
-      relationColumn('penilaianRisiko.kajiUlangRisiko.referensi', 'Referensi'),
-      enumCheckGroup('penilaianRisiko.kajiUlangRisiko.validasi', 'Validasi', [
-        { value: 'EFEKTIF', label: 'Efektif' },
-        { value: 'TIDAK_EFEKTIF', label: 'Tidak Efektif', width: '100px' },
-        { value: 'TIDAK_PASTI', label: 'Tidak Pasti' },
+      columnGroup('validasi', [
+        textColumn('penilaianRisiko.kajiUlangRisiko.referensi', 'Referensi'),
+        {
+          key: 'penilaianRisiko.kajiUlangRisiko.validasi',
+          label: 'Efektif',
+          render: (v) => (v === 'EFEKTIF' ? '✓' : '-'),
+        },
+        {
+          key: 'penilaianRisiko.kajiUlangRisiko.validasi',
+          label: 'Tidak Efektif',
+          render: (v) => (v === 'TIDAK_EFEKTIF' ? '✓' : '-'),
+        },
+        {
+          key: 'penilaianRisiko.kajiUlangRisiko.validasi',
+          label: 'Tidak Pasti',
+          render: (v) => (v === 'TIDAK_PASTI' ? '✓' : '-'),
+        },
+
       ]),
       columnGroup('Risiko Dengan Tindakan Pengendalian', skorTingkat('penilaianRisiko.kajiUlangRisiko')),
     ],
+
   },
   rencanaPerbaikan: {
     label: 'Rencana Perbaikan',

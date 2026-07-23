@@ -7,6 +7,7 @@
   "type": "module",
   "main": "./src/server.js",
   "scripts": {
+    "postinstall": "prisma generate --config src/databases/prisma.config.ts",
     "start": "node ./src/server.js",
     "build": "npm run prisma:generate",
     "dev": "nodemon ./src/server.js",
