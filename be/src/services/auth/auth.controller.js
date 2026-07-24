@@ -15,7 +15,7 @@ export default class AuthController {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge:  24 * 60 * 60 * 1000,
+            maxAge: 24 * 60 * 60 * 1000,
         });
 
         return response(res, 200, 'Login berhasil', {
@@ -26,20 +26,18 @@ export default class AuthController {
     //FR-05
     logoutController = async (req, res, next) => {
         try {
-                    const { id } = req.user;
-        const refreshToken = req.cookies.refreshToken;
-        await this.authService.logout({ token: refreshToken ,userId:id})
-
-        res.clearCookie('refreshToken', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-        });
-        return response(res, 200, 'Logout berhasil');
+            const { id } = req.user;
+            const refreshToken = req.cookies.refreshToken;
+            await this.authService.logout({ token: refreshToken, userId: id })
+            res.clearCookie('refreshToken', {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+            });
+            return response(res, 200, 'Logout berhasil');
 
         } catch (error) {
-            console.log(error);
-            
+            next(error);
         }
     };
 
