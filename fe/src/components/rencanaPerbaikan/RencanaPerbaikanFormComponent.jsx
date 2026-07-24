@@ -70,29 +70,20 @@ export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit
         onChangeValue={(e) => onChange({ ...form, jadwalPelaksanaan: e.target.value })}
       />
       <InputComponent
-        name="sumberPembiayaan" label="Sumber Pembiayaan"
-        value={form.sumberPembiayaan || ''}
-        onChangeValue={(e) => onChange({ ...form, sumberPembiayaan: e.target.value })}
-      />
-      <InputComponent
+        thousandSeparator
         name="biaya" label="Biaya (Rp)" type="number"
         value={form.biaya || ''}
         onChangeValue={(e) => onChange({ ...form, biaya: Number(e.target.value) })}
       />
       <InputComponent
+        name="sumberPembiayaan" label="Sumber Pembiayaan"
+        value={form.sumberPembiayaan || ''}
+        onChangeValue={(e) => onChange({ ...form, sumberPembiayaan: e.target.value })}
+      />
+      <InputComponent
         name="statusKemajuan" label="Status Kemajuan"
         value={form.statusKemajuan || ''}
         onChangeValue={(e) => onChange({ ...form, statusKemajuan: e.target.value })}
-      />
-      <SelectField
-        name="prioritas"
-        label="Prioritas"
-        required
-        placeholder="-- Prioritas --"
-        value={PRIORITAS_OPTIONS.find((opt) => opt.value === form.prioritas) || null}
-        onChange={(opt) => onChange({ ...form, prioritas: opt ? opt.value : '' })}
-        options={PRIORITAS_OPTIONS}
-
       />
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1.5">Kendala Sumber Daya</label>
@@ -111,6 +102,16 @@ export default function RencanaPerbaikanFormComponent({ form, onChange, onSubmit
           />
         </div>
       </div>
+      <SelectField
+        name="prioritas"
+        label="Prioritas"
+        required
+        placeholder="-- Prioritas --"
+        value={PRIORITAS_OPTIONS.find((opt) => opt.value === form.prioritas) || null}
+        onChange={(opt) => onChange({ ...form, prioritas: opt ? opt.value : '' })}
+        options={PRIORITAS_OPTIONS}
+
+      />
       <div className="flex justify-end gap-3 pt-2">
         <button type="button" onClick={onCancel} className="app-button-secondary">Batal</button>
         <button type="submit" disabled={loading} className="app-button-primary">

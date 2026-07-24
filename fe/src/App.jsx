@@ -53,7 +53,7 @@ function App() {
         {authUser.role === "ADMIN" && <Route path="/audit-log" element={<AuditLogPage />} />}
         {authUser.role === "ADMIN" && <Route path="/management-user" element={<ManagementUserPage />} />}
         <Route path="/" element={<Navigate to="/identifikasi-dan-kejadian-bahaya" replace />} />
-        <Route path="*" element={<Navigate to="/lokasi-spam" replace />} />
+        <Route path="*" element={<Navigate to="/bahaya-kontaminasi" replace />} />
       </Routes>
     </AppLayout>
   );

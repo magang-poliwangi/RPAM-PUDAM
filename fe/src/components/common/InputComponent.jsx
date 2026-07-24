@@ -1,5 +1,12 @@
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
+function formatThousand(val) {
+    if (val === "" || val === null || val === undefined) return "";
+    const digits = String(val).replace(/\D/g, "");
+    if (!digits) return "";
+    return Number(digits).toLocaleString("id-ID");
+}
+
 export default function InputComponent({
     name,
     toggle,
@@ -12,7 +19,20 @@ export default function InputComponent({
     leftIcon: LeftIcon,
     error,
     required = false,
+    thousandSeparator = false,
 }) {
+    function handleChange(e) {
+        if (!thousandSeparator) {
+            onChangeValue(e);
+            return;
+        }
+        const raw = e.target.value.replace(/\D/g, "");
+        onChangeValue({ ...e, target: { ...e.target, name, value: raw } });
+    }
+
+    const displayValue = thousandSeparator ? formatThousand(value) : value;
+    const inputType = thousandSeparator ? "text" : type;
+
     return (
         <div className="flex flex-col gap-1.5">
             {label && (
@@ -30,7 +50,8 @@ export default function InputComponent({
                     id={name}
                     name={name}
                     required={required}
-                    type={type}
+                    type={inputType}
+                    inputMode={thousandSeparator ? "numeric" : undefined}
                     className={`w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors ${
                         LeftIcon ? "pl-9" : "pl-3"
                     } ${toggle ? "pr-9" : "pr-3"} placeholder:text-neutral-400 transition-colors
@@ -40,8 +61,8 @@ export default function InputComponent({
                             : "border-brand-100 focus:ring-2 focus:ring-brand-200 focus:border-brand-500"
                     } focus:outline-none`}
                     placeholder={placeholder}
-                    value={value}
-                    onChange={onChangeValue}
+                    value={displayValue}
+                    onChange={handleChange}
                     aria-invalid={!!error}
                 />
 

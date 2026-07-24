@@ -6,18 +6,29 @@ function getByPath(obj, path) {
 }
 // kolom teks biasa
 export function textColumn(key, label, opts = {}) {
-  return { key, label, ...opts };
+  return {
+    key,
+    label,
+    ...opts,
+    render:
+      opts.render ??
+      ((value) => (value === '' || value == null ? '-' : value)),
+  };
 }
 
 // kolom yang ngambil data dari relasi nested
 export function relationColumn(path, label, opts = {}) {
   return {
-    key: path, 
+    key: path,
     label,
     width: opts.width,
     render: (_, row) => {
       const value = getByPath(row, path);
-      return opts.render ? opts.render(value, row) : (value ?? '-');
+
+      if (opts.render) {
+        return opts.render(value, row);
+      }
+      return value === '' || value == null ? '-' : value;
     },
   };
 }
@@ -37,7 +48,7 @@ export function checkColumn(key, label, opts = {}) {
     key,
     label,
     width: opts.width || '80px',
-    render: (v) => (v ? '✓' : ''),
+    render: (v) => (v ? '✓' : '-'),
   };
 }
 
@@ -57,7 +68,7 @@ export function enumCheckGroup(sourceKey, groupLabel, options) {
       render: (_, row) => {
         // 💡 Ambil nilai menggunakan getByPath, BUKAN row[sourceKey]
         const value = getByPath(row, sourceKey);
-        return value === opt.value ? '✓' : '';
+        return value === opt.value ? '✓' : '-';
       },
     }))
   );
